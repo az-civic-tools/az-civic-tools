@@ -22,7 +22,8 @@ var AZDistrictFinder = (function() {
     geojsonUrl: './data/az-districts.geojson',
     source: '',
     sourceUrl: '',
-    legislature: '57th Legislature'
+    legislature: '57th Legislature',
+    districtListCollapsed: true   // false = always expanded, no toggle
   };
 
   var PARTY_COLORS = { R: '#c0392b', D: '#2471a3', I: '#7d8c8e' };
@@ -74,6 +75,7 @@ var AZDistrictFinder = (function() {
         buildUI();
         initMap();
         buildDistrictList();
+        initDistrictToggle();
         initMobileOverlay();
         initAddressSearch();
 
@@ -127,10 +129,18 @@ var AZDistrictFinder = (function() {
     '</div>';
 
     // District list
+    var collapsed = config.districtListCollapsed;
     html += '<div class="df-section df-district-list">' +
-      '<h2 class="df-section-title">All 30 Legislative Districts</h2>' +
+      '<div class="df-district-list-header">' +
+        '<h2 class="df-section-title">All 30 Legislative Districts</h2>' +
+        (collapsed
+          ? '<button id="df-district-toggle" class="df-district-toggle" aria-expanded="false">' +
+            '<span class="df-toggle-icon">&#9654;</span> Expand' +
+            '</button>'
+          : '') +
+      '</div>' +
       '<span class="df-accent-line"></span>' +
-      '<div id="df-district-grid" class="df-district-grid"></div>' +
+      '<div id="df-district-grid" class="df-district-grid' + (collapsed ? ' df-collapsed' : '') + '"></div>' +
     '</div>';
 
     // Mobile panel overlay
@@ -471,6 +481,27 @@ var AZDistrictFinder = (function() {
     });
   }
 
+  /* ---- District List Toggle ---- */
+  function initDistrictToggle() {
+    var btn = containerEl.querySelector('#df-district-toggle');
+    if (!btn) return;
+    var grid = containerEl.querySelector('#df-district-grid');
+    if (!grid) return;
+
+    btn.addEventListener('click', function() {
+      var isCollapsed = grid.classList.contains('df-collapsed');
+      if (isCollapsed) {
+        grid.classList.remove('df-collapsed');
+        btn.innerHTML = '<span class="df-toggle-icon">&#9660;</span> Collapse';
+        btn.setAttribute('aria-expanded', 'true');
+      } else {
+        grid.classList.add('df-collapsed');
+        btn.innerHTML = '<span class="df-toggle-icon">&#9654;</span> Expand';
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
   /* ---- Mobile Overlay ---- */
   function initMobileOverlay() {
     var overlay = containerEl.querySelector('#df-panel-overlay');
@@ -624,7 +655,8 @@ document.addEventListener('DOMContentLoaded', function() {
       dataUrl: root.getAttribute('data-legislators') || './data/legislators.json',
       geojsonUrl: root.getAttribute('data-geojson') || './data/az-districts.geojson',
       source: root.getAttribute('data-source') || '',
-      sourceUrl: root.getAttribute('data-source-url') || ''
+      sourceUrl: root.getAttribute('data-source-url') || '',
+      districtListCollapsed: root.getAttribute('data-district-list-collapsed') !== 'false'
     });
   }
 });
