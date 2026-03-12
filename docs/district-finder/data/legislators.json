@@ -13,33 +13,33 @@
       "senator": {
         "name": "Mark Finchem",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2015,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/FINCHEM.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "MFINCHEM@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2372",
+        "phone": "(602) 926-3631"
       },
       "representatives": [
         {
           "name": "Selina Bliss",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/BLISS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "SBLISS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2296",
+          "phone": "(602) 926-4018"
         },
         {
           "name": "Quang H. Nguyen",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/NGUYEN.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "QNGUYEN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2326",
+          "phone": "(602) 926-3258"
         }
       ]
     },
@@ -48,33 +48,33 @@
       "senator": {
         "name": "Shawnna Bolick",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2019,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/BOLICK.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "SBOLICK@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2400",
+        "phone": "(602) 926-3314"
       },
       "representatives": [
         {
           "name": "Stephanie Simacek",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/SIMACEK.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "SSIMACEK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2353",
+          "phone": "(602) 926-3083"
         },
         {
           "name": "Justin Wilmeth",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/WILMETH.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "JWILMETH@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2342",
+          "phone": "(602) 926-5044"
         }
       ]
     },
@@ -83,33 +83,33 @@
       "senator": {
         "name": "John Kavanagh",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2007,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/KAVANAGH.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "JKAVANAGH@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2386",
+        "phone": "(602) 926-5170"
       },
       "representatives": [
         {
           "name": "Joseph Chaplik",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CHAPLIK.jpg",
           "email": null,
-          "url": null,
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2299",
           "phone": null
         },
         {
           "name": "Alexander Kolodin",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/KOLODIN.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "AKOLODIN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2318",
+          "phone": "(602) 926-3560"
         }
       ]
     },
@@ -118,33 +118,33 @@
       "senator": {
         "name": "Carine Werner",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2025,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/WERNER.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "CWERNER@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2389",
+        "phone": "(602) 926-3673"
       },
       "representatives": [
         {
           "name": "Pamela Carter",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CARTER.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "PCARTER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2354",
+          "phone": "(602) 926-3153"
         },
         {
           "name": "Matt Gress",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/GRESS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "MGRESS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2308",
+          "phone": "(602) 926-4105"
         }
       ]
     },
@@ -153,33 +153,33 @@
       "senator": {
         "name": "Lela Alston",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 1977,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/ALSTON.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "LALSTON@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2371",
+        "phone": "(602) 926-5829"
       },
       "representatives": [
         {
           "name": "Sarah Liguori",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/LIGUORI.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "SLIGUORI@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2347",
+          "phone": "(602) 926-3264"
         },
         {
           "name": "Aaron Márquez",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/M%C3%81RQUEZ.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "AMARQUEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2355",
+          "phone": "(602) 926-3179"
         }
       ]
     },
@@ -188,33 +188,33 @@
       "senator": {
         "name": "Theresa Hatathlie",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/HATATHLIE.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "THATATHLIE@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2383",
+        "phone": "(602) 926-5160"
       },
       "representatives": [
         {
           "name": "Mae Peshlakai",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2019,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/PESHLAKAI.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "MPESHLAKAI@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2332",
+          "phone": "(602) 926-3708"
         },
         {
           "name": "Myron Tsosie",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/TSOSIE.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "MTSOSIE@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2341",
+          "phone": "(602) 926-3157"
         }
       ]
     },
@@ -223,33 +223,33 @@
       "senator": {
         "name": "Wendy Rogers",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2021,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/ROGERS.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "WROGERS@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2394",
+        "phone": "(602) 926-3042"
       },
       "representatives": [
         {
           "name": "Walt Blackman",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2019,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/BLACKMAN.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "WBLACKMAN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2356",
+          "phone": "(602) 926-3244"
         },
         {
           "name": "David Marshall Sr.",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/MARSHALL.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "DMARSHALL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2321",
+          "phone": "(602) 926-3579"
         }
       ]
     },
@@ -258,33 +258,33 @@
       "senator": {
         "name": "Lauren Kuby",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2025,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/KUBY.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "LKUBY@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2390",
+        "phone": "(602) 926-4124"
       },
       "representatives": [
         {
           "name": "Janeen Connolly",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CONNOLLY.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "JCONNOLLY@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2357",
+          "phone": "(602) 926-3300"
         },
         {
           "name": "Brian Garcia",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/GARCIA.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "BGARCIA@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2358",
+          "phone": "(602) 926-3329"
         }
       ]
     },
@@ -293,33 +293,33 @@
       "senator": {
         "name": "Kiana Sears",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2025,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/SEARS.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "KSEARS@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2415",
+        "phone": "(602) 926-3374"
       },
       "representatives": [
         {
           "name": "Lorena Austin",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/AUSTIN.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "LAUSTIN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2343",
+          "phone": "(602) 926-3968"
         },
         {
           "name": "Seth Blattman",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/BLATTMAN.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "SBLATTMAN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2295",
+          "phone": "(602) 926-3996"
         }
       ]
     },
@@ -328,33 +328,33 @@
       "senator": {
         "name": "David C. Farnsworth",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2013,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/FARNSWORTH.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "DFARNSWORTH@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2378",
+        "phone": "(602) 926-3387"
       },
       "representatives": [
         {
           "name": "Ralph Heap",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/HEAP.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "RHEAP@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2360",
+          "phone": "(602) 926-3381"
         },
         {
           "name": "Justin Olson",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2011,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/OLSON.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "JOLSON@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2359",
+          "phone": "(602) 926-3376"
         }
       ]
     },
@@ -363,33 +363,33 @@
       "senator": {
         "name": "Catherine Miranda",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2014,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/MIRANDA.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "CMIRANDA@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2392",
+        "phone": "(602) 926-3413"
       },
       "representatives": [
         {
           "name": "Junelle Cavero",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2024,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CAVERO.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "JCAVERO@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2351",
+          "phone": "(602) 926-3285"
         },
         {
           "name": "Oscar De Los Santos",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/DE_LOS_SANTOS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "ODELOSSANTOS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2303",
+          "phone": "(602) 926-4098"
         }
       ]
     },
@@ -398,33 +398,33 @@
       "senator": {
         "name": "Mitzi Epstein",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2017,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/EPSTEIN.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "MEPSTEIN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2377",
+        "phone": "(602) 926-4870"
       },
       "representatives": [
         {
           "name": "Patty Contreras",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CONTRERAS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "PCONTRERAS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2302",
+          "phone": "(602) 926-4057"
         },
         {
           "name": "Stacey Travers",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/TRAVERS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "STRAVERS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2340",
+          "phone": "(602) 926-3917"
         }
       ]
     },
@@ -433,33 +433,33 @@
       "senator": {
         "name": "J.D. Mesnard",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2013,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/MESNARD.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "JMESNARD@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2391",
+        "phone": "(602) 926-4481"
       },
       "representatives": [
         {
           "name": "Jeff Weninger",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2015,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/WENINGER.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "JWENINGER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2361",
+          "phone": "(602) 926-3392"
         },
         {
           "name": "Julie Willoughby",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/WILLOUGHBY.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "JWILLOUGHBY@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2344",
+          "phone": "(602) 926-4153"
         }
       ]
     },
@@ -468,33 +468,33 @@
       "senator": {
         "name": "Warren Petersen",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2012,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/PETERSEN.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "WPETERSEN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2393",
+        "phone": "(602) 926-4136"
       },
       "representatives": [
         {
           "name": "Laurin Hendrix",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2009,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/HENDRIX.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "LHENDRIX@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2316",
+          "phone": "(602) 926-4209"
         },
         {
           "name": "Khyl Powell",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/POWELL.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "KPOWELL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2362",
+          "phone": "(602) 926-3415"
         }
       ]
     },
@@ -503,33 +503,33 @@
       "senator": {
         "name": "Jake Hoffman",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2021,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/HOFFMAN.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "JAKE.HOFFMAN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2385",
+        "phone": "(602) 926-3292"
       },
       "representatives": [
         {
           "name": "Neal Carter",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CARTER.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "NCARTER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2297",
+          "phone": "(602) 926-5761"
         },
         {
           "name": "Michael Way",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/WAY.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "MWAY@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2363",
+          "phone": "(602) 926-3433"
         }
       ]
     },
@@ -538,33 +538,33 @@
       "senator": {
         "name": "T.J. Shope",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2013,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/SHOPE.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "TSHOPE@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2396",
+        "phone": "(602) 926-3012"
       },
       "representatives": [
         {
           "name": "Chris Lopez",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/LOPEZ.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "CLOPEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2364",
+          "phone": "(602) 926-3445"
         },
         {
           "name": "Teresa Martinez",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/MARTINEZ.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "TMARTINEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2323",
+          "phone": "(602) 926-3158"
         }
       ]
     },
@@ -573,33 +573,33 @@
       "senator": {
         "name": "Vince Leach",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2015,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/LEACH.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "VLEACH@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2398",
+        "phone": "(602) 926-3694"
       },
       "representatives": [
         {
           "name": "Rachel Keshel",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/KESHEL.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "RKESHEL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2317",
+          "phone": "(602) 926-3558"
         },
         {
           "name": "Kevin Volk",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/VOLK.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "KVOLK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2365",
+          "phone": "(602) 926-3498"
         }
       ]
     },
@@ -608,33 +608,33 @@
       "senator": {
         "name": "Priya Sundareshan",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/SUNDARESHAN.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "PSUNDARESHAN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2397",
+        "phone": "(602) 926-3437"
       },
       "representatives": [
         {
           "name": "Nancy Gutierrez",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/GUTIERREZ.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "NGUTIERREZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2310",
+          "phone": "(602) 926-4134"
         },
         {
           "name": "Christopher Mathis",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/MATHIS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "CMATHIS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2322",
+          "phone": "(602) 926-3138"
         }
       ]
     },
@@ -643,33 +643,33 @@
       "senator": {
         "name": "David Gowan",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2011,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/GOWAN.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "DGOWAN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2382",
+        "phone": "(602) 926-5154"
       },
       "representatives": [
         {
           "name": "Lupe Diaz",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/DIAZ.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "LDIAZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2304",
+          "phone": "(602) 926-4852"
         },
         {
           "name": "Gail Griffin",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2011,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/GRIFFIN.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "GGRIFFIN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2309",
+          "phone": "(602) 926-5895"
         }
       ]
     },
@@ -678,33 +678,33 @@
       "senator": {
         "name": "Sally Ann Gonzales",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 1997,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/GONZALES.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "SGONZALES@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2381",
+        "phone": "(602) 926-3278"
       },
       "representatives": [
         {
           "name": "Alma Hernandez",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2019,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/HERNANDEZ.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "AHERNANDEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2312",
+          "phone": "(602) 926-3136"
         },
         {
           "name": "Betty J. Villegas",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/VILLEGAS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "BVILLEGAS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2346",
+          "phone": "(602) 926-3027"
         }
       ]
     },
@@ -713,33 +713,33 @@
       "senator": {
         "name": "Rosanna Gabaldón",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2013,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/GABALD%C3%93N.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "RGABALDON@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2380",
+        "phone": "(602) 926-3424"
       },
       "representatives": [
         {
           "name": "Consuelo Hernandez",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/HERNANDEZ.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "CHERNANDEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2313",
+          "phone": "(602) 926-3523"
         },
         {
           "name": "Stephanie Stahl Hamilton",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/STAHL_HAMILTON.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "SSTAHLHAMILTON@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2338",
+          "phone": "(602) 926-3279"
         }
       ]
     },
@@ -748,33 +748,33 @@
       "senator": {
         "name": "Eva Diaz",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/DIAZ.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "EVA.DIAZ@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2376",
+        "phone": "(602) 926-3473"
       },
       "representatives": [
         {
           "name": "Lupe Contreras",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2019,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CONTRERAS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "LCONTRERAS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2301",
+          "phone": "(602) 926-5284"
         },
         {
           "name": "Elda Luna-Nájera",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2024,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/LUNA-N%C3%81JERA.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "ELUNA-NAJERA@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2349",
+          "phone": "(602) 926-3881"
         }
       ]
     },
@@ -783,33 +783,33 @@
       "senator": {
         "name": "Brian Fernandez",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/FERNANDEZ.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "BFERNANDEZ@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2379",
+        "phone": "(602) 926-3098"
       },
       "representatives": [
         {
           "name": "Michele Peña",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/PE%C3%91A.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "MPENA@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2331",
+          "phone": "(602) 926-3696"
         },
         {
           "name": "Mariana Sandoval",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/SANDOVAL.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "MSANDOVAL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2334",
+          "phone": "(602) 926-3740"
         }
       ]
     },
@@ -818,33 +818,33 @@
       "senator": {
         "name": "Analise Ortiz",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/ORTIZ.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "ANALISE.ORTIZ@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2384",
+        "phone": "(602) 926-3633"
       },
       "representatives": [
         {
           "name": "Anna Abeytia",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/ABEYTIA.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "AABEYTIA@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2366",
+          "phone": "(602) 926-3501"
         },
         {
           "name": "Lydia Hernandez",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/HERNANDEZ.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "LHERNANDEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2314",
+          "phone": "(602) 926-3553"
         }
       ]
     },
@@ -853,33 +853,33 @@
       "senator": {
         "name": "Tim Dunn",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/DUNN.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "TDUNN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2388",
+        "phone": "(602) 926-4139"
       },
       "representatives": [
         {
           "name": "Michael Carbone",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CARBONE.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "MCARBONE@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2298",
+          "phone": "(602) 926-4038"
         },
         {
           "name": "Nick Kupper",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/KUPPER.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "NKUPPER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2367",
+          "phone": "(602) 926-3512"
         }
       ]
     },
@@ -888,33 +888,33 @@
       "senator": {
         "name": "Flavio Bravo",
         "party": "D",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/BRAVO.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "FBRAVO@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2399",
+        "phone": "(602) 926-4033"
       },
       "representatives": [
         {
           "name": "Cesar Aguilar",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/AGUILAR.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "CAGUILAR@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2293",
+          "phone": "(602) 926-3953"
         },
         {
           "name": "Quantá Crews",
           "party": "D",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/CREWS.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "QCREWS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2345",
+          "phone": "(602) 926-3256"
         }
       ]
     },
@@ -923,33 +923,33 @@
       "senator": {
         "name": "Kevin Payne",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2021,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/PAYNE.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "KPAYNE@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2387",
+        "phone": "(602) 926-4854"
       },
       "representatives": [
         {
           "name": "Lisa Fink",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/FINK.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "LFINK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2369",
+          "phone": "(602) 926-3516"
         },
         {
           "name": "Tony Rivero",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2015,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/RIVERO.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "TRIVERO@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2368",
+          "phone": "(602) 926-3528"
         }
       ]
     },
@@ -958,33 +958,33 @@
       "senator": {
         "name": "Frank Carroll",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/CARROLL.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "FCARROLL@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2375",
+        "phone": "(602) 926-3249"
       },
       "representatives": [
         {
           "name": "David Livingston",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2013,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/LIVINGSTON.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "DLIVINGSTON@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2319",
+          "phone": "(602) 926-4178"
         },
         {
           "name": "Beverly Pingerelli",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2021,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/PINGERELLI.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "BPINGERELLI@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2333",
+          "phone": "(602) 926-3396"
         }
       ]
     },
@@ -993,33 +993,33 @@
       "senator": {
         "name": "Janae Shamp",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2023,
+        "termEnds": 2026,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/SHAMP.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "JSHAMP@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2395",
+        "phone": "(602) 926-3499"
       },
       "representatives": [
         {
           "name": "Steve Montenegro",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2009,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/MONTENEGRO.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "SMONTENEGRO@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2325",
+          "phone": "(602) 926-3635"
         },
         {
           "name": "James Taylor",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2025,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/TAYLOR.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "JTAYLOR@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2370",
+          "phone": "(602) 926-3564"
         }
       ]
     },
@@ -1028,33 +1028,33 @@
       "senator": {
         "name": "Hildy Angius",
         "party": "R",
-        "since": 0,
-        "termEnds": 0,
+        "since": 2025,
+        "termEnds": 2028,
         "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/Senate/ANGIUS.jpg",
-        "email": null,
-        "url": null,
-        "phone": null
+        "email": "HANGIUS@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2373",
+        "phone": "(602) 926-5051"
       },
       "representatives": [
         {
           "name": "Leo Biasiucci",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2019,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/BIASIUCCI.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "LBIASIUCCI@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2294",
+          "phone": "(602) 926-3018"
         },
         {
           "name": "John Gillette",
           "party": "R",
-          "since": 0,
-          "termEnds": 0,
+          "since": 2023,
+          "termEnds": 2026,
           "photo": "https://www.azleg.gov/alisImages/MemberPhotos/57leg/House/GILLETTE.jpg",
-          "email": null,
-          "url": null,
-          "phone": null
+          "email": "JGILLETTE@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2306",
+          "phone": "(602) 926-4100"
         }
       ]
     }
