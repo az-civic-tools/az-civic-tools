@@ -1,0 +1,629 @@
+/* ============================================================
+   AZ District Finder — Core Styles
+   All classes prefixed with df- to avoid collisions.
+   Colors/fonts reference --df-* CSS variables (see themes/).
+   ============================================================ */
+
+/* --- Reset (scoped to container) --- */
+.df-container *, .df-container *::before, .df-container *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.df-container {
+  font-family: var(--df-font-body);
+  color: var(--df-color-text);
+  line-height: 1.7;
+  background: var(--df-color-bg);
+}
+
+.df-container a {
+  color: var(--df-color-primary);
+  text-decoration: none;
+}
+
+.df-container a:hover {
+  text-decoration: underline;
+}
+
+/* --- Header --- */
+.df-header {
+  background: linear-gradient(135deg, var(--df-color-primary) 0%, var(--df-color-primary-dark) 100%);
+  color: var(--df-color-white);
+  padding: 40px 24px 32px;
+  text-align: center;
+}
+
+.df-header h1 {
+  font-family: var(--df-font-heading);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
+}
+
+.df-header p {
+  font-size: 1rem;
+  opacity: 0.85;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* --- Section wrapper --- */
+.df-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.df-section-title {
+  font-family: var(--df-font-heading);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--df-color-primary);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.df-section-desc {
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--df-color-text-muted);
+  max-width: 600px;
+  margin: 0 auto 24px;
+  line-height: 1.6;
+}
+
+.df-accent-line {
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--df-color-accent);
+  margin: 0 auto 24px;
+  border-radius: 2px;
+}
+
+/* --- Address Search --- */
+.df-address-search {
+  max-width: 700px;
+  margin: 0 auto 32px;
+}
+
+.df-address-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.df-address-input-wrap {
+  display: flex;
+  gap: 0;
+  border-radius: var(--df-btn-radius);
+  overflow: hidden;
+  box-shadow: var(--df-card-shadow);
+}
+
+.df-address-input-wrap input {
+  flex: 1;
+  padding: 14px 18px;
+  font-family: var(--df-font-body);
+  font-size: 0.92rem;
+  border: 2px solid var(--df-color-border);
+  border-right: none;
+  border-radius: var(--df-btn-radius) 0 0 var(--df-btn-radius);
+  outline: none;
+  transition: border-color 0.2s;
+  background: var(--df-color-surface);
+  color: var(--df-color-text);
+}
+
+.df-address-input-wrap input:focus {
+  border-color: var(--df-color-primary);
+}
+
+.df-address-btn {
+  padding: 14px 24px;
+  background: var(--df-color-primary);
+  color: var(--df-color-white);
+  font-family: var(--df-font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.df-address-btn:hover {
+  background: var(--df-color-primary-dark);
+}
+
+.df-address-error {
+  font-size: 0.82rem;
+  color: var(--df-color-party-r);
+  min-height: 1.2em;
+  text-align: center;
+}
+
+.df-address-privacy {
+  font-size: 0.75rem;
+  color: var(--df-color-text-muted);
+  text-align: center;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Map + Panel Layout --- */
+.df-map-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+#df-map {
+  width: 100%;
+  height: var(--df-map-height);
+  border-radius: var(--df-card-radius);
+  border: 2px solid var(--df-color-border);
+  box-shadow: var(--df-card-shadow);
+  background: var(--df-map-bg);
+  z-index: 1;
+}
+
+/* --- District Panel --- */
+.df-panel {
+  background: var(--df-color-surface);
+  border-radius: var(--df-card-radius);
+  box-shadow: var(--df-card-shadow);
+  overflow: hidden;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.df-panel-empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--df-color-text-muted);
+}
+
+.df-panel-empty .df-panel-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+  display: block;
+}
+
+.df-panel-empty h3 {
+  font-family: var(--df-font-heading);
+  font-size: 1.2rem;
+  color: var(--df-color-primary);
+  margin-bottom: 8px;
+}
+
+.df-panel-empty p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* Panel header */
+.df-panel-header {
+  background: linear-gradient(135deg, var(--df-color-primary) 0%, var(--df-color-primary-dark) 100%);
+  color: var(--df-color-white);
+  padding: 24px;
+  text-align: center;
+}
+
+.df-panel-header h3 {
+  font-family: var(--df-font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+
+.df-panel-header .df-panel-subtitle {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.df-district-map-link {
+  color: var(--df-color-white);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.4);
+  transition: border-color 0.2s;
+}
+
+.df-district-map-link:hover {
+  border-bottom-color: var(--df-color-accent);
+  text-decoration: none;
+}
+
+/* Panel footer — copy markdown */
+.df-panel-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--df-color-border);
+  text-align: center;
+}
+
+.df-copy-md {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--df-color-primary);
+  color: var(--df-color-white);
+  border: none;
+  border-radius: var(--df-btn-radius);
+  padding: 9px 20px;
+  font-family: var(--df-font-heading);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.df-copy-md:hover {
+  background: var(--df-color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.df-copy-md:active {
+  transform: translateY(0);
+}
+
+.df-copy-md.copied {
+  background: #27ae60;
+}
+
+.df-copy-md-icon {
+  font-size: 0.9rem;
+}
+
+/* --- Legislator card --- */
+.df-legislator {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--df-color-border);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.df-legislator:last-of-type {
+  border-bottom: none;
+}
+
+.df-legislator-photo {
+  width: 80px;
+  height: 100px;
+  border-radius: var(--df-btn-radius);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--df-color-border);
+  border: 2px solid var(--df-color-border);
+}
+
+.df-legislator-photo.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--df-font-heading);
+  font-size: 0.65rem;
+  color: var(--df-color-text-muted);
+  letter-spacing: 0.04em;
+}
+
+.df-legislator-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.df-legislator-name {
+  font-family: var(--df-font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--df-color-text);
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.df-legislator-role {
+  font-family: var(--df-font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.df-legislator-role.senate {
+  color: var(--df-color-party-d);
+}
+
+.df-legislator-role.house {
+  color: var(--df-color-party-r);
+}
+
+/* Party badge */
+.df-party-badge {
+  display: inline-block;
+  font-family: var(--df-font-heading);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 2px 10px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.df-party-badge.R {
+  background: var(--df-color-party-r);
+  color: var(--df-color-white);
+}
+
+.df-party-badge.D {
+  background: var(--df-color-party-d);
+  color: var(--df-color-white);
+}
+
+.df-party-badge.I {
+  background: var(--df-color-party-i);
+  color: var(--df-color-white);
+}
+
+/* Legislator meta details */
+.df-legislator-meta {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.df-legislator-meta li {
+  font-size: 0.78rem;
+  color: var(--df-color-text-muted);
+  padding: 3px 0;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.df-legislator-meta li:last-child {
+  border-bottom: none;
+}
+
+.df-legislator-meta li span:first-child {
+  font-family: var(--df-font-heading);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--df-color-text-muted);
+}
+
+/* Legislator name link */
+.df-legislator-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--df-color-primary);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.df-legislator-link:hover {
+  color: var(--df-color-secondary);
+  border-bottom-color: var(--df-color-secondary);
+  text-decoration: none;
+}
+
+/* Email link */
+.df-email-link {
+  color: var(--df-color-primary);
+  font-family: var(--df-font-body);
+  font-size: 0.72rem;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.df-email-link:hover {
+  color: var(--df-color-secondary);
+  text-decoration: underline;
+}
+
+/* --- District Quick List --- */
+.df-district-list {
+  padding: 32px 0;
+}
+
+.df-district-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.df-district-card {
+  background: var(--df-color-surface);
+  border-radius: var(--df-btn-radius);
+  box-shadow: var(--df-card-shadow);
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-left: 4px solid var(--df-color-primary);
+}
+
+.df-district-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--df-card-shadow-hover);
+}
+
+.df-district-card h4 {
+  font-family: var(--df-font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--df-color-primary);
+  margin-bottom: 6px;
+}
+
+.df-district-card .df-legislator-line {
+  font-size: 0.82rem;
+  color: var(--df-color-text-muted);
+  padding: 2px 0;
+}
+
+.df-district-card .df-chamber-label {
+  font-family: var(--df-font-heading);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--df-color-text-muted);
+  display: inline-block;
+  width: 50px;
+}
+
+/* --- Mobile panel overlay --- */
+.df-panel-overlay {
+  display: none;
+}
+
+/* --- Leaflet overrides --- */
+.df-tooltip {
+  font-family: var(--df-font-body);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  padding: 8px 12px;
+  border: 2px solid var(--df-color-primary);
+  border-radius: 4px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+}
+
+.df-district-label {
+  background: none;
+  border: none;
+}
+
+.df-district-label span {
+  font-family: var(--df-font-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #222;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff;
+  pointer-events: none;
+}
+
+.df-address-marker { background: none; border: none; }
+.df-address-pin {
+  width: 16px; height: 16px;
+  background: var(--df-color-accent);
+  border: 3px solid #333;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* --- Responsive --- */
+@media (max-width: 1023px) {
+  .df-map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .df-panel {
+    position: static;
+    max-height: none;
+  }
+
+  .df-panel-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .df-panel-overlay.active {
+    display: flex;
+  }
+
+  .df-panel-overlay .df-panel {
+    position: static;
+    max-height: 80vh;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px 16px 0 0;
+    animation: dfSlideUp 0.3s ease;
+  }
+
+  .df-panel-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--df-color-white);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 2;
+    line-height: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .df-panel-close {
+    display: none;
+  }
+}
+
+@keyframes dfSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@media (max-width: 767px) {
+  .df-header h1 {
+    font-size: 1.6rem;
+  }
+
+  #df-map {
+    height: var(--df-map-height-mobile);
+  }
+
+  .df-district-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .df-address-input-wrap {
+    flex-direction: column;
+  }
+
+  .df-address-input-wrap input {
+    border-right: 2px solid var(--df-color-border);
+    border-bottom: none;
+    border-radius: var(--df-btn-radius) var(--df-btn-radius) 0 0;
+  }
+
+  .df-address-btn {
+    border-radius: 0 0 var(--df-btn-radius) var(--df-btn-radius);
+  }
+}
+
+@media (max-width: 479px) {
+  #df-map {
+    height: var(--df-map-height-small);
+  }
+}

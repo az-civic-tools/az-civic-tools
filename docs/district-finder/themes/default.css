@@ -1,0 +1,44 @@
+/* ============================================================
+   AZ District Finder — Default Theme
+   Override these CSS custom properties to customize the look.
+   See the wiki for a full customization guide.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+:root {
+  /* Typography */
+  --df-font-heading: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --df-font-body: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  /* Colors — Primary palette */
+  --df-color-primary: #1B4965;
+  --df-color-primary-dark: #0D2F45;
+  --df-color-secondary: #5FA8D3;
+  --df-color-accent: #CAA53D;
+  --df-color-bg: #F5F5F0;
+  --df-color-surface: #FFFFFF;
+  --df-color-text: #2D2D2D;
+  --df-color-text-muted: #6B6B6B;
+  --df-color-border: #DDD;
+  --df-color-white: #FFFFFF;
+
+  /* Party colors */
+  --df-color-party-r: #C0392B;
+  --df-color-party-d: #2471A3;
+  --df-color-party-i: #7D8C8E;
+
+  /* Map */
+  --df-map-height: 600px;
+  --df-map-height-mobile: 400px;
+  --df-map-height-small: 320px;
+  --df-map-bg: #e0ddd4;
+
+  /* Cards & Surfaces */
+  --df-card-radius: 8px;
+  --df-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --df-card-shadow-hover: 0 5px 18px rgba(0, 0, 0, 0.12);
+
+  /* Buttons */
+  --df-btn-radius: 6px;
+}
