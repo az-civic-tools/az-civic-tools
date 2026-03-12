@@ -1,0 +1,24 @@
+/* ============================================================
+   AZ District Finder — Modern Dark Theme
+   Clean dark mode with high contrast accents.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;600&display=swap');
+
+:root {
+  --df-font-heading: 'Inter', -apple-system, sans-serif;
+  --df-font-body: 'IBM Plex Serif', Georgia, serif;
+
+  --df-color-primary: #60A5FA;
+  --df-color-primary-dark: #3B82F6;
+  --df-color-secondary: #93C5FD;
+  --df-color-accent: #FBBF24;
+  --df-color-bg: #111827;
+  --df-color-surface: #1F2937;
+  --df-color-text: #F3F4F6;
+  --df-color-text-muted: #9CA3AF;
+  --df-color-border: #374151;
+  --df-color-white: #F9FAFB;
+
+  --df-map-bg: #1a2332;
+}

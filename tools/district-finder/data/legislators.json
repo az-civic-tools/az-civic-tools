@@ -1,0 +1,1062 @@
+{
+  "meta": {
+    "state": "Arizona",
+    "legislature": "57th Legislature",
+    "session": "2025-2026",
+    "lastUpdated": "2026-03-12",
+    "source": "https://www.azleg.gov",
+    "totalDistricts": 30
+  },
+  "districts": {
+    "1": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict01.pdf",
+      "senator": {
+        "name": "Mark Finchem",
+        "party": "R",
+        "since": 2019,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "MFINCHEM@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2372",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Selina Bliss",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "SBLISS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2296",
+          "phone": null
+        },
+        {
+          "name": "Quang H. Nguyen",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "QNGUYEN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2326",
+          "phone": null
+        }
+      ]
+    },
+    "2": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict02.pdf",
+      "senator": {
+        "name": "Shawnna Bolick",
+        "party": "R",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "SBOLICK@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2400",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Stephanie Simacek",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "SSIMACEK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2353",
+          "phone": null
+        },
+        {
+          "name": "Justin Wilmeth",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JWILMETH@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2342",
+          "phone": null
+        }
+      ]
+    },
+    "3": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict03.pdf",
+      "senator": {
+        "name": "John Kavanagh",
+        "party": "R",
+        "since": 2019,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "JKAVANAGH@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2383",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Alexander Kolodin",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "AKOLODIN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2315",
+          "phone": null
+        },
+        {
+          "name": "Jeff Weninger",
+          "party": "R",
+          "since": 2015,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JWENINGER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2341",
+          "phone": null
+        }
+      ]
+    },
+    "4": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict04.pdf",
+      "senator": {
+        "name": "Ken Bennett",
+        "party": "R",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "KBENNETT@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2374",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "David Marshall Sr.",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "DMARSHALL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2323",
+          "phone": null
+        },
+        {
+          "name": "Michael Way",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "MWAY@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2371",
+          "phone": null
+        }
+      ]
+    },
+    "5": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict05.pdf",
+      "senator": {
+        "name": "Jake Hoffman",
+        "party": "R",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "JHOFFMAN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2381",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Joseph Chaplik",
+          "party": "R",
+          "since": 2021,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JCHAPLIK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2297",
+          "phone": null
+        },
+        {
+          "name": "Rachel Keshel",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "RKESHEL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2356",
+          "phone": null
+        }
+      ]
+    },
+    "6": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict06.pdf",
+      "senator": {
+        "name": "Theresa Hatathlie",
+        "party": "D",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "THATATHLIE@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2380",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Mae Peshlakai",
+          "party": "D",
+          "since": 2019,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "MPESHLAKAI@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2330",
+          "phone": null
+        },
+        {
+          "name": "Jasmine Blackwater-Nygren",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JBLACKWATER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2295",
+          "phone": null
+        }
+      ]
+    },
+    "7": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict07.pdf",
+      "senator": {
+        "name": "David Gowan",
+        "party": "R",
+        "since": 2021,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "DGOWAN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2378",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Lupe Diaz",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "LDIAZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2301",
+          "phone": null
+        },
+        {
+          "name": "Chris Lopez",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "CLOPEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2358",
+          "phone": null
+        }
+      ]
+    },
+    "8": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict08.pdf",
+      "senator": {
+        "name": "Juan Ciscomani",
+        "party": "D",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "JCISCOMANI@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2401",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Alma Hernandez",
+          "party": "D",
+          "since": 2019,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "AHERNANDEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2309",
+          "phone": null
+        },
+        {
+          "name": "Sanda Clark",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "SCLARK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2350",
+          "phone": null
+        }
+      ]
+    },
+    "9": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict09.pdf",
+      "senator": {
+        "name": "Victoria Steele",
+        "party": "D",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "VSTEELE@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2397",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Regina Cobb",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "RCOBB@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2349",
+          "phone": null
+        },
+        {
+          "name": "Mariana Sandoval",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "MSANDOVAL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2365",
+          "phone": null
+        }
+      ]
+    },
+    "10": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict10.pdf",
+      "senator": {
+        "name": "David C. Farnsworth",
+        "party": "R",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "DFARNSWORTH@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2376",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Barbara Parker",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "BPARKER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2328",
+          "phone": null
+        },
+        {
+          "name": "Justin Olson",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JOLSON@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2362",
+          "phone": null
+        }
+      ]
+    },
+    "11": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict11.pdf",
+      "senator": {
+        "name": "Vince Leach",
+        "party": "R",
+        "since": 2019,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "VLEACH@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2385",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Teresa Martinez",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "TMARTINEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2359",
+          "phone": null
+        },
+        {
+          "name": "Khyl Powell",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "KPOWELL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2363",
+          "phone": null
+        }
+      ]
+    },
+    "12": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict12.pdf",
+      "senator": {
+        "name": "Frank Carroll",
+        "party": "R",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "FCARROLL@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2375",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Walt Blackman",
+          "party": "R",
+          "since": 2019,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "WBLACKMAN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2293",
+          "phone": null
+        },
+        {
+          "name": "Nick Kupper",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "NKUPPER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2357",
+          "phone": null
+        }
+      ]
+    },
+    "13": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict13.pdf",
+      "senator": {
+        "name": "J.D. Mesnard",
+        "party": "R",
+        "since": 2021,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "JMESNARD@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2387",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Julie Willoughby",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JWILLOUGHBY@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2343",
+          "phone": null
+        },
+        {
+          "name": "Matt Gress",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "MGRESS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2308",
+          "phone": null
+        }
+      ]
+    },
+    "14": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict14.pdf",
+      "senator": {
+        "name": "Warren Petersen",
+        "party": "R",
+        "since": 2019,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "WPETERSEN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2390",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Laurin Hendrix",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "LHENDRIX@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2310",
+          "phone": null
+        },
+        {
+          "name": "Lisa Fink",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "LFINK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2303",
+          "phone": null
+        }
+      ]
+    },
+    "15": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict15.pdf",
+      "senator": {
+        "name": "Rob Robson",
+        "party": "R",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "RROBSON@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2393",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Neal Carter",
+          "party": "R",
+          "since": 2021,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "NCARTER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2345",
+          "phone": null
+        },
+        {
+          "name": "Pamela Carter",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "PCARTER@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2348",
+          "phone": null
+        }
+      ]
+    },
+    "16": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict16.pdf",
+      "senator": {
+        "name": "T.J. Shope",
+        "party": "R",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "TSHOPE@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2396",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Teresa Leger Fernandez",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "TLEGERFERNANDEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2316",
+          "phone": null
+        },
+        {
+          "name": "Keith Seaman",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "KSEAMAN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2366",
+          "phone": null
+        }
+      ]
+    },
+    "17": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict17.pdf",
+      "senator": {
+        "name": "John McLean",
+        "party": "D",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "JMCLEAN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2386",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Dana Allmond",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "DALLMOND@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2346",
+          "phone": null
+        },
+        {
+          "name": "Jen Pawlik",
+          "party": "D",
+          "since": 2019,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JPAWLIK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2329",
+          "phone": null
+        }
+      ]
+    },
+    "18": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict18.pdf",
+      "senator": {
+        "name": "Priya Sundareshan",
+        "party": "D",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "PSUNDARESHAN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2398",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Christopher Mathis",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "CMATHIS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2324",
+          "phone": null
+        },
+        {
+          "name": "Nancy Gutierrez",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "NGUTIERREZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2344",
+          "phone": null
+        }
+      ]
+    },
+    "19": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict19.pdf",
+      "senator": {
+        "name": "Lela Alston",
+        "party": "D",
+        "since": 2019,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "LALSTON@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2399",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Diego Rodriguez",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "DRODRIGUEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2335",
+          "phone": null
+        },
+        {
+          "name": "Oscar De Los Santos",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "ODELOSSANTOS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2300",
+          "phone": null
+        }
+      ]
+    },
+    "20": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict20.pdf",
+      "senator": {
+        "name": "Anna Hernandez",
+        "party": "D",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "AHERNANDEZ-S@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2402",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Analise Ortiz",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "AORTIZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2327",
+          "phone": null
+        },
+        {
+          "name": "Elda Luna-Najera",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "ELUNA@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2322",
+          "phone": null
+        }
+      ]
+    },
+    "21": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict21.pdf",
+      "senator": {
+        "name": "Rosanna Gabaldon",
+        "party": "D",
+        "since": 2019,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "RGABALDON@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2377",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Consuelo Hernandez",
+          "party": "D",
+          "since": 2019,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "CHERNANDEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2311",
+          "phone": null
+        },
+        {
+          "name": "Stephanie Stahl Hamilton",
+          "party": "D",
+          "since": 2021,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "SSTAHL@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2339",
+          "phone": null
+        }
+      ]
+    },
+    "22": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict22.pdf",
+      "senator": {
+        "name": "Eva Burch",
+        "party": "D",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "EBURCH@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2403",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Leezah Sun",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "LSUN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2369",
+          "phone": null
+        },
+        {
+          "name": "Michele Pena",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "MPENA@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2331",
+          "phone": null
+        }
+      ]
+    },
+    "23": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict23.pdf",
+      "senator": {
+        "name": "Brian Fernandez",
+        "party": "D",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "BFERNANDEZ@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2404",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Marcelino Quinonez",
+          "party": "D",
+          "since": 2021,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "MQUINONEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2334",
+          "phone": null
+        },
+        {
+          "name": "Lydia Hernandez",
+          "party": "D",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "LHERNANDEZ@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2355",
+          "phone": null
+        }
+      ]
+    },
+    "24": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict24.pdf",
+      "senator": {
+        "name": "Kevin Payne",
+        "party": "R",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "KPAYNE@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2389",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "David Livingston",
+          "party": "R",
+          "since": 2013,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "DLIVINGSTON@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2320",
+          "phone": null
+        },
+        {
+          "name": "Tony Rivero",
+          "party": "R",
+          "since": 2017,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "TRIVERO@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2336",
+          "phone": null
+        }
+      ]
+    },
+    "25": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict25.pdf",
+      "senator": {
+        "name": "Carine Werner",
+        "party": "R",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "CWERNER@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2405",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Tim Dunn",
+          "party": "R",
+          "since": 2021,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "TDUNN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2302",
+          "phone": null
+        },
+        {
+          "name": "Gail Griffin",
+          "party": "R",
+          "since": 2013,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "GGRIFFIN@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2307",
+          "phone": null
+        }
+      ]
+    },
+    "26": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict26.pdf",
+      "senator": {
+        "name": "Raquel Teran",
+        "party": "D",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "RTERAN@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2406",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Quantá Crews",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "QCREWS@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2299",
+          "phone": null
+        },
+        {
+          "name": "Cesar Aguilar",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "CAGUILAR@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2291",
+          "phone": null
+        }
+      ]
+    },
+    "27": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict27.pdf",
+      "senator": {
+        "name": "Rebecca Rios",
+        "party": "D",
+        "since": 2019,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "RRIOS@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2392",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Kevin Parada",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "KPARADA@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2332",
+          "phone": null
+        },
+        {
+          "name": "Laura Terech",
+          "party": "D",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "LTERECH@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2340",
+          "phone": null
+        }
+      ]
+    },
+    "28": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict28.pdf",
+      "senator": {
+        "name": "Wendy Rogers",
+        "party": "R",
+        "since": 2021,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "WROGERS@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2394",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "David Cook",
+          "party": "R",
+          "since": 2019,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "DCOOK@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2298",
+          "phone": null
+        },
+        {
+          "name": "Ralph Heap",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "RHEAP@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2354",
+          "phone": null
+        }
+      ]
+    },
+    "29": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict29.pdf",
+      "senator": {
+        "name": "Janae Shamp",
+        "party": "R",
+        "since": 2023,
+        "termEnds": 2026,
+        "photo": null,
+        "email": "JSHAMP@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2395",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Steve Montenegro",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "SMONTENEGRO@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2325",
+          "phone": null
+        },
+        {
+          "name": "James Taylor",
+          "party": "R",
+          "since": 2025,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JTAYLOR@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2370",
+          "phone": null
+        }
+      ]
+    },
+    "30": {
+      "mapUrl": "https://www.azleg.gov/images/LegislativeDistrictMaps/LegislativeDistrict30.pdf",
+      "senator": {
+        "name": "Hildy Angius",
+        "party": "R",
+        "since": 2025,
+        "termEnds": 2028,
+        "photo": null,
+        "email": "HANGIUS@azleg.gov",
+        "url": "https://www.azleg.gov/Senate/Senate-member/?legislature=57&session=130&legislator=2373",
+        "phone": null
+      },
+      "representatives": [
+        {
+          "name": "Leo Biasiucci",
+          "party": "R",
+          "since": 2019,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "LBIASIUCCI@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2294",
+          "phone": null
+        },
+        {
+          "name": "John Gillette",
+          "party": "R",
+          "since": 2023,
+          "termEnds": 2026,
+          "photo": null,
+          "email": "JGILLETTE@azleg.gov",
+          "url": "https://www.azleg.gov/House/House-member/?legislature=57&session=130&legislator=2306",
+          "phone": null
+        }
+      ]
+    }
+  }
+}

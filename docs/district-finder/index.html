@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>District Finder Demo — AZ Civic Tools</title>
+  <meta name="description" content="Demo of the AZ District Finder — find your Arizona state legislators by district.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%231B4965'/><text x='50' y='66' font-size='36' font-family='system-ui' font-weight='700' fill='%23FBBF24' text-anchor='middle'>AZ</text></svg>">
+  <link rel="stylesheet" href="../../tools/district-finder/themes/default.css">
+  <link rel="stylesheet" href="../../tools/district-finder/district-finder.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; padding: 0; }
+
+    .demo-banner {
+      background: #FBBF24;
+      color: #1a1a1a;
+      text-align: center;
+      padding: 10px 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      position: sticky;
+      top: 0;
+      z-index: 10000;
+    }
+
+    .demo-banner a {
+      color: #1B4965;
+      text-decoration: underline;
+    }
+
+    .demo-embed-bar {
+      background: #1F2937;
+      padding: 16px 24px;
+      text-align: center;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: #9CA3AF;
+    }
+
+    .demo-embed-bar code {
+      background: #374151;
+      padding: 6px 12px;
+      border-radius: 4px;
+      color: #E5E7EB;
+      user-select: all;
+    }
+
+    .demo-embed-bar a {
+      color: #FBBF24;
+      margin-left: 12px;
+      text-decoration: none;
+    }
+
+    .demo-embed-bar a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-banner">
+    DEMO — Data may not be current. <a href="../">Back to AZ Civic Tools</a> | <a href="https://github.com/az-civic-tools/az-civic-tools">GitHub</a>
+  </div>
+
+  <div id="df-root" class="df-container" data-auto-init
+       data-legislators="../../tools/district-finder/data/legislators.json"
+       data-geojson="../../tools/district-finder/data/az-districts.geojson">
+  </div>
+
+  <div class="demo-embed-bar">
+    Embed this: <code>&lt;iframe src="...district-finder.html" width="100%" height="900"&gt;&lt;/iframe&gt;</code>
+    <a href="https://github.com/az-civic-tools/az-civic-tools/wiki">Customization Guide</a>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="../../tools/district-finder/district-finder.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+/* ============================================================
+   AZ District Finder — Desert Theme
+   Warm earth tones inspired by the Sonoran landscape.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700&family=Lato:wght@400;700&display=swap');
+
+:root {
+  --df-font-heading: 'Bitter', Georgia, serif;
+  --df-font-body: 'Lato', 'Helvetica Neue', sans-serif;
+
+  --df-color-primary: #8B4513;
+  --df-color-primary-dark: #5C2D0E;
+  --df-color-secondary: #CD853F;
+  --df-color-accent: #DAA520;
+  --df-color-bg: #FAF0E6;
+  --df-color-surface: #FFFAF5;
+  --df-color-text: #3B2F2F;
+  --df-color-text-muted: #7A6B5D;
+  --df-color-border: #D4C4A8;
+}

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AZ Civic Tools — Open-Source Civic Engagement Toolkit</title>
+  <meta name="description" content="Free, open-source tools for Arizona advocacy groups. District finder, bill tracker, and more. Embed on your site or fork and customize.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%231B4965'/><text x='50' y='66' font-size='36' font-family='system-ui' font-weight='700' fill='%23FBBF24' text-anchor='middle'>AZ</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --landing-primary: #1B4965;
+      --landing-accent: #CAA53D;
+      --landing-bg: #F5F5F0;
+      --landing-surface: #FFFFFF;
+      --landing-text: #2D2D2D;
+      --landing-muted: #6B6B6B;
+    }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--landing-bg);
+      color: var(--landing-text);
+      line-height: 1.7;
+    }
+
+    /* Demo banner */
+    .demo-banner {
+      background: #FBBF24;
+      color: #1a1a1a;
+      text-align: center;
+      padding: 10px 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .demo-banner a {
+      color: #1B4965;
+      text-decoration: underline;
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #1B4965 0%, #0D2F45 60%, #122940 100%);
+      color: #fff;
+      padding: 80px 24px 64px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span { color: #FBBF24; }
+
+    .hero p {
+      font-size: 1.15rem;
+      max-width: 640px;
+      margin: 0 auto 32px;
+      opacity: 0.9;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #FBBF24;
+      color: #1a1a1a;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Container */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Tools grid */
+    .tools-section {
+      padding: 64px 24px;
+    }
+
+    .tools-section h2 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--landing-primary);
+    }
+
+    .tools-section .subtitle {
+      text-align: center;
+      color: var(--landing-muted);
+      margin-bottom: 40px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .tool-card {
+      background: var(--landing-surface);
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    }
+
+    .tool-card-header {
+      padding: 32px 28px 24px;
+    }
+
+    .tool-card-header .tool-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .tool-card-header h3 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .tool-card-header p {
+      font-size: 0.92rem;
+      color: var(--landing-muted);
+      line-height: 1.6;
+    }
+
+    .tool-card-footer {
+      padding: 16px 28px;
+      border-top: 1px solid #eee;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .tool-badge {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .tool-badge.live {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .tool-badge.coming-soon {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .tool-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--landing-primary);
+      text-decoration: none;
+    }
+
+    .tool-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Quick start */
+    .quickstart {
+      background: var(--landing-surface);
+      padding: 64px 24px;
+    }
+
+    .quickstart h2 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--landing-primary);
+    }
+
+    .quickstart .subtitle {
+      text-align: center;
+      color: var(--landing-muted);
+      margin-bottom: 40px;
+    }
+
+    .quickstart-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .quickstart-option {
+      padding: 28px;
+      border: 2px solid #E5E7EB;
+      border-radius: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .quickstart-option:hover {
+      border-color: var(--landing-primary);
+    }
+
+    .quickstart-option h3 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .quickstart-option p {
+      font-size: 0.88rem;
+      color: var(--landing-muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .code-block {
+      background: #1F2937;
+      color: #E5E7EB;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--landing-muted);
+      font-size: 0.85rem;
+    }
+
+    .site-footer a {
+      color: var(--landing-primary);
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+      .tools-grid, .quickstart-options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-banner">
+    This is a <strong>DEMO</strong> of az-civic-tools. Data shown may not be current. <a href="https://github.com/az-civic-tools/az-civic-tools">View on GitHub</a>
+  </div>
+
+  <section class="hero">
+    <h1>AZ <span>Civic Tools</span></h1>
+    <p>Free, open-source tools for Arizona advocacy groups. Find legislators, track bills, and engage your community. Embed on your website or fork and make it your own.</p>
+    <a href="https://github.com/az-civic-tools/az-civic-tools" class="hero-cta">View on GitHub &rarr;</a>
+  </section>
+
+  <section class="tools-section">
+    <div class="container">
+      <h2>Available Tools</h2>
+      <p class="subtitle">Drop-in civic engagement components for your website.</p>
+
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-card-header">
+            <span class="tool-icon" aria-hidden="true">&#128506;</span>
+            <h3>District Finder</h3>
+            <p>Interactive map of Arizona's 30 legislative districts. Search by address or click on the map to find your State Senator and Representatives with contact info.</p>
+          </div>
+          <div class="tool-card-footer">
+            <span class="tool-badge live">Live</span>
+            <a href="district-finder/" class="tool-link">Try the Demo &rarr;</a>
+          </div>
+        </div>
+
+        <div class="tool-card" style="opacity: 0.6;">
+          <div class="tool-card-header">
+            <span class="tool-icon" aria-hidden="true">&#128220;</span>
+            <h3>Bill Tracker</h3>
+            <p>Filterable, searchable list of bills moving through the Arizona Legislature. Tag, categorize, and share bills relevant to your advocacy work.</p>
+          </div>
+          <div class="tool-card-footer">
+            <span class="tool-badge coming-soon">Coming Soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quickstart">
+    <div class="container">
+      <h2>Quick Start</h2>
+      <p class="subtitle">Three ways to use these tools on your site.</p>
+
+      <div class="quickstart-options">
+        <div class="quickstart-option">
+          <h3>1. Embed via iframe</h3>
+          <p>Paste one line of HTML. Works on any website, no coding required.</p>
+          <div class="code-block">&lt;iframe
+  src="https://az-civic-tools.github.io/az-civic-tools/tools/district-finder/district-finder.html"
+  width="100%"
+  height="900"
+  frameborder="0"
+  style="border: none;"
+&gt;&lt;/iframe&gt;</div>
+        </div>
+
+        <div class="quickstart-option">
+          <h3>2. Fork &amp; Customize</h3>
+          <p>Clone the repo, edit the CSS and data, deploy to your own hosting.</p>
+          <div class="code-block">git clone https://github.com/az-civic-tools/az-civic-tools.git
+cd az-civic-tools/tools/district-finder
+
+# Edit themes/default.css for your colors
+# Edit data/legislators.json for current data
+# Deploy to any static host</div>
+        </div>
+
+        <div class="quickstart-option">
+          <h3>3. Download Files</h3>
+          <p>Download individual tool files and add them directly to your existing site.</p>
+          <div class="code-block"># Files you need:
+tools/district-finder/
+  ├── district-finder.html
+  ├── district-finder.js
+  ├── district-finder.css
+  ├── themes/default.css
+  └── data/
+      ├── legislators.json
+      └── az-districts.geojson</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>AZ Civic Tools is open source under the <a href="https://github.com/az-civic-tools/az-civic-tools/blob/main/LICENSE">MIT License</a>.</p>
+    <p style="margin-top: 8px;">Built for Arizona's advocacy community.</p>
+  </footer>
+
+</body>
+</html>
