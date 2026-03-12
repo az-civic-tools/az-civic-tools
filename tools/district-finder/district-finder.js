@@ -330,9 +330,13 @@ var AZDistrictFinder = (function() {
     var yearsInOffice = currentYear - person.since;
     var partyFull = person.party === 'R' ? 'Republican' : person.party === 'D' ? 'Democrat' : 'Independent';
 
-    var photoHtml = person.photo
-      ? '<img class="df-legislator-photo" src="' + person.photo + '" alt="Photo of ' + person.name + '">'
-      : '<div class="df-legislator-photo placeholder">Photo</div>';
+    var photoHtml;
+    if (person.photo) {
+      photoHtml = '<img class="df-legislator-photo" src="' + person.photo + '" alt="Photo of ' + person.name + '" onerror="this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
+        '<div class="df-legislator-photo placeholder" style="display:none;">Photo</div>';
+    } else {
+      photoHtml = '<div class="df-legislator-photo placeholder">Photo</div>';
+    }
 
     var nameHtml = person.url
       ? '<a href="' + person.url + '" target="_blank" rel="noopener" class="df-legislator-link">' + person.name + '</a>'
