@@ -29,52 +29,66 @@
         <h1 class="bt-title">Cactus Watch</h1>
         <p class="bt-subtitle">Arizona Legislature Bill Tracker</p>
       </div>
-      <div class="bt-meta-stats" id="bt-meta-stats"></div>
+      <div class="bt-header-right">
+        <div class="bt-meta-stats" id="bt-meta-stats"></div>
+        <div class="bt-user-badge" id="bt-user-badge"></div>
+      </div>
     </div>
   </header>
 
   <!-- Toolbar -->
   <div class="bt-toolbar">
     <div class="bt-toolbar-inner">
-      <div class="bt-search-wrap">
-        <svg class="bt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="search" id="bt-search" class="bt-search" placeholder="Search by bill number, title, or keyword..." aria-label="Search bills">
-      </div>
-      <div class="bt-filters">
-        <select id="bt-filter-chamber" class="bt-select" aria-label="Filter by chamber">
-          <option value="">All Chambers</option>
-          <option value="H">House</option>
-          <option value="S">Senate</option>
-        </select>
-        <select id="bt-filter-status" class="bt-select" aria-label="Filter by status">
-          <option value="">All Statuses</option>
-          <option value="introduced">Introduced</option>
-          <option value="in_committee">In Committee</option>
-          <option value="passed_committee">Passed Committee</option>
-          <option value="on_floor">On Floor</option>
-          <option value="passed_house">Passed House</option>
-          <option value="passed_senate">Passed Senate</option>
-          <option value="passed_both">Passed Both</option>
-          <option value="to_governor">To Governor</option>
-          <option value="signed">Signed</option>
-          <option value="vetoed">Vetoed</option>
-          <option value="dead">Dead</option>
-          <option value="held">Held</option>
-        </select>
-        <select id="bt-filter-type" class="bt-select" aria-label="Filter by type">
-          <option value="">All Types</option>
-          <option value="bill">Bills</option>
-          <option value="memorial">Memorials</option>
-          <option value="resolution">Resolutions</option>
-          <option value="concurrent_resolution">Concurrent Resolutions</option>
-          <option value="joint_resolution">Joint Resolutions</option>
-        </select>
-        <select id="bt-filter-sort" class="bt-select" aria-label="Sort by">
-          <option value="updated_at">Recently Updated</option>
-          <option value="date_introduced">Date Introduced</option>
-          <option value="number">Bill Number</option>
-          <option value="sponsor">Sponsor</option>
-        </select>
+      <!-- Nav tabs -->
+      <nav class="bt-nav" role="tablist">
+        <button class="bt-nav-tab bt-nav-tab--active" data-tab="browse" role="tab" aria-selected="true">Browse Bills</button>
+        <button class="bt-nav-tab" data-tab="lists" role="tab" aria-selected="false">
+          My Lists <span class="bt-nav-badge" id="bt-lists-badge" hidden>0</span>
+        </button>
+      </nav>
+
+      <!-- Browse filters (hidden when on My Lists tab) -->
+      <div class="bt-browse-controls" id="bt-browse-controls">
+        <div class="bt-search-wrap">
+          <svg class="bt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="bt-search" class="bt-search" placeholder="Search by bill number, title, or keyword..." aria-label="Search bills">
+        </div>
+        <div class="bt-filters">
+          <select id="bt-filter-chamber" class="bt-select" aria-label="Filter by chamber">
+            <option value="">All Chambers</option>
+            <option value="H">House</option>
+            <option value="S">Senate</option>
+          </select>
+          <select id="bt-filter-status" class="bt-select" aria-label="Filter by status">
+            <option value="">All Statuses</option>
+            <option value="introduced">Introduced</option>
+            <option value="in_committee">In Committee</option>
+            <option value="passed_committee">Passed Committee</option>
+            <option value="on_floor">On Floor</option>
+            <option value="passed_house">Passed House</option>
+            <option value="passed_senate">Passed Senate</option>
+            <option value="passed_both">Passed Both</option>
+            <option value="to_governor">To Governor</option>
+            <option value="signed">Signed</option>
+            <option value="vetoed">Vetoed</option>
+            <option value="dead">Dead</option>
+            <option value="held">Held</option>
+          </select>
+          <select id="bt-filter-type" class="bt-select" aria-label="Filter by type">
+            <option value="">All Types</option>
+            <option value="bill">Bills</option>
+            <option value="memorial">Memorials</option>
+            <option value="resolution">Resolutions</option>
+            <option value="concurrent_resolution">Concurrent Resolutions</option>
+            <option value="joint_resolution">Joint Resolutions</option>
+          </select>
+          <select id="bt-filter-sort" class="bt-select" aria-label="Sort by">
+            <option value="updated_at">Recently Updated</option>
+            <option value="date_introduced">Date Introduced</option>
+            <option value="number">Bill Number</option>
+            <option value="sponsor">Sponsor</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -82,10 +96,20 @@
   <!-- Active filters / result count -->
   <div class="bt-results-bar" id="bt-results-bar"></div>
 
-  <!-- Bill list -->
-  <main class="bt-main">
+  <!-- Browse view -->
+  <main class="bt-main" id="bt-browse-view">
     <div class="bt-bill-list" id="bt-bill-list"></div>
     <div class="bt-pagination" id="bt-pagination"></div>
+  </main>
+
+  <!-- My Lists view -->
+  <main class="bt-main bt-lists-view" id="bt-lists-view" hidden>
+    <div class="bt-lists-header">
+      <h2 class="bt-lists-title">My Lists</h2>
+      <button class="bt-btn bt-btn--primary" id="bt-create-list">+ New List</button>
+    </div>
+    <div class="bt-lists-attention" id="bt-lists-attention"></div>
+    <div class="bt-lists-container" id="bt-lists-container"></div>
   </main>
 
   <!-- Bill detail overlay -->
@@ -94,6 +118,17 @@
     <div class="bt-detail" id="bt-detail" role="dialog" aria-label="Bill detail">
       <button class="bt-detail-close" id="bt-detail-close" aria-label="Close detail">&times;</button>
       <div class="bt-detail-body" id="bt-detail-body"></div>
+    </div>
+  </div>
+
+  <!-- Add-to-list popover (positioned via JS) -->
+  <div class="bt-list-popover" id="bt-list-popover" hidden>
+    <div class="bt-list-popover-title">Add to list</div>
+    <div class="bt-list-popover-items" id="bt-list-popover-items"></div>
+    <button class="bt-list-popover-new" id="bt-list-popover-new">+ Create new list</button>
+    <div class="bt-list-popover-create" id="bt-list-popover-create" hidden>
+      <input type="text" class="bt-list-popover-input" id="bt-list-popover-input" placeholder="List name..." maxlength="50">
+      <button class="bt-btn bt-btn--small" id="bt-list-popover-save">Add</button>
     </div>
   </div>
 
