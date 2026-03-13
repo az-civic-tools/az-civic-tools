@@ -154,6 +154,14 @@
       if (list) { delete list.items[number]; this.save(); }
     },
 
+    archiveItem(listId, number) {
+      this.updateItem(listId, number, { archived: true });
+    },
+
+    unarchiveItem(listId, number) {
+      this.updateItem(listId, number, { archived: false });
+    },
+
     getListsForBill(number) {
       const lists = this.load().lists;
       const result = [];
@@ -200,7 +208,7 @@
       let count = 0;
       for (const list of Object.values(this.load().lists)) {
         for (const item of Object.values(list.items)) {
-          if (item.needsAttention) count++;
+          if (item.needsAttention && !item.archived) count++;
         }
       }
       return count;
@@ -648,6 +656,9 @@
      Rendering — My Lists View
      ============================================================ */
 
+  // Track which lists are expanded and whether archived bills are shown
+  const listsUIState = { expanded: {}, showArchived: false };
+
   function renderMyLists() {
     const container = document.getElementById('bt-lists-container');
     const attentionEl = document.getElementById('bt-lists-attention');
@@ -659,6 +670,20 @@
       ? `<div class="bt-attention-banner"><span class="bt-attention-banner-icon">&#9888;&#65039;</span>${attentionCount} bill${attentionCount !== 1 ? 's' : ''} need${attentionCount === 1 ? 's' : ''} attention — status changed, RTS comments cleared</div>`
       : '';
 
+    // Update settings menu delete list options
+    const deleteListsEl = document.getElementById('bt-settings-delete-lists');
+    if (deleteListsEl) {
+      deleteListsEl.innerHTML = lists.length === 0
+        ? '<div class="bt-settings-item bt-settings-item--disabled">No lists</div>'
+        : lists.map(l => `<button class="bt-settings-item bt-settings-item--danger bt-settings-delete-list" data-list-id="${l.id}">&#128465; ${esc(l.name)}</button>`).join('');
+    }
+
+    // Update archived toggle text
+    const toggleBtn = document.getElementById('bt-toggle-archived');
+    if (toggleBtn) {
+      toggleBtn.textContent = listsUIState.showArchived ? 'Hide Archived Bills' : 'Show Archived Bills';
+    }
+
     if (lists.length === 0) {
       container.innerHTML = `<div class="bt-empty"><div class="bt-empty-icon">&#128203;</div><div class="bt-empty-text">No lists yet</div><div class="bt-empty-sub">Create a list and start tracking bills while browsing</div></div>`;
       return;
@@ -669,34 +694,39 @@
   }
 
   function renderListCard(list) {
-    const items = Object.values(list.items);
-    const attentionItems = items.filter(i => i.needsAttention);
-    const rtsItems = items.filter(i => i.trackingType === 'rts_comment');
-    const voteItems = items.filter(i => i.trackingType === 'vote_only');
-    const watchItems = items.filter(i => i.trackingType === 'watching');
+    const allItems = Object.values(list.items);
+    const activeItems = allItems.filter(i => !i.archived);
+    const archivedItems = allItems.filter(i => i.archived);
+    const visibleItems = listsUIState.showArchived ? allItems : activeItems;
+    const rtsItems = activeItems.filter(i => i.trackingType === 'rts_comment');
+    const voteItems = activeItems.filter(i => i.trackingType === 'vote_only');
+    const watchItems = activeItems.filter(i => i.trackingType === 'watching');
+    const isExpanded = !!listsUIState.expanded[list.id];
 
-    let html = `<div class="bt-list-card" data-list-id="${list.id}">
-      <div class="bt-list-card-header">
-        <div>
+    let html = `<div class="bt-list-card ${isExpanded ? 'bt-list-card--expanded' : ''}" data-list-id="${list.id}">
+      <div class="bt-list-card-header bt-list-card-toggle" data-list-id="${list.id}" role="button" aria-expanded="${isExpanded}" tabindex="0">
+        <div class="bt-list-card-header-left">
+          <span class="bt-list-card-chevron" aria-hidden="true">${isExpanded ? '&#9660;' : '&#9654;'}</span>
           <span class="bt-list-card-name">${esc(list.name)}</span>
-          <span class="bt-list-card-count">${items.length} bill${items.length !== 1 ? 's' : ''}${rtsItems.length ? ` &middot; ${rtsItems.length} RTS` : ''}${voteItems.length ? ` &middot; ${voteItems.length} Vote` : ''}${watchItems.length ? ` &middot; ${watchItems.length} Watch` : ''}</span>
+          <span class="bt-list-card-count">${activeItems.length} bill${activeItems.length !== 1 ? 's' : ''}${rtsItems.length ? ` &middot; ${rtsItems.length} RTS` : ''}${voteItems.length ? ` &middot; ${voteItems.length} Vote` : ''}${watchItems.length ? ` &middot; ${watchItems.length} Watch` : ''}${archivedItems.length ? ` &middot; ${archivedItems.length} archived` : ''}</span>
         </div>
-        <div class="bt-list-card-actions">
-          <button class="bt-btn bt-btn--small bt-btn--danger bt-delete-list" data-list-id="${list.id}" title="Delete list">&#128465;</button>
-        </div>
+        ${activeItems.some(i => i.needsAttention) ? '<span class="bt-list-card-attention">&#9888;&#65039;</span>' : ''}
       </div>`;
 
-    if (items.length === 0) {
-      html += `<div class="bt-list-empty">No bills tracked yet. Browse bills and click + to add them.</div>`;
-    } else {
-      // Show attention items first, then RTS, then vote, then watching
-      const sorted = [...items].sort((a, b) => {
-        if (a.needsAttention !== b.needsAttention) return a.needsAttention ? -1 : 1;
-        const typeOrder = { rts_comment: 0, vote_only: 1, watching: 2 };
-        return (typeOrder[a.trackingType] || 3) - (typeOrder[b.trackingType] || 3);
-      });
+    if (isExpanded) {
+      if (visibleItems.length === 0) {
+        html += `<div class="bt-list-empty">${listsUIState.showArchived ? 'No bills in this list.' : 'No active bills. Browse bills and click + to add them.'}</div>`;
+      } else {
+        // Show attention items first, then RTS, then vote, then watching; archived last
+        const sorted = [...visibleItems].sort((a, b) => {
+          if (a.archived !== b.archived) return a.archived ? 1 : -1;
+          if (a.needsAttention !== b.needsAttention) return a.needsAttention ? -1 : 1;
+          const typeOrder = { rts_comment: 0, vote_only: 1, watching: 2 };
+          return (typeOrder[a.trackingType] || 3) - (typeOrder[b.trackingType] || 3);
+        });
 
-      html += sorted.map(item => renderTrackedBill(list.id, item)).join('');
+        html += sorted.map(item => renderTrackedBill(list.id, item)).join('');
+      }
     }
 
     html += `</div>`;
@@ -706,23 +736,25 @@
   function renderTrackedBill(listId, item) {
     const bill = state.billCache[item.number];
     const title = bill?.short_title || bill?.description || '';
+    const isArchived = !!item.archived;
 
-    let html = `<div class="bt-tracked-bill ${item.needsAttention ? 'bt-tracked-bill--attention' : ''}">
+    let html = `<div class="bt-tracked-bill ${item.needsAttention ? 'bt-tracked-bill--attention' : ''} ${isArchived ? 'bt-tracked-bill--archived' : ''}">
       <div class="bt-tracked-info">
         <div class="bt-tracked-header">
           <span class="bt-tracked-number" data-number="${esc(item.number)}">${esc(item.number)}</span>
           <span class="bt-status bt-status--${esc(item.lastKnownStatus)}" style="font-size: 11px; padding: 2px 8px;">${statusLabel(item.lastKnownStatus)}</span>
           <span class="bt-track-type bt-track-type--${item.trackingType}">${TRACK_TYPE_LABELS[item.trackingType]}</span>
+          ${isArchived ? '<span class="bt-track-type bt-track-type--archived">Archived</span>' : ''}
         </div>
         ${title ? `<div class="bt-tracked-title">${esc(title)}</div>` : ''}`;
 
-    // Status change alert
-    if (item.needsAttention) {
+    // Status change alert (only for active items)
+    if (item.needsAttention && !isArchived) {
       html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed — update your RTS comment</div>`;
     }
 
-    // RTS comment inline (for rts_comment type)
-    if (item.trackingType === 'rts_comment') {
+    // RTS comment inline (for rts_comment type, not archived)
+    if (item.trackingType === 'rts_comment' && !isArchived) {
       html += `<div class="bt-rts-section">
         <div class="bt-rts-label">RTS Comment Draft</div>
         <textarea class="bt-rts-textarea bt-list-rts" data-list="${listId}" data-number="${esc(item.number)}" placeholder="Write your RTS comment...">${esc(item.rtsComment)}</textarea>
@@ -731,28 +763,58 @@
 
     html += `</div>
       <div class="bt-tracked-actions">
-        <button class="bt-btn bt-btn--small bt-remove-from-list" data-list="${listId}" data-number="${esc(item.number)}" title="Remove from list">&times;</button>
+        ${isArchived
+          ? `<button class="bt-btn bt-btn--small bt-unarchive-bill" data-list="${listId}" data-number="${esc(item.number)}">Restore</button>
+             <button class="bt-btn bt-btn--small bt-btn--danger bt-remove-from-list" data-list="${listId}" data-number="${esc(item.number)}">Remove</button>`
+          : `<button class="bt-btn bt-btn--small bt-archive-bill" data-list="${listId}" data-number="${esc(item.number)}">Archive</button>
+             <button class="bt-btn bt-btn--small bt-btn--danger bt-remove-from-list" data-list="${listId}" data-number="${esc(item.number)}">Remove</button>`
+        }
       </div>
     </div>`;
     return html;
   }
 
   function bindListEvents(container) {
-    // Delete list
-    container.querySelectorAll('.bt-delete-list').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (confirm(`Delete list? This cannot be undone.`)) {
-          tracking.deleteList(btn.dataset.listId);
-          renderMyLists();
-          updateListsBadge();
+    // Toggle collapse/expand
+    container.querySelectorAll('.bt-list-card-toggle').forEach(header => {
+      header.addEventListener('click', () => {
+        const listId = header.dataset.listId;
+        listsUIState.expanded[listId] = !listsUIState.expanded[listId];
+        renderMyLists();
+      });
+      header.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          header.click();
         }
       });
     });
 
     // Remove bill from list
     container.querySelectorAll('.bt-remove-from-list').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         tracking.removeFromList(btn.dataset.list, btn.dataset.number);
+        renderMyLists();
+        updateListsBadge();
+      });
+    });
+
+    // Archive bill
+    container.querySelectorAll('.bt-archive-bill').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tracking.archiveItem(btn.dataset.list, btn.dataset.number);
+        renderMyLists();
+        updateListsBadge();
+      });
+    });
+
+    // Unarchive bill
+    container.querySelectorAll('.bt-unarchive-bill').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tracking.unarchiveItem(btn.dataset.list, btn.dataset.number);
         renderMyLists();
         updateListsBadge();
       });
@@ -760,12 +822,16 @@
 
     // Click bill number to open detail
     container.querySelectorAll('.bt-tracked-number').forEach(el => {
-      el.addEventListener('click', () => openBillDetail(el.dataset.number));
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openBillDetail(el.dataset.number);
+      });
     });
 
     // RTS comment auto-save
     container.querySelectorAll('.bt-list-rts').forEach(textarea => {
       let timer = null;
+      textarea.addEventListener('click', (e) => e.stopPropagation());
       textarea.addEventListener('input', () => {
         clearTimeout(timer);
         timer = setTimeout(() => {
@@ -957,6 +1023,41 @@
         tracking.createList(name.trim());
         renderMyLists();
         updateListsBadge();
+      }
+    });
+
+    // Settings menu toggle
+    document.getElementById('bt-lists-settings').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const menu = document.getElementById('bt-lists-settings-menu');
+      menu.hidden = !menu.hidden;
+      if (!menu.hidden) renderMyLists(); // refresh delete list options
+    });
+
+    // Toggle archived bills
+    document.getElementById('bt-toggle-archived').addEventListener('click', () => {
+      listsUIState.showArchived = !listsUIState.showArchived;
+      document.getElementById('bt-lists-settings-menu').hidden = true;
+      renderMyLists();
+    });
+
+    // Delete list from settings menu (delegated)
+    document.getElementById('bt-settings-delete-lists').addEventListener('click', (e) => {
+      const btn = e.target.closest('.bt-settings-delete-list');
+      if (!btn) return;
+      if (confirm('Delete this list? This cannot be undone.')) {
+        tracking.deleteList(btn.dataset.listId);
+        document.getElementById('bt-lists-settings-menu').hidden = true;
+        renderMyLists();
+        updateListsBadge();
+      }
+    });
+
+    // Close settings menu on outside click
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('bt-lists-settings-menu');
+      if (!menu.hidden && !e.target.closest('.bt-lists-settings-wrap')) {
+        menu.hidden = true;
       }
     });
 

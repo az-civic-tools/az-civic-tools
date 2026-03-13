@@ -1110,6 +1110,64 @@ a:hover { color: var(--bt-mesa-warm); }
   font-size: 32px;
   color: var(--bt-mesa);
 }
+.bt-lists-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Settings dropdown */
+.bt-lists-settings-wrap {
+  position: relative;
+}
+.bt-lists-settings-btn {
+  font-size: 20px;
+  min-width: var(--bt-touch-min);
+}
+.bt-lists-settings-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 200;
+  background: var(--bt-card-bg);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  box-shadow: var(--bt-shadow-lg);
+  min-width: 220px;
+  padding: 8px 0;
+}
+.bt-lists-settings-menu[hidden] { display: none; }
+.bt-settings-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  font-family: var(--bt-font-body);
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--bt-text);
+  transition: background 0.15s;
+}
+.bt-settings-item:hover { background: var(--bt-sand); }
+.bt-settings-item--danger { color: var(--bt-red); }
+.bt-settings-item--danger:hover { background: #FFF5F5; }
+.bt-settings-item--disabled { color: var(--bt-text-light); cursor: default; }
+.bt-settings-item--disabled:hover { background: transparent; }
+.bt-settings-divider {
+  height: 1px;
+  background: var(--bt-border-light);
+  margin: 6px 0;
+}
+.bt-settings-label {
+  padding: 6px 16px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bt-text-light);
+}
 
 /* Attention summary */
 .bt-lists-attention {
@@ -1143,8 +1201,28 @@ a:hover { color: var(--bt-mesa-warm); }
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--bt-border-light);
   background: var(--bt-sand);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.bt-list-card-header:hover { background: var(--bt-sand-dark); }
+.bt-list-card--expanded .bt-list-card-header {
+  border-bottom: 1px solid var(--bt-border-light);
+}
+.bt-list-card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.bt-list-card-chevron {
+  font-size: 14px;
+  color: var(--bt-text-muted);
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+  transition: transform 0.2s;
 }
 .bt-list-card-name {
   font-family: var(--bt-font-display);
@@ -1155,11 +1233,14 @@ a:hover { color: var(--bt-mesa-warm); }
 .bt-list-card-count {
   font-size: 14px;
   color: var(--bt-text-muted);
-  margin-left: 10px;
   font-family: var(--bt-font-body);
   font-weight: 400;
+  white-space: nowrap;
 }
-.bt-list-card-actions { display: flex; gap: 6px; }
+.bt-list-card-attention {
+  font-size: 18px;
+  flex-shrink: 0;
+}
 
 /* Tracked bill row */
 .bt-tracked-bill {
@@ -1217,6 +1298,14 @@ a:hover { color: var(--bt-mesa-warm); }
 .bt-track-type--rts_comment { background: #E8F0FE; color: #1A56DB; }
 .bt-track-type--vote_only   { background: #FEF3E2; color: #B87333; }
 .bt-track-type--watching     { background: var(--bt-sand-dark); color: var(--bt-earth); }
+.bt-track-type--archived     { background: #E5E7EB; color: #6B7280; }
+
+/* Archived bill styling */
+.bt-tracked-bill--archived {
+  opacity: 0.6;
+  background: #F9FAFB;
+}
+.bt-tracked-bill--archived:hover { opacity: 0.8; }
 
 /* Status change alert */
 .bt-status-alert {
@@ -1276,9 +1365,9 @@ a:hover { color: var(--bt-mesa-warm); }
 /* Tracked bill actions */
 .bt-tracked-actions {
   display: flex;
-  flex-direction: column;
   gap: 6px;
-  align-items: flex-end;
+  align-items: flex-start;
+  flex-shrink: 0;
 }
 
 /* Tracking type selector in detail panel */
@@ -1381,5 +1470,7 @@ a:hover { color: var(--bt-mesa-warm); }
   .bt-vote-grid { grid-template-columns: 1fr; }
 
   .bt-tracked-bill { grid-template-columns: 1fr; }
-  .bt-tracked-actions { flex-direction: row; align-items: center; }
+  .bt-tracked-actions { align-items: center; flex-wrap: wrap; }
+  .bt-list-card-header-left { flex-wrap: wrap; }
+  .bt-lists-header { flex-wrap: wrap; gap: 12px; }
 }

@@ -106,7 +106,18 @@
   <main class="bt-main bt-lists-view" id="bt-lists-view" hidden>
     <div class="bt-lists-header">
       <h2 class="bt-lists-title">My Lists</h2>
-      <button class="bt-btn bt-btn--primary" id="bt-create-list">+ New List</button>
+      <div class="bt-lists-header-actions">
+        <button class="bt-btn bt-btn--primary" id="bt-create-list">+ New List</button>
+        <div class="bt-lists-settings-wrap">
+          <button class="bt-btn bt-lists-settings-btn" id="bt-lists-settings" aria-label="List settings" title="List settings">&#9881;</button>
+          <div class="bt-lists-settings-menu" id="bt-lists-settings-menu" hidden>
+            <button class="bt-settings-item" id="bt-toggle-archived">Show Archived Bills</button>
+            <div class="bt-settings-divider"></div>
+            <div class="bt-settings-label">Delete a list</div>
+            <div id="bt-settings-delete-lists"></div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="bt-lists-attention" id="bt-lists-attention"></div>
     <div class="bt-lists-container" id="bt-lists-container"></div>
