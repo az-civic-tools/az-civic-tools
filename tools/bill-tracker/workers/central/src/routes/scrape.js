@@ -74,12 +74,8 @@ export async function handleScrapeAll(request, env) {
 
   const sessionId = body.sessionId ? parseInt(body.sessionId, 10) : undefined;
 
-  // Get the worker's own URL for self-calling
-  const url = new URL(request.url);
-  const workerUrl = `${url.protocol}//${url.host}`;
-
   try {
-    const result = await runFullScrape(env, workerUrl, expectedToken, sessionId);
+    const result = await runFullScrape(env, sessionId);
     return Response.json({ success: true, ...result });
   } catch (err) {
     return Response.json({ error: `Full scrape failed: ${err.message}` }, { status: 500 });

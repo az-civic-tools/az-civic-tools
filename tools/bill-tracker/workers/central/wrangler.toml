@@ -11,5 +11,8 @@ binding = "DB"
 database_name = "cactus-watch-db"
 database_id = "b4e43bc9-fd98-437e-b216-30df9afb4f0e"
 
+[limits]
+subrequests = 50000
+
 [vars]
 ENVIRONMENT = "production"

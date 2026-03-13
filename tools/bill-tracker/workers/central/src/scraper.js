@@ -144,26 +144,17 @@ export async function runScraper(env, options = {}) {
 }
 
 /**
- * Run a full scrape by calling self for each prefix.
- * Uses the Worker's own URL to make sequential requests.
+ * Run a full scrape of all bill prefixes.
+ * Calls runScraper directly (avoids Worker self-fetch, which triggers error 1042).
  */
-export async function runFullScrape(env, workerUrl, authToken, sessionId) {
+export async function runFullScrape(env, sessionId) {
   const results = [];
 
   for (const { prefix } of BILL_PREFIXES) {
     console.log(`Starting scrape for prefix: ${prefix}`);
 
     try {
-      const resp = await fetch(`${workerUrl}/api/scrape`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prefix, sessionId }),
-      });
-
-      const result = await resp.json();
+      const result = await runScraper(env, { prefix, sessionId });
       results.push({ prefix, ...result });
       console.log(`Prefix ${prefix}: ${result.billsFound || 0} bills`);
     } catch (err) {
