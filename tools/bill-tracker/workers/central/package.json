@@ -1,0 +1,12 @@
+{
+  "name": "cactus-watch-central",
+  "version": "1.0.0",
+  "description": "Cactus Watch — Central Arizona bill scraper and public API",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute cactus-watch-db --file=./schema.sql --remote",
+    "db:init:local": "wrangler d1 execute cactus-watch-db --file=./schema.sql --local"
+  }
+}
