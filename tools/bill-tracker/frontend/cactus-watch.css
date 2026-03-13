@@ -1370,6 +1370,113 @@ a:hover { color: var(--bt-mesa-warm); }
   flex-shrink: 0;
 }
 
+/* Position selector */
+.bt-position-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.bt-position-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--bt-text-muted);
+}
+.bt-position-selector {
+  display: flex;
+  gap: 4px;
+}
+.bt-position-btn {
+  padding: 6px 16px;
+  min-height: 36px;
+  border: 2px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  background: var(--bt-card-bg);
+  font-family: var(--bt-font-body);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--bt-text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.bt-position-btn:hover { border-color: var(--bt-text-muted); }
+.bt-position-btn--support.bt-position-btn--active {
+  border-color: var(--bt-sage);
+  background: rgba(74, 124, 89, 0.1);
+  color: var(--bt-sage);
+}
+.bt-position-btn--neutral.bt-position-btn--active {
+  border-color: var(--bt-gold);
+  background: rgba(202, 165, 61, 0.1);
+  color: var(--bt-gold);
+}
+.bt-position-btn--oppose.bt-position-btn--active {
+  border-color: var(--bt-red);
+  background: rgba(178, 34, 52, 0.1);
+  color: var(--bt-red);
+}
+
+/* Position badge (My Lists) */
+.bt-position-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.bt-position-badge--support { background: #D1FAE5; color: #065F46; }
+.bt-position-badge--neutral { background: #FEF3C7; color: #92400E; }
+.bt-position-badge--oppose  { background: #FEE2E2; color: #991B1B; }
+
+/* Action history */
+.bt-action-history {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--bt-border-light);
+}
+.bt-action-history-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bt-text-muted);
+  margin-bottom: 8px;
+}
+.bt-action-history-entry {
+  display: flex;
+  gap: 10px;
+  padding: 4px 0;
+  font-size: 14px;
+}
+.bt-action-history-date {
+  color: var(--bt-text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 90px;
+}
+.bt-action-history-text {
+  color: var(--bt-text);
+}
+
+/* Read-only RTS in My Lists */
+.bt-rts-section--readonly {
+  opacity: 0.8;
+}
+.bt-rts-readonly {
+  padding: 10px 12px;
+  background: var(--bt-card-bg);
+  border: 2px solid var(--bt-border-light);
+  border-radius: var(--bt-radius-sm);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--bt-text-muted);
+  white-space: pre-wrap;
+}
+
 /* Tracking type selector in detail panel */
 .bt-detail-tracking {
   margin-top: 20px;
@@ -1485,21 +1592,73 @@ a:hover { color: var(--bt-mesa-warm); }
   margin-top: 4px;
 }
 
-/* --- Section headers --- */
-.bt-tl-section {
-  padding: 20px 0 6px 44px;
+/* Position indicator in timeline header */
+.bt-tl-position {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
-.bt-tl-section-label {
+.bt-tl-position--support { background: #D1FAE5; color: #065F46; }
+.bt-tl-position--neutral { background: #FEF3C7; color: #92400E; }
+.bt-tl-position--oppose  { background: #FEE2E2; color: #991B1B; }
+
+/* --- Collapsible section groups --- */
+.bt-tl-group {
+  margin-bottom: 4px;
+}
+.bt-tl-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--bt-radius-sm);
+  transition: background 0.15s;
+}
+.bt-tl-group-header:hover { background: rgba(255, 255, 255, 0.4); }
+.bt-tl-group-chevron {
+  font-size: 12px;
+  color: var(--bt-text-muted);
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.bt-tl-group-label {
   font-family: var(--bt-font-display);
   font-weight: 700;
-  font-size: 17px;
+  font-size: 18px;
   color: var(--bt-terracotta);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-.bt-tl-section.bt-tl--future .bt-tl-section-label {
+.bt-tl-group--future .bt-tl-group-label {
   color: var(--bt-text-light);
   opacity: 0.45;
+}
+.bt-tl-group-current {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: var(--bt-gold);
+  color: var(--bt-mesa);
+  letter-spacing: 0.04em;
+}
+.bt-tl-group-summary {
+  font-size: 12px;
+  color: var(--bt-text-light);
+  margin-left: auto;
+}
+.bt-tl-group-body {
+  padding-left: 8px;
 }
 
 /* --- Stage row --- */

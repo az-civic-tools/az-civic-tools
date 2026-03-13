@@ -49,6 +49,12 @@
     watching: 'Watching',
   };
 
+  const POSITION_LABELS = {
+    support: 'Support',
+    neutral: 'Neutral',
+    oppose: 'Oppose',
+  };
+
   const DEMO_NAMES = [
     'Sage Prescott', 'Quinn Sedona', 'Rio Verde', 'Luna Flagstaff',
     'Jade Tempe', 'Scout Chandler', 'Wren Yuma', 'Ember Tucson',
@@ -139,6 +145,7 @@
         number: bill.number,
         addedAt: new Date().toISOString(),
         trackingType: 'watching',
+        position: null, // 'support', 'neutral', 'oppose'
         rtsComment: '',
         lastKnownStatus: bill.status,
         lastKnownAction: bill.last_action || '',
@@ -173,6 +180,7 @@
       if (!data.billActions[number]) data.billActions[number] = {};
       if (!data.billActions[number][stageId]) data.billActions[number][stageId] = {};
       data.billActions[number][stageId][actionType] = value;
+      data.billActions[number][stageId][actionType + '_date'] = value ? new Date().toISOString() : null;
       this.save();
     },
 
@@ -557,6 +565,7 @@
     const firstList = lists[0];
     const item = firstList.items[bill.number];
     const listNames = lists.map(l => l.name).join(', ');
+    const userActions = tracking.getBillActions(bill.number);
 
     let html = `<div class="bt-detail-tracking">
       <div class="bt-detail-tracking-title">&#128204; Tracking</div>
@@ -566,6 +575,16 @@
     if (item.needsAttention) {
       html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed to <strong>${statusLabel(bill.status)}</strong> — please update your RTS comment</div>`;
     }
+
+    // Position selector (Support / Neutral / Oppose)
+    html += `<div class="bt-position-row">
+      <span class="bt-position-label">My Position:</span>
+      <div class="bt-position-selector">
+        ${Object.entries(POSITION_LABELS).map(([key, label]) =>
+          `<button class="bt-position-btn bt-position-btn--${key} ${item.position === key ? 'bt-position-btn--active' : ''}" data-position="${key}" data-list="${firstList.id}" data-number="${bill.number}">${label}</button>`
+        ).join('')}
+      </div>
+    </div>`;
 
     // Tracking type selector
     html += `<div class="bt-track-type-selector">
@@ -577,14 +596,58 @@
     // RTS Comment area (visible for rts_comment type)
     if (item.trackingType === 'rts_comment') {
       html += `<div class="bt-rts-section">
-        <div class="bt-rts-label">RTS Comment Draft</div>
+        <div class="bt-rts-label">My RTS Comment</div>
         <textarea class="bt-rts-textarea" id="bt-rts-textarea" data-list="${firstList.id}" data-number="${bill.number}" placeholder="Write your Request to Speak comment here...">${esc(item.rtsComment)}</textarea>
         <div class="bt-rts-hint">This comment will be cleared when the bill's status changes, so you can draft a fresh one for the new hearing.</div>
       </div>`;
     }
 
+    // RTS Action History
+    const historyEntries = buildActionHistory(bill, userActions);
+    if (historyEntries.length > 0) {
+      html += `<div class="bt-action-history">
+        <div class="bt-action-history-title">My RTS History</div>
+        ${historyEntries.map(entry => `<div class="bt-action-history-entry">
+          <span class="bt-action-history-date">${entry.date}</span>
+          <span class="bt-action-history-text">${esc(entry.text)}</span>
+        </div>`).join('')}
+      </div>`;
+    }
+
     html += `</div>`;
     return html;
+  }
+
+  /** Build action history entries from bill actions data */
+  function buildActionHistory(bill, userActions) {
+    const entries = [];
+    const stages = buildTimelineStages(bill);
+
+    for (const stage of stages) {
+      if (stage.type === 'section') continue;
+      const actions = userActions[stage.id];
+      if (!actions) continue;
+
+      if (actions.commented && actions.commented_date) {
+        entries.push({
+          date: formatDate(actions.commented_date),
+          text: `RTS Comment Left — ${stage.label}`,
+          timestamp: actions.commented_date,
+        });
+      }
+      if (actions.voted && actions.voted_date) {
+        const positionLabel = bill ? '' : '';
+        entries.push({
+          date: formatDate(actions.voted_date),
+          text: `RTS Vote — ${stage.label}`,
+          timestamp: actions.voted_date,
+        });
+      }
+    }
+
+    // Sort newest first
+    entries.sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+    return entries;
   }
 
   /* ============================================================
@@ -609,15 +672,26 @@
     const isFinal = ['signed', 'vetoed'].includes(bill.status);
     const isDead = bill.status === 'dead' || bill.status === 'held';
 
+    // Determine which section is "current" for auto-expand
+    let currentSection = 'intro';
+    if (['in_committee', 'passed_committee', 'on_floor'].includes(bill.status)) {
+      currentSection = originCh === 'H' ? 'house' : 'senate';
+    } else if (passedOrigin && !passedCross) {
+      currentSection = crossCh === 'H' ? 'house' : 'senate';
+    } else if (atGovernor || isFinal) {
+      currentSection = 'governor';
+    }
+
     // --- Introduction ---
     stages.push({
       id: 'introduced', type: 'milestone', label: 'Introduced',
       sublabel: bill.date_introduced ? formatDate(bill.date_introduced) : '',
-      phase: 'completed',
+      phase: 'completed', section: 'intro',
     });
 
     // --- Origin chamber ---
-    stages.push({ id: 'origin-header', type: 'section', label: `${originLabel} Chamber`, phase: 'active' });
+    const originSectionId = originCh === 'H' ? 'house' : 'senate';
+    stages.push({ id: 'origin-header', type: 'section', label: originLabel, sectionId: originSectionId, phase: 'active' });
 
     const originCAs = (bill.committee_actions || []).filter(ca => ca.chamber === originCh);
     originCAs.forEach((ca, i) => {
@@ -629,7 +703,7 @@
         detail: acted ? actionLabel(ca.action) : 'Pending',
         votes: (ca.ayes || ca.nays) ? `${ca.ayes}-${ca.nays}` : '',
         phase: acted ? 'completed' : (passedOrigin ? 'completed' : 'current'),
-        actionable: true,
+        actionable: true, section: originSectionId,
       });
     });
 
@@ -645,7 +719,7 @@
         votes: `${v.yeas}-${v.nays}`,
         phase: 'completed',
         result: passed ? 'passed' : 'failed',
-        actionable: true,
+        actionable: true, section: originSectionId,
       });
     });
 
@@ -655,19 +729,20 @@
         id: 'origin-vote-future', type: 'vote',
         label: `${originLabel} Floor Vote`,
         phase: bill.status === 'on_floor' ? 'current' : 'future',
-        actionable: true,
+        actionable: true, section: originSectionId,
       });
     }
 
     // --- Crossover ---
     stages.push({
       id: 'crossover', type: 'milestone', label: `Cross to ${crossLabel}`,
-      phase: passedOrigin ? 'completed' : 'future',
+      phase: passedOrigin ? 'completed' : 'future', section: originSectionId,
     });
 
     // --- Cross chamber ---
+    const crossSectionId = crossCh === 'H' ? 'house' : 'senate';
     if (passedOrigin) {
-      stages.push({ id: 'cross-header', type: 'section', label: `${crossLabel} Chamber`, phase: 'active' });
+      stages.push({ id: 'cross-header', type: 'section', label: crossLabel, sectionId: crossSectionId, phase: 'active' });
 
       const crossCAs = (bill.committee_actions || []).filter(ca => ca.chamber === crossCh);
       if (crossCAs.length > 0) {
@@ -680,16 +755,15 @@
             detail: acted ? actionLabel(ca.action) : 'Pending',
             votes: (ca.ayes || ca.nays) ? `${ca.ayes}-${ca.nays}` : '',
             phase: acted ? 'completed' : (passedCross ? 'completed' : 'current'),
-            actionable: true,
+            actionable: true, section: crossSectionId,
           });
         });
       } else if (!passedCross) {
-        // Simplified future committee placeholder
         stages.push({
           id: 'cross-ca-future', type: 'committee',
           label: `${crossLabel} Committee`,
           phase: 'current',
-          actionable: true,
+          actionable: true, section: crossSectionId,
         });
       }
 
@@ -704,7 +778,7 @@
           votes: `${v.yeas}-${v.nays}`,
           phase: 'completed',
           result: passed ? 'passed' : 'failed',
-          actionable: true,
+          actionable: true, section: crossSectionId,
         });
       });
 
@@ -713,17 +787,17 @@
           id: 'cross-vote-future', type: 'vote',
           label: `${crossLabel} Floor Vote`,
           phase: 'future',
-          actionable: true,
+          actionable: true, section: crossSectionId,
         });
       }
     } else if (!isDead) {
-      // Simplified future cross chamber
-      stages.push({ id: 'cross-header', type: 'section', label: `${crossLabel} Chamber`, phase: 'future' });
-      stages.push({ id: 'cross-ca-future', type: 'committee', label: `${crossLabel} Committee`, phase: 'future', actionable: true });
-      stages.push({ id: 'cross-vote-future', type: 'vote', label: `${crossLabel} Floor Vote`, phase: 'future', actionable: true });
+      stages.push({ id: 'cross-header', type: 'section', label: crossLabel, sectionId: crossSectionId, phase: 'future' });
+      stages.push({ id: 'cross-ca-future', type: 'committee', label: `${crossLabel} Committee`, phase: 'future', actionable: true, section: crossSectionId });
+      stages.push({ id: 'cross-vote-future', type: 'vote', label: `${crossLabel} Floor Vote`, phase: 'future', actionable: true, section: crossSectionId });
     }
 
     // --- Governor ---
+    stages.push({ id: 'governor-header', type: 'section', label: 'Governor', sectionId: 'governor', phase: atGovernor || isFinal ? 'active' : 'future' });
     if (bill.governor_action) {
       const signed = bill.status === 'signed';
       stages.push({
@@ -732,11 +806,13 @@
         detail: bill.governor_action,
         phase: 'completed',
         result: signed ? 'signed' : 'vetoed',
+        section: 'governor',
       });
     } else if (!isDead) {
       stages.push({
         id: 'governor', type: 'governor', label: 'Governor',
         phase: atGovernor ? 'current' : 'future',
+        section: 'governor',
       });
     }
 
@@ -744,116 +820,188 @@
     if (isDead) {
       stages.push({
         id: 'dead', type: 'dead', label: bill.status === 'held' ? 'Held' : 'Dead',
-        phase: 'dead',
+        phase: 'dead', section: 'governor',
       });
     }
 
+    // Store currentSection on the result for the renderer
+    stages.currentSection = currentSection;
+
     return stages;
   }
+
+  // Track which timeline sections are manually toggled
+  const timelineSectionState = {};
 
   /** Render the timeline panel */
   function renderTimeline(bill) {
     const panel = document.getElementById('bt-timeline-body');
     const stages = buildTimelineStages(bill);
+    const currentSection = stages.currentSection || 'intro';
     const isTracked = tracking.isTracked(bill.number);
     const userActions = tracking.getBillActions(bill.number);
 
-    // Determine tracking type
+    // Determine tracking type & position
     let trackingType = null;
+    let position = null;
     if (isTracked) {
       const lists = tracking.getListsForBill(bill.number);
       const item = lists[0]?.items[bill.number];
       trackingType = item?.trackingType;
+      position = item?.position;
     }
 
     let html = `<div class="bt-tl-header">
       <div class="bt-tl-bill-number">${esc(bill.number)}</div>
       <div class="bt-tl-heading">Bill Lifecycle</div>
-    </div>
-    <div class="bt-tl-stages">`;
+      ${position ? `<div class="bt-tl-position bt-tl-position--${position}">${POSITION_LABELS[position]}</div>` : ''}
+    </div>`;
 
-    const nodeStages = stages.filter(s => s.type !== 'section');
-    let nodeIndex = 0;
-
+    // Group stages by section
+    const sections = [];
+    let currentGroup = null;
     for (const stage of stages) {
       if (stage.type === 'section') {
-        html += `<div class="bt-tl-section ${stage.phase === 'future' ? 'bt-tl--future' : ''}">
-          <div class="bt-tl-section-label">${esc(stage.label)}</div>
-        </div>`;
-        continue;
+        currentGroup = { header: stage, stages: [] };
+        sections.push(currentGroup);
+      } else if (currentGroup) {
+        currentGroup.stages.push(stage);
       }
-
-      const isFirst = nodeIndex === 0;
-      const isLast = nodeIndex === nodeStages.length - 1;
-      const phaseClass = `bt-tl--${stage.phase}`;
-      const typeClass = `bt-tl-stage--${stage.type}`;
-
-      // Marker icon based on phase and type
-      let markerIcon;
-      if (stage.phase === 'dead') markerIcon = '&#10007;';
-      else if (stage.phase === 'completed') markerIcon = '&#10003;';
-      else if (stage.phase === 'current') markerIcon = '&#9679;';
-      else markerIcon = '';
-
-      // Result badge
-      let resultBadge = '';
-      if (stage.result === 'failed') resultBadge = '<span class="bt-tl-result bt-tl-result--failed">Failed</span>';
-      else if (stage.result === 'vetoed') resultBadge = '<span class="bt-tl-result bt-tl-result--vetoed">Vetoed</span>';
-      else if (stage.result === 'signed') resultBadge = '<span class="bt-tl-result bt-tl-result--signed">Signed</span>';
-
-      html += `<div class="bt-tl-stage ${phaseClass} ${typeClass} ${isFirst ? 'bt-tl-stage--first' : ''} ${isLast ? 'bt-tl-stage--last' : ''}" data-stage-id="${stage.id}">
-        <div class="bt-tl-node">
-          <div class="bt-tl-line-top"></div>
-          <div class="bt-tl-marker">${markerIcon}</div>
-          <div class="bt-tl-line-bottom"></div>
-        </div>
-        <div class="bt-tl-content">
-          <div class="bt-tl-label">${esc(stage.label)} ${resultBadge}</div>
-          ${stage.sublabel ? `<div class="bt-tl-sublabel">${stage.sublabel}</div>` : ''}
-          ${stage.detail ? `<div class="bt-tl-detail">${esc(stage.detail)}${stage.votes ? ` (${stage.votes})` : ''}</div>` : ''}`;
-
-      // User action checkboxes — on committee/vote events that aren't future
-      if (stage.actionable && stage.phase !== 'future' && isTracked && (trackingType === 'rts_comment' || trackingType === 'vote_only')) {
-        const actions = userActions[stage.id] || {};
-        html += `<div class="bt-tl-actions">`;
-
-        if (stage.type === 'committee') {
-          if (trackingType === 'rts_comment') {
-            html += `<label class="bt-tl-action">
-              <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="commented" ${actions.commented ? 'checked' : ''}>
-              <span>I left an RTS comment</span>
-            </label>`;
-          }
-          html += `<label class="bt-tl-action">
-            <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="voted" ${actions.voted ? 'checked' : ''}>
-            <span>I voted in committee</span>
-          </label>`;
-        }
-
-        if (stage.type === 'vote') {
-          html += `<label class="bt-tl-action">
-            <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="voted" ${actions.voted ? 'checked' : ''}>
-            <span>I contacted my legislator</span>
-          </label>`;
-        }
-
-        html += `</div>`;
-      }
-
-      html += `</div></div>`;
-      nodeIndex++;
     }
 
-    html += '</div>';
+    // The "Introduced" milestone has no section header, handle it
+    const introStage = stages.find(s => s.id === 'introduced');
+    if (introStage && (sections.length === 0 || sections[0].header.sectionId !== 'intro')) {
+      // Insert intro section at beginning if not there
+      const introSection = sections.find(s => s.header.sectionId === 'intro');
+      if (!introSection) {
+        sections.unshift({ header: { label: 'Introduced', sectionId: 'intro', phase: 'completed' }, stages: [introStage] });
+      }
+    }
+
+    const allNodeStages = stages.filter(s => s.type !== 'section');
+
+    for (const group of sections) {
+      const sectionId = group.header.sectionId;
+      const isFutureSection = group.header.phase === 'future';
+
+      // Determine if section should be expanded
+      const isCurrentSection = sectionId === currentSection;
+      // Manual override in timelineSectionState, otherwise auto-expand current section
+      const isExpanded = timelineSectionState[bill.number + '-' + sectionId] !== undefined
+        ? timelineSectionState[bill.number + '-' + sectionId]
+        : isCurrentSection;
+
+      // Section summary for collapsed view
+      const completedCount = group.stages.filter(s => s.phase === 'completed').length;
+      const totalCount = group.stages.length;
+      const hasCurrentStage = group.stages.some(s => s.phase === 'current');
+      const summaryText = isFutureSection ? '' : `${completedCount}/${totalCount} complete`;
+
+      html += `<div class="bt-tl-group ${isFutureSection ? 'bt-tl-group--future' : ''} ${isExpanded ? 'bt-tl-group--expanded' : ''}">
+        <div class="bt-tl-group-header" data-section="${sectionId}" data-bill="${esc(bill.number)}" role="button" tabindex="0">
+          <span class="bt-tl-group-chevron">${isExpanded ? '&#9660;' : '&#9654;'}</span>
+          <span class="bt-tl-group-label">${esc(group.header.label)}</span>
+          ${hasCurrentStage ? '<span class="bt-tl-group-current">Current</span>' : ''}
+          ${summaryText ? `<span class="bt-tl-group-summary">${summaryText}</span>` : ''}
+        </div>`;
+
+      if (isExpanded) {
+        html += '<div class="bt-tl-group-body">';
+        group.stages.forEach((stage, gi) => {
+          const globalIndex = allNodeStages.indexOf(stage);
+          const isFirst = globalIndex === 0;
+          const isLast = globalIndex === allNodeStages.length - 1;
+          const phaseClass = `bt-tl--${stage.phase}`;
+          const typeClass = `bt-tl-stage--${stage.type}`;
+
+          let markerIcon;
+          if (stage.phase === 'dead') markerIcon = '&#10007;';
+          else if (stage.phase === 'completed') markerIcon = '&#10003;';
+          else if (stage.phase === 'current') markerIcon = '&#9679;';
+          else markerIcon = '';
+
+          let resultBadge = '';
+          if (stage.result === 'failed') resultBadge = '<span class="bt-tl-result bt-tl-result--failed">Failed</span>';
+          else if (stage.result === 'vetoed') resultBadge = '<span class="bt-tl-result bt-tl-result--vetoed">Vetoed</span>';
+          else if (stage.result === 'signed') resultBadge = '<span class="bt-tl-result bt-tl-result--signed">Signed</span>';
+
+          html += `<div class="bt-tl-stage ${phaseClass} ${typeClass} ${isFirst ? 'bt-tl-stage--first' : ''} ${isLast ? 'bt-tl-stage--last' : ''}" data-stage-id="${stage.id}">
+            <div class="bt-tl-node">
+              <div class="bt-tl-line-top"></div>
+              <div class="bt-tl-marker">${markerIcon}</div>
+              <div class="bt-tl-line-bottom"></div>
+            </div>
+            <div class="bt-tl-content">
+              <div class="bt-tl-label">${esc(stage.label)} ${resultBadge}</div>
+              ${stage.sublabel ? `<div class="bt-tl-sublabel">${stage.sublabel}</div>` : ''}
+              ${stage.detail ? `<div class="bt-tl-detail">${esc(stage.detail)}${stage.votes ? ` (${stage.votes})` : ''}</div>` : ''}`;
+
+          // User action checkboxes
+          if (stage.actionable && stage.phase !== 'future' && isTracked && (trackingType === 'rts_comment' || trackingType === 'vote_only')) {
+            const actions = userActions[stage.id] || {};
+            html += `<div class="bt-tl-actions">`;
+
+            if (stage.type === 'committee') {
+              if (trackingType === 'rts_comment') {
+                html += `<label class="bt-tl-action">
+                  <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="commented" ${actions.commented ? 'checked' : ''}>
+                  <span>I left an RTS Comment</span>
+                </label>`;
+              }
+              html += `<label class="bt-tl-action">
+                <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="voted" ${actions.voted ? 'checked' : ''}>
+                <span>I left an RTS Vote</span>
+              </label>`;
+            }
+
+            if (stage.type === 'vote') {
+              html += `<label class="bt-tl-action">
+                <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="voted" ${actions.voted ? 'checked' : ''}>
+                <span>I left an RTS Vote</span>
+              </label>`;
+            }
+
+            html += `</div>`;
+          }
+
+          html += `</div></div>`;
+        });
+        html += '</div>';
+      }
+
+      html += '</div>';
+    }
+
     panel.innerHTML = html;
-    bindTimelineEvents(panel);
+    bindTimelineEvents(panel, bill);
   }
 
-  function bindTimelineEvents(panel) {
+  function bindTimelineEvents(panel, bill) {
+    // Checkbox events
     panel.querySelectorAll('.bt-tl-checkbox').forEach(cb => {
       cb.addEventListener('click', (e) => e.stopPropagation());
       cb.addEventListener('change', () => {
         tracking.setBillAction(cb.dataset.bill, cb.dataset.stage, cb.dataset.action, cb.checked);
+      });
+    });
+
+    // Section collapse/expand
+    panel.querySelectorAll('.bt-tl-group-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const key = header.dataset.bill + '-' + header.dataset.section;
+        const isExpanded = timelineSectionState[key];
+        timelineSectionState[key] = isExpanded === undefined ? true : !isExpanded;
+        // For sections that are auto-expanded (current), first click should collapse
+        if (isExpanded === undefined) {
+          const stages = buildTimelineStages(bill);
+          const isCurrent = stages.currentSection === header.dataset.section;
+          timelineSectionState[key] = !isCurrent;
+        }
+        renderTimeline(bill);
+      });
+      header.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }
       });
     });
   }
@@ -911,12 +1059,28 @@
       });
     });
 
+    // Position buttons
+    body.querySelectorAll('.bt-position-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const current = btn.dataset.position;
+        const lists = tracking.getListsForBill(bill.number);
+        // Toggle off if already selected, otherwise set
+        const newPosition = lists[0]?.items[bill.number]?.position === current ? null : current;
+        for (const list of lists) {
+          tracking.updateItem(list.id, bill.number, { position: newPosition });
+        }
+        renderBillDetail(bill);
+        showTimeline(bill); // Re-render timeline too
+      });
+    });
+
     // Tracking type buttons
     body.querySelectorAll('.bt-track-type-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const { type, list, number } = btn.dataset;
         tracking.updateItem(list, number, { trackingType: type, needsAttention: false });
-        renderBillDetail(bill); // Re-render to show/hide RTS area
+        renderBillDetail(bill);
+        showTimeline(bill); // Re-render timeline too
       });
     });
 
@@ -1031,11 +1195,13 @@
     const bill = state.billCache[item.number];
     const title = bill?.short_title || bill?.description || '';
     const isArchived = !!item.archived;
+    const posClass = item.position ? `bt-position-badge--${item.position}` : '';
 
-    let html = `<div class="bt-tracked-bill ${item.needsAttention ? 'bt-tracked-bill--attention' : ''} ${isArchived ? 'bt-tracked-bill--archived' : ''}">
+    let html = `<div class="bt-tracked-bill ${item.needsAttention ? 'bt-tracked-bill--attention' : ''} ${isArchived ? 'bt-tracked-bill--archived' : ''}" data-bill-number="${esc(item.number)}">
       <div class="bt-tracked-info">
         <div class="bt-tracked-header">
           <span class="bt-tracked-number" data-number="${esc(item.number)}">${esc(item.number)}</span>
+          ${item.position ? `<span class="bt-position-badge ${posClass}">${POSITION_LABELS[item.position]}</span>` : ''}
           <span class="bt-status bt-status--${esc(item.lastKnownStatus)}" style="font-size: 11px; padding: 2px 8px;">${statusLabel(item.lastKnownStatus)}</span>
           <span class="bt-track-type bt-track-type--${item.trackingType}">${TRACK_TYPE_LABELS[item.trackingType]}</span>
           ${isArchived ? '<span class="bt-track-type bt-track-type--archived">Archived</span>' : ''}
@@ -1047,11 +1213,11 @@
       html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed — update your RTS comment</div>`;
     }
 
-    // RTS comment inline (for rts_comment type, not archived)
-    if (item.trackingType === 'rts_comment' && !isArchived) {
-      html += `<div class="bt-rts-section">
-        <div class="bt-rts-label">RTS Comment Draft</div>
-        <textarea class="bt-rts-textarea bt-list-rts" data-list="${listId}" data-number="${esc(item.number)}" placeholder="Write your RTS comment...">${esc(item.rtsComment)}</textarea>
+    // Read-only RTS comment (only if has content, not archived)
+    if (item.trackingType === 'rts_comment' && item.rtsComment && !isArchived) {
+      html += `<div class="bt-rts-section bt-rts-section--readonly">
+        <div class="bt-rts-label">My RTS Comment</div>
+        <div class="bt-rts-readonly">${esc(item.rtsComment)}</div>
       </div>`;
     }
 
@@ -1116,27 +1282,14 @@
       });
     });
 
-    // Click bill number to open detail
-    container.querySelectorAll('.bt-tracked-number').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openBillDetail(el.dataset.number);
-      });
-    });
-
-    // RTS comment auto-save
-    container.querySelectorAll('.bt-list-rts').forEach(textarea => {
-      let timer = null;
-      textarea.addEventListener('click', (e) => e.stopPropagation());
-      textarea.addEventListener('input', () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          tracking.updateItem(textarea.dataset.list, textarea.dataset.number, {
-            rtsComment: textarea.value,
-            needsAttention: false,
-          });
-          updateListsBadge();
-        }, 500);
+    // Click anywhere on tracked bill row to open detail
+    container.querySelectorAll('.bt-tracked-bill').forEach(row => {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', (e) => {
+        // Don't navigate if clicking buttons
+        if (e.target.closest('.bt-tracked-actions')) return;
+        const number = row.dataset.billNumber;
+        if (number) openBillDetail(number);
       });
     });
   }
