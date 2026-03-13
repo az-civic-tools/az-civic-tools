@@ -1365,7 +1365,7 @@ a:hover { color: var(--bt-mesa-warm); }
 /* Tracked bill actions */
 .bt-tracked-actions {
   display: flex;
-  gap: 6px;
+  gap: 20px;
   align-items: flex-start;
   flex-shrink: 0;
 }

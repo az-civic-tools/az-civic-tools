@@ -790,13 +790,15 @@
       });
     });
 
-    // Remove bill from list
+    // Remove bill from list (with confirmation)
     container.querySelectorAll('.bt-remove-from-list').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        tracking.removeFromList(btn.dataset.list, btn.dataset.number);
-        renderMyLists();
-        updateListsBadge();
+        if (confirm(`Remove ${btn.dataset.number} from this list permanently?\n\nIf you just want to hide it, use Archive instead.`)) {
+          tracking.removeFromList(btn.dataset.list, btn.dataset.number);
+          renderMyLists();
+          updateListsBadge();
+        }
       });
     });
 
