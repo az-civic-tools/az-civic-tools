@@ -15,11 +15,20 @@ import { handleListBills, handleGetBill, handleSyncBills } from './routes/bills.
 import { handleMeta } from './routes/meta.js';
 import { handleScrape, handleScrapeAll } from './routes/scrape.js';
 import { runScraper, BILL_PREFIXES } from './scraper.js';
+import { checkRateLimit } from './rate-limit.js';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+/** Cache durations (seconds) by route */
+const CACHE_TTL = {
+  bills_list: 300,      // 5 min — list changes when new bills scraped
+  bill_detail: 900,     // 15 min — individual bill changes less often
+  bills_sync: 300,      // 5 min — sync endpoint
+  meta: 600,            // 10 min — counts/session info
 };
 
 export default {
@@ -28,21 +37,30 @@ export default {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
 
+    // Rate limit all non-OPTIONS requests
+    const rateLimited = await checkRateLimit(request, env);
+    if (rateLimited) return addCorsHeaders(rateLimited);
+
     const url = new URL(request.url);
     const path = url.pathname;
 
     try {
       let response;
+      let cacheTtl = 0;
 
       if (path === '/api/bills' && request.method === 'GET') {
         response = await handleListBills(request, env);
+        cacheTtl = CACHE_TTL.bills_list;
       } else if (path === '/api/bills/sync' && request.method === 'GET') {
         response = await handleSyncBills(request, env);
+        cacheTtl = CACHE_TTL.bills_sync;
       } else if (path.match(/^\/api\/bills\/[A-Za-z]+\d+$/) && request.method === 'GET') {
         const number = path.split('/').pop();
         response = await handleGetBill(number, env);
+        cacheTtl = CACHE_TTL.bill_detail;
       } else if (path === '/api/meta' && request.method === 'GET') {
         response = await handleMeta(env);
+        cacheTtl = CACHE_TTL.meta;
       } else if (path === '/api/scrape/all' && request.method === 'POST') {
         response = await handleScrapeAll(request, env);
       } else if (path === '/api/scrape' && request.method === 'POST') {
@@ -54,7 +72,7 @@ export default {
         );
       }
 
-      return addCorsHeaders(response);
+      return addCorsHeaders(addCacheHeaders(response, cacheTtl));
     } catch (err) {
       console.error('Unhandled error:', err);
       return addCorsHeaders(
@@ -88,6 +106,17 @@ async function runScheduledScrape(env) {
   }
 
   console.log('Cron scrape complete');
+}
+
+/**
+ * Add Cache-Control headers to successful GET responses.
+ */
+function addCacheHeaders(response, ttl) {
+  if (!ttl || response.status >= 400) return response;
+
+  const newResponse = new Response(response.body, response);
+  newResponse.headers.set('Cache-Control', `public, max-age=${ttl}, s-maxage=${ttl}`);
+  return newResponse;
 }
 
 function addCorsHeaders(response) {

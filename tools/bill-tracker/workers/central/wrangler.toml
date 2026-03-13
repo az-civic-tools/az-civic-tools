@@ -11,6 +11,10 @@ binding = "DB"
 database_name = "cactus-watch-db"
 database_id = "b4e43bc9-fd98-437e-b216-30df9afb4f0e"
 
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "cbbdc642de8749a7b3a1a44c6890c8c6"
+
 [limits]
 subrequests = 50000
 
