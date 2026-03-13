@@ -575,6 +575,25 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
+/* --- Focus-visible states --- */
+.df-address-btn:focus-visible,
+.df-copy-md:focus-visible,
+.df-district-toggle:focus-visible,
+.df-panel-close:focus-visible {
+  outline: 2px solid var(--df-color-primary);
+  outline-offset: 2px;
+}
+
+.df-container a:focus-visible {
+  outline: 2px solid var(--df-color-primary);
+  outline-offset: 2px;
+}
+
+.df-district-card:focus-visible {
+  outline: 2px solid var(--df-color-primary);
+  outline-offset: 2px;
+}
+
 /* --- Responsive --- */
 @media (max-width: 1023px) {
   .df-map-layout {
@@ -620,6 +639,11 @@
     cursor: pointer;
     z-index: 2;
     line-height: 1;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 

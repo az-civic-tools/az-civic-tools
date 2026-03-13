@@ -34,6 +34,23 @@ var AZDistrictFinder = (function() {
   var districtGeoJSON = null;
   var legislators = null;
   var containerEl = null;
+  var addressMarker = null;
+  var lastSearchTime = 0;
+
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function isSafeUrl(url) {
+    if (!url) return false;
+    try {
+      var parsed = new URL(url, window.location.origin);
+      return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+    } catch (e) {
+      return false;
+    }
+  }
 
   /* ---- Init ---- */
   function init(userConfig) {
@@ -47,7 +64,12 @@ var AZDistrictFinder = (function() {
 
     // Read URL params for overrides
     var params = new URLSearchParams(window.location.search);
-    if (params.get('district')) config._initialDistrict = parseInt(params.get('district'), 10);
+    if (params.get('district')) {
+      var d = parseInt(params.get('district'), 10);
+      if (d >= 1 && d <= 30) {
+        config._initialDistrict = d;
+      }
+    }
     if (params.get('source')) config.source = params.get('source');
 
     // Resolve container
@@ -174,7 +196,13 @@ var AZDistrictFinder = (function() {
         districtGeoJSON = data;
         renderDistricts(data);
       })
-      .catch(function(err) { console.error('AZDistrictFinder: failed to load GeoJSON', err); });
+      .catch(function(err) {
+        console.error('AZDistrictFinder: failed to load GeoJSON', err);
+        var mapEl = containerEl.querySelector('#df-map');
+        if (mapEl) {
+          mapEl.innerHTML = '<p style="text-align:center;padding:40px;color:#c00;">Failed to load district boundaries. Please try refreshing the page.</p>';
+        }
+      });
   }
 
   function getDistrictColor(district) {
@@ -205,11 +233,11 @@ var AZDistrictFinder = (function() {
         var tooltipContent =
           '<strong>District ' + d + '</strong><br>' +
           '<span style="color:' + (PARTY_COLORS[data.senator.party] || '#888') + '">' +
-          data.senator.name + ' (' + data.senator.party + ') - Senate</span>';
+          escHtml(data.senator.name) + ' (' + escHtml(data.senator.party) + ') - Senate</span>';
 
         reps.forEach(function(rep) {
           tooltipContent += '<br><span style="color:' + (PARTY_COLORS[rep.party] || '#888') + '">' +
-            rep.name + ' (' + rep.party + ') - House</span>';
+            escHtml(rep.name) + ' (' + escHtml(rep.party) + ') - House</span>';
         });
 
         layer.bindTooltip(tooltipContent, {
@@ -292,12 +320,12 @@ var AZDistrictFinder = (function() {
     var reps = data.representatives || [];
 
     var html = '<div class="df-panel-header">';
-    if (mapUrl) {
-      html += '<h3><a href="' + mapUrl + '" target="_blank" rel="noopener" class="df-district-map-link">Legislative District ' + d + '</a></h3>';
+    if (mapUrl && isSafeUrl(mapUrl)) {
+      html += '<h3><a href="' + escHtml(mapUrl) + '" target="_blank" rel="noopener" class="df-district-map-link">Legislative District ' + d + '</a></h3>';
     } else {
       html += '<h3>Legislative District ' + d + '</h3>';
     }
-    html += '<p class="df-panel-subtitle">' + config.legislature + '</p></div>';
+    html += '<p class="df-panel-subtitle">' + escHtml(config.legislature) + '</p></div>';
 
     html += buildLegislatorCard(data.senator, 'State Senator', 'senate', currentYear);
     reps.forEach(function(rep) {
@@ -337,27 +365,28 @@ var AZDistrictFinder = (function() {
   }
 
   function buildLegislatorCard(person, role, chamber, currentYear) {
+    if (!person) return '';
     var yearsInOffice = currentYear - person.since;
     var partyFull = person.party === 'R' ? 'Republican' : person.party === 'D' ? 'Democrat' : 'Independent';
 
     var photoHtml;
-    if (person.photo) {
-      photoHtml = '<img class="df-legislator-photo" src="' + person.photo + '" alt="Photo of ' + person.name + '" onerror="this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
+    if (person.photo && isSafeUrl(person.photo)) {
+      photoHtml = '<img class="df-legislator-photo" src="' + escHtml(person.photo) + '" alt="Photo of ' + escHtml(person.name) + '" onerror="this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' +
         '<div class="df-legislator-photo placeholder" style="display:none;">Photo</div>';
     } else {
       photoHtml = '<div class="df-legislator-photo placeholder">Photo</div>';
     }
 
-    var nameHtml = person.url
-      ? '<a href="' + person.url + '" target="_blank" rel="noopener" class="df-legislator-link">' + person.name + '</a>'
-      : person.name;
+    var nameHtml = person.url && isSafeUrl(person.url)
+      ? '<a href="' + escHtml(person.url) + '" target="_blank" rel="noopener" class="df-legislator-link">' + escHtml(person.name) + '</a>'
+      : escHtml(person.name);
 
     var emailHtml = person.email
-      ? '<li><span>Email</span><span><a href="mailto:' + person.email + '" class="df-email-link">' + person.email + '</a></span></li>'
+      ? '<li><span>Email</span><span><a href="mailto:' + escHtml(person.email) + '" class="df-email-link">' + escHtml(person.email) + '</a></span></li>'
       : '';
 
     var phoneHtml = person.phone
-      ? '<li><span>Phone</span><span><a href="tel:' + person.phone + '" class="df-email-link">' + person.phone + '</a></span></li>'
+      ? '<li><span>Phone</span><span><a href="tel:' + escHtml(person.phone) + '" class="df-email-link">' + escHtml(person.phone) + '</a></span></li>'
       : '';
 
     return '<div class="df-legislator">' +
@@ -365,13 +394,13 @@ var AZDistrictFinder = (function() {
       '<div class="df-legislator-info">' +
         '<div class="df-legislator-name">' +
           nameHtml +
-          '<span class="df-party-badge ' + person.party + '">' + partyFull + '</span>' +
+          '<span class="df-party-badge ' + escHtml(person.party) + '">' + escHtml(partyFull) + '</span>' +
         '</div>' +
-        '<div class="df-legislator-role ' + chamber + '">' + role + '</div>' +
+        '<div class="df-legislator-role ' + escHtml(chamber) + '">' + escHtml(role) + '</div>' +
         '<ul class="df-legislator-meta">' +
-          '<li><span>In Office Since</span><span>' + person.since + '</span></li>' +
+          '<li><span>In Office Since</span><span>' + escHtml(String(person.since)) + '</span></li>' +
           '<li><span>Years Serving</span><span>' + yearsInOffice + ' year' + (yearsInOffice !== 1 ? 's' : '') + '</span></li>' +
-          '<li><span>Term Ends</span><span>' + person.termEnds + '</span></li>' +
+          '<li><span>Term Ends</span><span>' + escHtml(String(person.termEnds)) + '</span></li>' +
           '<li><span>Term Length</span><span>' + (chamber === 'senate' ? '4 years' : '2 years') + '</span></li>' +
           emailHtml +
           phoneHtml +
@@ -406,10 +435,10 @@ var AZDistrictFinder = (function() {
     var reps = data.representatives || [];
     var lines = [];
 
-    if (mapUrl) {
-      lines.push('[**Arizona Legislative District ' + d + '**](' + mapUrl + ') (' + config.legislature + ')');
+    if (mapUrl && isSafeUrl(mapUrl)) {
+      lines.push('[**Arizona Legislative District ' + d + '**](' + mapUrl + ') (' + (config.legislature || '') + ')');
     } else {
-      lines.push('**Arizona Legislative District ' + d + '** (' + config.legislature + ')');
+      lines.push('**Arizona Legislative District ' + d + '** (' + (config.legislature || '') + ')');
     }
     lines.push('');
 
@@ -419,15 +448,16 @@ var AZDistrictFinder = (function() {
     });
 
     people.forEach(function(p) {
+      if (!p.person) return;
       var partyFull = p.person.party === 'R' ? 'Republican' : p.person.party === 'D' ? 'Democrat' : 'Independent';
       var years = currentYear - p.person.since;
-      var nameLink = p.person.url
-        ? '[' + p.person.name + '](' + p.person.url + ')'
-        : p.person.name;
+      var nameLink = p.person.url && isSafeUrl(p.person.url)
+        ? '[' + (p.person.name || '') + '](' + p.person.url + ')'
+        : (p.person.name || '');
 
       lines.push('**' + p.role + ':** ' + nameLink + ' (' + partyFull + ')');
-      lines.push('- In office since ' + p.person.since + ' (' + years + ' year' + (years !== 1 ? 's' : '') + ')');
-      lines.push('- Term ends ' + p.person.termEnds);
+      lines.push('- In office since ' + (p.person.since || '') + ' (' + years + ' year' + (years !== 1 ? 's' : '') + ')');
+      lines.push('- Term ends ' + (p.person.termEnds || ''));
       if (p.person.email) lines.push('- Email: ' + p.person.email);
       if (p.person.phone) lines.push('- Phone: ' + p.person.phone);
       lines.push('');
@@ -457,27 +487,38 @@ var AZDistrictFinder = (function() {
       if (!data) continue;
       var reps = data.representatives || [];
 
-      html += '<div class="df-district-card" data-district="' + d + '">' +
+      html += '<div class="df-district-card" data-district="' + d + '" tabindex="0" role="button">' +
         '<h4>District ' + d + '</h4>' +
         '<div class="df-legislator-line"><span class="df-chamber-label">Sen.</span> ' +
-          data.senator.name + ' <span class="df-party-badge ' + data.senator.party + '">' + data.senator.party + '</span></div>';
+          escHtml(data.senator.name) + ' <span class="df-party-badge ' + escHtml(data.senator.party) + '">' + escHtml(data.senator.party) + '</span></div>';
 
       reps.forEach(function(rep) {
         html += '<div class="df-legislator-line"><span class="df-chamber-label">Rep.</span> ' +
-          rep.name + ' <span class="df-party-badge ' + rep.party + '">' + rep.party + '</span></div>';
+          escHtml(rep.name) + ' <span class="df-party-badge ' + escHtml(rep.party) + '">' + escHtml(rep.party) + '</span></div>';
       });
 
       html += '</div>';
     }
     grid.innerHTML = html;
 
-    grid.addEventListener('click', function(e) {
+    function handleCardActivation(e) {
       var card = e.target.closest('.df-district-card');
       if (!card) return;
       var d = parseInt(card.dataset.district, 10);
       var mapEl = containerEl.querySelector('#df-map');
       if (mapEl) mapEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       selectDistrictByNumber(d);
+    }
+
+    grid.addEventListener('click', handleCardActivation);
+
+    grid.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        var card = e.target.closest('.df-district-card');
+        if (!card) return;
+        e.preventDefault();
+        handleCardActivation(e);
+      }
     });
   }
 
@@ -531,6 +572,18 @@ var AZDistrictFinder = (function() {
         return;
       }
 
+      if (address.length > 200) {
+        errorEl.textContent = 'Address is too long. Please enter a shorter address.';
+        return;
+      }
+
+      var now = Date.now();
+      if (now - lastSearchTime < 1000) {
+        errorEl.textContent = 'Please wait a moment before searching again.';
+        return;
+      }
+      lastSearchTime = now;
+
       if (!/arizona|AZ/i.test(address)) {
         address += ', Arizona';
       }
@@ -551,13 +604,22 @@ var AZDistrictFinder = (function() {
         btn.textContent = 'Find My District';
         btn.disabled = false;
 
-        if (!results || results.length === 0) {
+        if (!results || !Array.isArray(results) || results.length === 0) {
           errorEl.textContent = 'Address not found. Please try a more specific address.';
+          return;
+        }
+        if (!results[0].lat || !results[0].lon) {
+          errorEl.textContent = 'Could not determine coordinates. Please try a different address.';
           return;
         }
 
         var lat = parseFloat(results[0].lat);
         var lng = parseFloat(results[0].lon);
+
+        if (isNaN(lat) || isNaN(lng)) {
+          errorEl.textContent = 'Invalid coordinates returned. Please try again.';
+          return;
+        }
 
         // Arizona bounds check
         if (lat < 31.3 || lat > 37.0 || lng < -114.9 || lng > -109.0) {
@@ -567,10 +629,10 @@ var AZDistrictFinder = (function() {
 
         var district = findDistrictForPoint(lat, lng);
         if (district) {
-          if (window._dfAddressMarker) {
-            map.removeLayer(window._dfAddressMarker);
+          if (addressMarker) {
+            map.removeLayer(addressMarker);
           }
-          window._dfAddressMarker = L.marker([lat, lng], {
+          addressMarker = L.marker([lat, lng], {
             icon: L.divIcon({
               className: 'df-address-marker',
               html: '<div class="df-address-pin"></div>',
