@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cactus Watch — Arizona Bill Tracker</title>
+  <meta name="description" content="Track every bill in the Arizona Legislature. Search, filter, and see how your legislators voted.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cactus-watch.css">
+</head>
+<body>
+
+  <!-- Demo banner -->
+  <div id="bt-demo-banner" class="bt-demo-banner" hidden>
+    <div class="bt-demo-inner">
+      <span class="bt-demo-icon">&#127797;</span>
+      <span>You're viewing <strong>demo data</strong> — a static snapshot, not live bills.</span>
+      <a href="https://cactus-watch.pages.dev" class="bt-demo-link">Go to live site &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bt-header">
+    <div class="bt-header-bg" aria-hidden="true"></div>
+    <div class="bt-header-content">
+      <div class="bt-brand">
+        <h1 class="bt-title">Cactus Watch</h1>
+        <p class="bt-subtitle">Arizona Legislature Bill Tracker</p>
+      </div>
+      <div class="bt-meta-stats" id="bt-meta-stats"></div>
+    </div>
+  </header>
+
+  <!-- Toolbar -->
+  <div class="bt-toolbar">
+    <div class="bt-toolbar-inner">
+      <div class="bt-search-wrap">
+        <svg class="bt-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="bt-search" class="bt-search" placeholder="Search by bill number, title, or keyword..." aria-label="Search bills">
+      </div>
+      <div class="bt-filters">
+        <select id="bt-filter-chamber" class="bt-select" aria-label="Filter by chamber">
+          <option value="">All Chambers</option>
+          <option value="H">House</option>
+          <option value="S">Senate</option>
+        </select>
+        <select id="bt-filter-status" class="bt-select" aria-label="Filter by status">
+          <option value="">All Statuses</option>
+          <option value="introduced">Introduced</option>
+          <option value="in_committee">In Committee</option>
+          <option value="passed_committee">Passed Committee</option>
+          <option value="on_floor">On Floor</option>
+          <option value="passed_house">Passed House</option>
+          <option value="passed_senate">Passed Senate</option>
+          <option value="passed_both">Passed Both</option>
+          <option value="to_governor">To Governor</option>
+          <option value="signed">Signed</option>
+          <option value="vetoed">Vetoed</option>
+          <option value="dead">Dead</option>
+          <option value="held">Held</option>
+        </select>
+        <select id="bt-filter-type" class="bt-select" aria-label="Filter by type">
+          <option value="">All Types</option>
+          <option value="bill">Bills</option>
+          <option value="memorial">Memorials</option>
+          <option value="resolution">Resolutions</option>
+          <option value="concurrent_resolution">Concurrent Resolutions</option>
+          <option value="joint_resolution">Joint Resolutions</option>
+        </select>
+        <select id="bt-filter-sort" class="bt-select" aria-label="Sort by">
+          <option value="updated_at">Recently Updated</option>
+          <option value="date_introduced">Date Introduced</option>
+          <option value="number">Bill Number</option>
+          <option value="sponsor">Sponsor</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active filters / result count -->
+  <div class="bt-results-bar" id="bt-results-bar"></div>
+
+  <!-- Bill list -->
+  <main class="bt-main">
+    <div class="bt-bill-list" id="bt-bill-list"></div>
+    <div class="bt-pagination" id="bt-pagination"></div>
+  </main>
+
+  <!-- Bill detail overlay -->
+  <div class="bt-overlay" id="bt-overlay" hidden>
+    <div class="bt-overlay-backdrop" id="bt-overlay-backdrop"></div>
+    <div class="bt-detail" id="bt-detail" role="dialog" aria-label="Bill detail">
+      <button class="bt-detail-close" id="bt-detail-close" aria-label="Close detail">&times;</button>
+      <div class="bt-detail-body" id="bt-detail-body"></div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="bt-loading" id="bt-loading">
+    <div class="bt-spinner"></div>
+    <p>Loading bills...</p>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bt-footer">
+    <p>Data sourced from <a href="https://www.azleg.gov" target="_blank" rel="noopener">azleg.gov</a> &middot; Updated daily at 6:00 AM Arizona time</p>
+    <p>Part of <a href="https://github.com/az-civic-tools/az-civic-tools" target="_blank" rel="noopener">AZ Civic Tools</a> &middot; Free &amp; open source &middot; MIT License</p>
+  </footer>
+
+  <script src="cactus-watch.js"></script>
+</body>
+</html>

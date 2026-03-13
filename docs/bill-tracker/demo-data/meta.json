@@ -1,0 +1,47 @@
+{
+  "current_session": {
+    "id": 130,
+    "legislature": 57,
+    "session": "2R",
+    "name": "57th Legislature, 2nd Regular Session",
+    "year": 2026
+  },
+  "available_sessions": [
+    {
+      "id": 130,
+      "legislature": 57,
+      "session": "2R",
+      "name": "57th Legislature, 2nd Regular Session",
+      "year": 2026,
+      "is_current": true
+    }
+  ],
+  "bills": {
+    "total": 1959,
+    "by_status": {
+      "in_committee": 869,
+      "introduced": 95,
+      "on_floor": 86,
+      "passed_both": 9,
+      "passed_committee": 112,
+      "passed_house": 413,
+      "passed_senate": 360,
+      "signed": 3,
+      "vetoed": 12
+    },
+    "by_chamber": {
+      "H": 1074,
+      "S": 885
+    }
+  },
+  "last_scrape": {
+    "started_at": "2026-03-13T15:42:25.723Z",
+    "completed_at": "2026-03-13T15:42:29.827Z",
+    "bills_found": 1,
+    "bills_new": 0,
+    "bills_updated": 1,
+    "status": "complete"
+  },
+  "_demo": true,
+  "_demo_note": "Static demo data \u2014 not live. Visit the production site for real-time bill tracking."
+}
