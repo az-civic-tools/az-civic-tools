@@ -162,6 +162,20 @@
       this.updateItem(listId, number, { archived: false });
     },
 
+    getBillActions(number) {
+      const data = this.load();
+      return (data.billActions && data.billActions[number]) || {};
+    },
+
+    setBillAction(number, stageId, actionType, value) {
+      const data = this.load();
+      if (!data.billActions) data.billActions = {};
+      if (!data.billActions[number]) data.billActions[number] = {};
+      if (!data.billActions[number][stageId]) data.billActions[number][stageId] = {};
+      data.billActions[number][stageId][actionType] = value;
+      this.save();
+    },
+
     getListsForBill(number) {
       const lists = this.load().lists;
       const result = [];
@@ -571,6 +585,286 @@
 
     html += `</div>`;
     return html;
+  }
+
+  /* ============================================================
+     Timeline — Bill Lifecycle
+     ============================================================ */
+
+  /** Build an ordered array of timeline stages from bill data */
+  function buildTimelineStages(bill) {
+    const stages = [];
+    const originCh = bill.chamber || (bill.number.startsWith('H') ? 'H' : 'S');
+    const crossCh = originCh === 'H' ? 'S' : 'H';
+    const originLabel = originCh === 'H' ? 'House' : 'Senate';
+    const crossLabel = crossCh === 'H' ? 'House' : 'Senate';
+
+    // Determine what has been passed based on status
+    const passedOriginStatuses = originCh === 'H'
+      ? ['passed_house', 'passed_both', 'to_governor', 'signed', 'vetoed']
+      : ['passed_senate', 'passed_both', 'to_governor', 'signed', 'vetoed'];
+    const passedOrigin = passedOriginStatuses.includes(bill.status);
+    const passedCross = ['passed_both', 'to_governor', 'signed', 'vetoed'].includes(bill.status);
+    const atGovernor = ['to_governor', 'signed', 'vetoed'].includes(bill.status);
+    const isFinal = ['signed', 'vetoed'].includes(bill.status);
+    const isDead = bill.status === 'dead' || bill.status === 'held';
+
+    // --- Introduction ---
+    stages.push({
+      id: 'introduced', type: 'milestone', label: 'Introduced',
+      sublabel: bill.date_introduced ? formatDate(bill.date_introduced) : '',
+      phase: 'completed',
+    });
+
+    // --- Origin chamber ---
+    stages.push({ id: 'origin-header', type: 'section', label: `${originLabel} Chamber`, phase: 'active' });
+
+    const originCAs = (bill.committee_actions || []).filter(ca => ca.chamber === originCh);
+    originCAs.forEach((ca, i) => {
+      const acted = ca.action && ca.action !== 'None' && ca.action_date;
+      stages.push({
+        id: `origin-ca-${i}`, type: 'committee',
+        label: ca.committee_name,
+        sublabel: acted ? formatDate(ca.action_date) : '',
+        detail: acted ? actionLabel(ca.action) : 'Pending',
+        votes: (ca.ayes || ca.nays) ? `${ca.ayes}-${ca.nays}` : '',
+        phase: acted ? 'completed' : (passedOrigin ? 'completed' : 'current'),
+        actionable: true,
+      });
+    });
+
+    // Origin floor votes
+    const originVotes = (bill.votes || []).filter(v => v.chamber === originCh);
+    originVotes.forEach((v, i) => {
+      const passed = v.result?.toLowerCase().includes('passed');
+      stages.push({
+        id: `origin-vote-${i}`, type: 'vote',
+        label: `${originLabel} Floor Vote`,
+        sublabel: formatDate(v.vote_date),
+        detail: v.result,
+        votes: `${v.yeas}-${v.nays}`,
+        phase: 'completed',
+        result: passed ? 'passed' : 'failed',
+        actionable: true,
+      });
+    });
+
+    // Future origin floor vote if not yet voted and not passed origin
+    if (originVotes.length === 0 && !passedOrigin && !isDead) {
+      stages.push({
+        id: 'origin-vote-future', type: 'vote',
+        label: `${originLabel} Floor Vote`,
+        phase: bill.status === 'on_floor' ? 'current' : 'future',
+        actionable: true,
+      });
+    }
+
+    // --- Crossover ---
+    stages.push({
+      id: 'crossover', type: 'milestone', label: `Cross to ${crossLabel}`,
+      phase: passedOrigin ? 'completed' : 'future',
+    });
+
+    // --- Cross chamber ---
+    if (passedOrigin) {
+      stages.push({ id: 'cross-header', type: 'section', label: `${crossLabel} Chamber`, phase: 'active' });
+
+      const crossCAs = (bill.committee_actions || []).filter(ca => ca.chamber === crossCh);
+      if (crossCAs.length > 0) {
+        crossCAs.forEach((ca, i) => {
+          const acted = ca.action && ca.action !== 'None' && ca.action_date;
+          stages.push({
+            id: `cross-ca-${i}`, type: 'committee',
+            label: ca.committee_name,
+            sublabel: acted ? formatDate(ca.action_date) : '',
+            detail: acted ? actionLabel(ca.action) : 'Pending',
+            votes: (ca.ayes || ca.nays) ? `${ca.ayes}-${ca.nays}` : '',
+            phase: acted ? 'completed' : (passedCross ? 'completed' : 'current'),
+            actionable: true,
+          });
+        });
+      } else if (!passedCross) {
+        // Simplified future committee placeholder
+        stages.push({
+          id: 'cross-ca-future', type: 'committee',
+          label: `${crossLabel} Committee`,
+          phase: 'current',
+          actionable: true,
+        });
+      }
+
+      const crossVotes = (bill.votes || []).filter(v => v.chamber === crossCh);
+      crossVotes.forEach((v, i) => {
+        const passed = v.result?.toLowerCase().includes('passed');
+        stages.push({
+          id: `cross-vote-${i}`, type: 'vote',
+          label: `${crossLabel} Floor Vote`,
+          sublabel: formatDate(v.vote_date),
+          detail: v.result,
+          votes: `${v.yeas}-${v.nays}`,
+          phase: 'completed',
+          result: passed ? 'passed' : 'failed',
+          actionable: true,
+        });
+      });
+
+      if (crossVotes.length === 0 && !passedCross) {
+        stages.push({
+          id: 'cross-vote-future', type: 'vote',
+          label: `${crossLabel} Floor Vote`,
+          phase: 'future',
+          actionable: true,
+        });
+      }
+    } else if (!isDead) {
+      // Simplified future cross chamber
+      stages.push({ id: 'cross-header', type: 'section', label: `${crossLabel} Chamber`, phase: 'future' });
+      stages.push({ id: 'cross-ca-future', type: 'committee', label: `${crossLabel} Committee`, phase: 'future', actionable: true });
+      stages.push({ id: 'cross-vote-future', type: 'vote', label: `${crossLabel} Floor Vote`, phase: 'future', actionable: true });
+    }
+
+    // --- Governor ---
+    if (bill.governor_action) {
+      const signed = bill.status === 'signed';
+      stages.push({
+        id: 'governor', type: 'governor', label: 'Governor',
+        sublabel: formatDate(bill.governor_action_date),
+        detail: bill.governor_action,
+        phase: 'completed',
+        result: signed ? 'signed' : 'vetoed',
+      });
+    } else if (!isDead) {
+      stages.push({
+        id: 'governor', type: 'governor', label: 'Governor',
+        phase: atGovernor ? 'current' : 'future',
+      });
+    }
+
+    // --- Dead / Held marker ---
+    if (isDead) {
+      stages.push({
+        id: 'dead', type: 'dead', label: bill.status === 'held' ? 'Held' : 'Dead',
+        phase: 'dead',
+      });
+    }
+
+    return stages;
+  }
+
+  /** Render the timeline panel */
+  function renderTimeline(bill) {
+    const panel = document.getElementById('bt-timeline-body');
+    const stages = buildTimelineStages(bill);
+    const isTracked = tracking.isTracked(bill.number);
+    const userActions = tracking.getBillActions(bill.number);
+
+    // Determine tracking type
+    let trackingType = null;
+    if (isTracked) {
+      const lists = tracking.getListsForBill(bill.number);
+      const item = lists[0]?.items[bill.number];
+      trackingType = item?.trackingType;
+    }
+
+    let html = `<div class="bt-tl-header">
+      <div class="bt-tl-bill-number">${esc(bill.number)}</div>
+      <div class="bt-tl-heading">Bill Lifecycle</div>
+    </div>
+    <div class="bt-tl-stages">`;
+
+    const nodeStages = stages.filter(s => s.type !== 'section');
+    let nodeIndex = 0;
+
+    for (const stage of stages) {
+      if (stage.type === 'section') {
+        html += `<div class="bt-tl-section ${stage.phase === 'future' ? 'bt-tl--future' : ''}">
+          <div class="bt-tl-section-label">${esc(stage.label)}</div>
+        </div>`;
+        continue;
+      }
+
+      const isFirst = nodeIndex === 0;
+      const isLast = nodeIndex === nodeStages.length - 1;
+      const phaseClass = `bt-tl--${stage.phase}`;
+      const typeClass = `bt-tl-stage--${stage.type}`;
+
+      // Marker icon based on phase and type
+      let markerIcon;
+      if (stage.phase === 'dead') markerIcon = '&#10007;';
+      else if (stage.phase === 'completed') markerIcon = '&#10003;';
+      else if (stage.phase === 'current') markerIcon = '&#9679;';
+      else markerIcon = '';
+
+      // Result badge
+      let resultBadge = '';
+      if (stage.result === 'failed') resultBadge = '<span class="bt-tl-result bt-tl-result--failed">Failed</span>';
+      else if (stage.result === 'vetoed') resultBadge = '<span class="bt-tl-result bt-tl-result--vetoed">Vetoed</span>';
+      else if (stage.result === 'signed') resultBadge = '<span class="bt-tl-result bt-tl-result--signed">Signed</span>';
+
+      html += `<div class="bt-tl-stage ${phaseClass} ${typeClass} ${isFirst ? 'bt-tl-stage--first' : ''} ${isLast ? 'bt-tl-stage--last' : ''}" data-stage-id="${stage.id}">
+        <div class="bt-tl-node">
+          <div class="bt-tl-line-top"></div>
+          <div class="bt-tl-marker">${markerIcon}</div>
+          <div class="bt-tl-line-bottom"></div>
+        </div>
+        <div class="bt-tl-content">
+          <div class="bt-tl-label">${esc(stage.label)} ${resultBadge}</div>
+          ${stage.sublabel ? `<div class="bt-tl-sublabel">${stage.sublabel}</div>` : ''}
+          ${stage.detail ? `<div class="bt-tl-detail">${esc(stage.detail)}${stage.votes ? ` (${stage.votes})` : ''}</div>` : ''}`;
+
+      // User action checkboxes — on committee/vote events that aren't future
+      if (stage.actionable && stage.phase !== 'future' && isTracked && (trackingType === 'rts_comment' || trackingType === 'vote_only')) {
+        const actions = userActions[stage.id] || {};
+        html += `<div class="bt-tl-actions">`;
+
+        if (stage.type === 'committee') {
+          if (trackingType === 'rts_comment') {
+            html += `<label class="bt-tl-action">
+              <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="commented" ${actions.commented ? 'checked' : ''}>
+              <span>I left an RTS comment</span>
+            </label>`;
+          }
+          html += `<label class="bt-tl-action">
+            <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="voted" ${actions.voted ? 'checked' : ''}>
+            <span>I voted in committee</span>
+          </label>`;
+        }
+
+        if (stage.type === 'vote') {
+          html += `<label class="bt-tl-action">
+            <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="voted" ${actions.voted ? 'checked' : ''}>
+            <span>I contacted my legislator</span>
+          </label>`;
+        }
+
+        html += `</div>`;
+      }
+
+      html += `</div></div>`;
+      nodeIndex++;
+    }
+
+    html += '</div>';
+    panel.innerHTML = html;
+    bindTimelineEvents(panel);
+  }
+
+  function bindTimelineEvents(panel) {
+    panel.querySelectorAll('.bt-tl-checkbox').forEach(cb => {
+      cb.addEventListener('click', (e) => e.stopPropagation());
+      cb.addEventListener('change', () => {
+        tracking.setBillAction(cb.dataset.bill, cb.dataset.stage, cb.dataset.action, cb.checked);
+      });
+    });
+  }
+
+  function showTimeline(bill) {
+    renderTimeline(bill);
+    document.getElementById('bt-timeline').classList.add('bt-timeline--open');
+  }
+
+  function hideTimeline() {
+    document.getElementById('bt-timeline').classList.remove('bt-timeline--open');
   }
 
   function renderVote(vote, index) {
@@ -1122,6 +1416,7 @@
     try {
       const bill = await loadBillDetail(number);
       renderBillDetail(bill);
+      showTimeline(bill);
     } catch (err) {
       console.error('Failed to load bill detail:', err);
       body.innerHTML = `<div class="bt-empty"><div class="bt-empty-icon">&#9888;&#65039;</div><div class="bt-empty-text">Failed to load bill detail</div></div>`;
@@ -1131,6 +1426,7 @@
   function closeDetail() {
     const overlay = document.getElementById('bt-overlay');
     if (overlay.hidden) return;
+    hideTimeline();
     overlay.hidden = true;
     document.body.style.overflow = '';
     // Refresh list view if active (tracking may have changed)
