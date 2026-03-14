@@ -313,6 +313,9 @@ async function processBill(env, dbSessionId, azlegSessionId, bill) {
   // Process committee actions from the bill data (already in response, no extra fetch)
   await processCommitteeActions(env, billDbId, bill);
 
+  // Process floor actions — readings, COW (already in response, no extra fetch)
+  await processFloorActions(env, billDbId, bill);
+
   // Process floor votes (requires extra fetch per vote)
   await processFloorVotes(env, billDbId, bill);
 
@@ -408,6 +411,58 @@ async function processCommitteeActions(env, billDbId, bill) {
     `).bind(
       billDbId, committee.CommitteeName || 'Unknown', committee.CommitteeShortName || '',
       chamber, a.Action || null, a.Ayes || 0, a.Nays || 0, a.ReportDate || null
+    ).run();
+  }
+}
+
+async function processFloorActions(env, billDbId, bill) {
+  const actions = [];
+
+  // Parse top-level reading date fields (House1stRead, Senate2ndRead, etc.)
+  for (const [chamber, prefix] of [['H', 'House'], ['S', 'Senate']]) {
+    if (bill[`${prefix}1stRead`]) {
+      actions.push({ chamber, action_type: '1st_read', action_date: bill[`${prefix}1stRead`] });
+    }
+    if (bill[`${prefix}2ndRead`]) {
+      actions.push({ chamber, action_type: '2nd_read', action_date: bill[`${prefix}2ndRead`] });
+    }
+  }
+
+  // Parse FloorHeaders for COW and 3rd reading (with action IDs and vote totals)
+  for (const fh of (bill.FloorHeaders || [])) {
+    if (fh.CommitteeShortName === 'COW') {
+      actions.push({
+        chamber: fh.LegislativeBody,
+        action_type: 'cow',
+        action_date: fh.ActionDate,
+        azleg_action_id: fh.BillStatusActionId,
+        total_votes: fh.TotalVotes || 0,
+      });
+    } else if (fh.CommitteeShortName === 'THIRD') {
+      actions.push({
+        chamber: fh.LegislativeBody,
+        action_type: '3rd_read',
+        action_date: fh.ActionDate,
+        azleg_action_id: fh.BillStatusActionId,
+        total_votes: fh.TotalVotes || 0,
+      });
+    }
+  }
+
+  if (actions.length === 0) return;
+
+  // Upsert floor actions (replace on conflict)
+  for (const a of actions) {
+    await env.DB.prepare(`
+      INSERT INTO floor_actions (bill_id, chamber, action_type, action_date, azleg_action_id, total_votes)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(bill_id, chamber, action_type) DO UPDATE SET
+        action_date = excluded.action_date,
+        azleg_action_id = excluded.azleg_action_id,
+        total_votes = excluded.total_votes
+    `).bind(
+      billDbId, a.chamber, a.action_type,
+      a.action_date || null, a.azleg_action_id || null, a.total_votes || 0
     ).run();
   }
 }

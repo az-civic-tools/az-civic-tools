@@ -689,6 +689,39 @@
      Timeline — Bill Lifecycle
      ============================================================ */
 
+  const FLOOR_ACTION_LABELS = {
+    '1st_read': 'First Read',
+    '2nd_read': 'Second Read',
+    'cow': 'Committee of the Whole',
+  };
+
+  /** Add floor reading stages (1st read, 2nd read, COW) for a chamber */
+  function addFloorReadings(stages, bill, chamber, prefix, chamberLabel, sectionId, passed) {
+    const fa = (bill.floor_actions || []).filter(a => a.chamber === chamber);
+    if (fa.length === 0 && !passed) return; // No data and not passed — skip (future stages only)
+
+    for (const actionType of ['1st_read', '2nd_read', 'cow']) {
+      const action = fa.find(a => a.action_type === actionType);
+      if (action) {
+        stages.push({
+          id: `${prefix}-${actionType}`, type: 'floor_reading',
+          label: `${chamberLabel} ${FLOOR_ACTION_LABELS[actionType]}`,
+          sublabel: formatDate(action.action_date),
+          phase: 'completed', section: sectionId,
+          actionable: false,
+        });
+      } else if (!passed) {
+        // Show as future if bill hasn't passed this chamber yet
+        stages.push({
+          id: `${prefix}-${actionType}`, type: 'floor_reading',
+          label: `${chamberLabel} ${FLOOR_ACTION_LABELS[actionType]}`,
+          phase: 'future', section: sectionId,
+          actionable: false,
+        });
+      }
+    }
+  }
+
   /** Build an ordered array of timeline stages from bill data */
   function buildTimelineStages(bill) {
     const stages = [];
@@ -742,13 +775,16 @@
       });
     });
 
-    // Origin floor votes
+    // Origin floor actions (readings, COW)
+    addFloorReadings(stages, bill, originCh, 'origin', originLabel, originSectionId, passedOrigin);
+
+    // Origin floor votes (3rd reading)
     const originVotes = (bill.votes || []).filter(v => v.chamber === originCh);
     originVotes.forEach((v, i) => {
       const passed = v.result?.toLowerCase().includes('passed');
       stages.push({
         id: `origin-vote-${i}`, type: 'vote',
-        label: `${originLabel} Floor Vote`,
+        label: `${originLabel} Third Read`,
         sublabel: formatDate(v.vote_date),
         detail: v.result,
         votes: `${v.yeas}-${v.nays}`,
@@ -762,7 +798,7 @@
     if (originVotes.length === 0 && !passedOrigin && !isDead) {
       stages.push({
         id: 'origin-vote-future', type: 'vote',
-        label: `${originLabel} Floor Vote`,
+        label: `${originLabel} Third Read`,
         phase: bill.status === 'on_floor' ? 'current' : 'future',
         actionable: true, section: originSectionId,
       });
@@ -802,12 +838,15 @@
         });
       }
 
+      // Cross floor actions (readings, COW)
+      addFloorReadings(stages, bill, crossCh, 'cross', crossLabel, crossSectionId, passedCross);
+
       const crossVotes = (bill.votes || []).filter(v => v.chamber === crossCh);
       crossVotes.forEach((v, i) => {
         const passed = v.result?.toLowerCase().includes('passed');
         stages.push({
           id: `cross-vote-${i}`, type: 'vote',
-          label: `${crossLabel} Floor Vote`,
+          label: `${crossLabel} Third Read`,
           sublabel: formatDate(v.vote_date),
           detail: v.result,
           votes: `${v.yeas}-${v.nays}`,
@@ -820,7 +859,7 @@
       if (crossVotes.length === 0 && !passedCross) {
         stages.push({
           id: 'cross-vote-future', type: 'vote',
-          label: `${crossLabel} Floor Vote`,
+          label: `${crossLabel} Third Read`,
           phase: 'future',
           actionable: true, section: crossSectionId,
         });
@@ -828,7 +867,7 @@
     } else if (!isDead) {
       stages.push({ id: 'cross-header', type: 'section', label: crossLabel, sectionId: crossSectionId, phase: 'future' });
       stages.push({ id: 'cross-ca-future', type: 'committee', label: `${crossLabel} Committee Assignment`, phase: 'future', actionable: false, section: crossSectionId });
-      stages.push({ id: 'cross-vote-future', type: 'vote', label: `${crossLabel} Floor Vote`, phase: 'future', actionable: false, section: crossSectionId });
+      stages.push({ id: 'cross-vote-future', type: 'vote', label: `${crossLabel} Third Read`, phase: 'future', actionable: false, section: crossSectionId });
     }
 
     // --- Governor ---

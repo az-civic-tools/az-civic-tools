@@ -1953,6 +1953,20 @@ a:hover { color: var(--bt-mesa-warm); }
   font-size: 16px;
 }
 
+/* Floor reading stages (1st/2nd read, COW) — smaller, subtler */
+.bt-tl-stage--floor_reading .bt-tl-marker {
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+}
+.bt-tl-stage--floor_reading .bt-tl-label {
+  font-size: 13px;
+  color: var(--bt-text-muted);
+}
+.bt-tl-stage--floor_reading .bt-tl-sublabel {
+  font-size: 11px;
+}
+
 /* Governor stage */
 .bt-tl-stage--governor .bt-tl-marker {
   width: 34px;

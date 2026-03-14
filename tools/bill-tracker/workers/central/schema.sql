@@ -86,6 +86,20 @@ CREATE TABLE IF NOT EXISTS vote_records (
   UNIQUE(vote_id, legislator)
 );
 
+-- Floor actions (readings, COW, caucus — parsed from Bill API response, no extra calls)
+CREATE TABLE IF NOT EXISTS floor_actions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  bill_id INTEGER NOT NULL REFERENCES bills(id) ON DELETE CASCADE,
+  chamber TEXT NOT NULL,
+  action_type TEXT NOT NULL,   -- '1st_read', '2nd_read', 'cow', '3rd_read', 'caucus'
+  action_date TEXT,
+  azleg_action_id INTEGER,     -- BillStatusActionId from FloorHeaders (for COW/THIRD)
+  total_votes INTEGER DEFAULT 0,
+  UNIQUE(bill_id, chamber, action_type)
+);
+
+CREATE INDEX IF NOT EXISTS idx_floor_actions_bill ON floor_actions(bill_id);
+
 -- Scraper audit log
 CREATE TABLE IF NOT EXISTS scrape_log (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

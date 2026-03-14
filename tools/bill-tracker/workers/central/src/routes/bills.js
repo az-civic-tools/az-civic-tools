@@ -159,12 +159,14 @@ export async function handleGetBill(number, env) {
   }
 
   // Fetch related data in parallel
-  const [cosponsors, committeeActions, votes] = await Promise.all([
+  const [cosponsors, committeeActions, votes, floorActions] = await Promise.all([
     env.DB.prepare('SELECT name, party, sponsor_type FROM cosponsors WHERE bill_id = ? ORDER BY sponsor_type, name')
       .bind(bill.id).all(),
     env.DB.prepare('SELECT committee_name, committee_short, chamber, action, ayes, nays, action_date FROM committee_actions WHERE bill_id = ? ORDER BY action_date')
       .bind(bill.id).all(),
     env.DB.prepare('SELECT id, chamber, vote_date, yeas, nays, not_voting, excused, result FROM votes WHERE bill_id = ? ORDER BY vote_date')
+      .bind(bill.id).all(),
+    env.DB.prepare('SELECT chamber, action_type, action_date, total_votes FROM floor_actions WHERE bill_id = ? ORDER BY action_date')
       .bind(bill.id).all(),
   ]);
 
@@ -187,6 +189,7 @@ export async function handleGetBill(number, env) {
     session_code: bill.session_code,
     cosponsors: (cosponsors.results || []),
     committee_actions: (committeeActions.results || []),
+    floor_actions: (floorActions.results || []),
     votes: votesWithRecords.map(v => ({
       chamber: v.chamber,
       vote_date: v.vote_date,
