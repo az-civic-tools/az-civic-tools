@@ -40,7 +40,19 @@
   const COMMITTEE_ACTIONS = {
     DP: 'Do Pass', DPA: 'Do Pass, Amended', DPS: 'Do Pass, Substituted',
     DPAS: 'Do Pass, Amended & Substituted', PFC: 'Passed from Committee',
+    'C&P': 'Consent & Pass', 'W/D': 'Withdrawn',
     W: 'Withdrawn', H: 'Held', RP: 'Referred', PASSED: 'Passed', FAILED: 'Failed',
+  };
+
+  // Better display names for procedural committee_short codes
+  const PROCEDURAL_NAMES = {
+    ADCOW: 'Committee of the Whole',
+    COW: 'Committee of the Whole',
+    MISC: 'Floor Motion',
+    RECON_3RD: 'Motion to Reconsider 3rd Read',
+    RECON: 'Motion to Reconsider',
+    '3RD_READ': 'Third Read',
+    CAUCUS: 'Caucus',
   };
 
   const TRACK_TYPE_LABELS = {
@@ -398,6 +410,7 @@
   function statusLabel(s) { return STATUS_LABELS[s] || s; }
   function typeLabel(t) { return TYPE_LABELS[t] || t; }
   function actionLabel(a) { return COMMITTEE_ACTIONS[a] || a; }
+  function committeeName(ca) { return PROCEDURAL_NAMES[ca.committee_short] || ca.committee_name; }
 
   /* ============================================================
      Rendering — Header & Meta
@@ -698,7 +711,7 @@
       const acted = ca.action && ca.action !== 'None' && ca.action_date;
       stages.push({
         id: `origin-ca-${i}`, type: 'committee',
-        label: ca.committee_name,
+        label: committeeName(ca),
         sublabel: acted ? formatDate(ca.action_date) : '',
         detail: acted ? actionLabel(ca.action) : 'Pending',
         votes: (ca.ayes || ca.nays) ? `${ca.ayes}-${ca.nays}` : '',
@@ -750,7 +763,7 @@
           const acted = ca.action && ca.action !== 'None' && ca.action_date;
           stages.push({
             id: `cross-ca-${i}`, type: 'committee',
-            label: ca.committee_name,
+            label: committeeName(ca),
             sublabel: acted ? formatDate(ca.action_date) : '',
             detail: acted ? actionLabel(ca.action) : 'Pending',
             votes: (ca.ayes || ca.nays) ? `${ca.ayes}-${ca.nays}` : '',
@@ -761,9 +774,9 @@
       } else if (!passedCross) {
         stages.push({
           id: 'cross-ca-future', type: 'committee',
-          label: `${crossLabel} Committee`,
+          label: 'Awaiting committee assignment',
           phase: 'current',
-          actionable: true, section: crossSectionId,
+          actionable: false, section: crossSectionId,
         });
       }
 
@@ -792,8 +805,8 @@
       }
     } else if (!isDead) {
       stages.push({ id: 'cross-header', type: 'section', label: crossLabel, sectionId: crossSectionId, phase: 'future' });
-      stages.push({ id: 'cross-ca-future', type: 'committee', label: `${crossLabel} Committee`, phase: 'future', actionable: true, section: crossSectionId });
-      stages.push({ id: 'cross-vote-future', type: 'vote', label: `${crossLabel} Floor Vote`, phase: 'future', actionable: true, section: crossSectionId });
+      stages.push({ id: 'cross-ca-future', type: 'committee', label: `${crossLabel} Committee Assignment`, phase: 'future', actionable: false, section: crossSectionId });
+      stages.push({ id: 'cross-vote-future', type: 'vote', label: `${crossLabel} Floor Vote`, phase: 'future', actionable: false, section: crossSectionId });
     }
 
     // --- Governor ---
@@ -978,11 +991,13 @@
   }
 
   function bindTimelineEvents(panel, bill) {
-    // Checkbox events
+    // Checkbox events — save action and refresh detail tracking section
     panel.querySelectorAll('.bt-tl-checkbox').forEach(cb => {
       cb.addEventListener('click', (e) => e.stopPropagation());
       cb.addEventListener('change', () => {
         tracking.setBillAction(cb.dataset.bill, cb.dataset.stage, cb.dataset.action, cb.checked);
+        // Re-render the detail panel's tracking section to show updated history
+        renderBillDetail(bill);
       });
     });
 
