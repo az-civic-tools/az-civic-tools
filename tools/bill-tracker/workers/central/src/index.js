@@ -7,6 +7,7 @@
  *   GET  /api/bills/:number  — single bill detail
  *   GET  /api/bills/sync     — changed bills since a given date
  *   GET  /api/meta           — session info, last scrape, counts
+ *   GET  /api/rts/:number    — RTS agenda items + deep links for a bill
  *   POST /api/scrape         — trigger single-prefix scrape (auth required)
  *   POST /api/scrape/all     — trigger full scrape, all prefixes (auth required)
  */
@@ -14,6 +15,7 @@
 import { handleListBills, handleGetBill, handleSyncBills } from './routes/bills.js';
 import { handleMeta } from './routes/meta.js';
 import { handleScrape, handleScrapeAll } from './routes/scrape.js';
+import { handleRts } from './routes/rts.js';
 import { runScraper, BILL_PREFIXES } from './scraper.js';
 import { checkRateLimit } from './rate-limit.js';
 
@@ -29,6 +31,7 @@ const CACHE_TTL = {
   bill_detail: 900,     // 15 min — individual bill changes less often
   bills_sync: 300,      // 5 min — sync endpoint
   meta: 600,            // 10 min — counts/session info
+  rts: 3600,            // 1 hour — agenda items change infrequently
 };
 
 export default {
@@ -61,6 +64,10 @@ export default {
       } else if (path === '/api/meta' && request.method === 'GET') {
         response = await handleMeta(env);
         cacheTtl = CACHE_TTL.meta;
+      } else if (path.match(/^\/api\/rts\/[A-Za-z]+\d+$/) && request.method === 'GET') {
+        const number = path.split('/').pop().toUpperCase();
+        response = await handleRts(number, env);
+        cacheTtl = CACHE_TTL.rts;
       } else if (path === '/api/scrape/all' && request.method === 'POST') {
         response = await handleScrapeAll(request, env);
       } else if (path === '/api/scrape' && request.method === 'POST') {
@@ -90,9 +97,26 @@ export default {
 };
 
 /**
+ * Approximate session date range — update when CURRENT_SESSION changes.
+ * Prevents daily scraping (and unnecessary azleg.gov API calls) during interim.
+ * The cron still fires but exits immediately outside this window.
+ */
+const SESSION_WINDOW = {
+  start: '2026-01-01',
+  end: '2026-06-30',
+};
+
+/**
  * Cron-triggered scrape: run each prefix sequentially.
+ * Skips scraping entirely outside the legislative session window.
  */
 async function runScheduledScrape(env) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today < SESSION_WINDOW.start || today > SESSION_WINDOW.end) {
+    console.log(`Cron: session not active (${today} outside ${SESSION_WINDOW.start}–${SESSION_WINDOW.end}). Skipping.`);
+    return;
+  }
+
   console.log('Cron-triggered scrape starting...');
 
   for (const { prefix } of BILL_PREFIXES) {

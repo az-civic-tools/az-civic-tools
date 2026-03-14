@@ -62,9 +62,9 @@
   };
 
   const POSITION_LABELS = {
-    support: 'Support',
+    for: 'For',
     neutral: 'Neutral',
-    oppose: 'Oppose',
+    against: 'Against',
   };
 
   const DEMO_NAMES = [
@@ -157,7 +157,8 @@
         number: bill.number,
         addedAt: new Date().toISOString(),
         trackingType: 'watching',
-        position: null, // 'support', 'neutral', 'oppose'
+        position: null, // 'for', 'neutral', 'against'
+        notes: '',
         rtsComment: '',
         lastKnownStatus: bill.status,
         lastKnownAction: bill.last_action || '',
@@ -228,7 +229,6 @@
           if (current.status !== item.lastKnownStatus) {
             item.needsAttention = true;
             item.statusChangedAt = new Date().toISOString();
-            item.rtsComment = ''; // Clear RTS comment
             item.lastKnownStatus = current.status;
             item.lastKnownAction = current.last_action || '';
             changed = true;
@@ -571,6 +571,11 @@
 
     body.innerHTML = html;
     bindDetailEvents(body, bill);
+
+    // Load RTS agenda data asynchronously (only if bill is tracked)
+    if (tracking.isTracked(bill.number)) {
+      loadRtsAgendas(bill.number);
+    }
   }
 
   function renderDetailTracking(bill, lists) {
@@ -586,10 +591,10 @@
 
     // Status change alert
     if (item.needsAttention) {
-      html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed to <strong>${statusLabel(bill.status)}</strong> — please update your RTS comment</div>`;
+      html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed to <strong>${statusLabel(bill.status)}</strong> — re-submit your RTS comment on azleg.gov</div>`;
     }
 
-    // Position selector (Support / Neutral / Oppose)
+    // Position selector (For / Neutral / Against)
     html += `<div class="bt-position-row">
       <span class="bt-position-label">My Position:</span>
       <div class="bt-position-selector">
@@ -608,12 +613,32 @@
 
     // RTS Comment area (visible for rts_comment type)
     if (item.trackingType === 'rts_comment') {
+      const charCount = (item.rtsComment || '').length;
+      const charClass = charCount > 250 ? 'bt-rts-counter--over' : charCount > 200 ? 'bt-rts-counter--warn' : '';
       html += `<div class="bt-rts-section">
-        <div class="bt-rts-label">My RTS Comment</div>
-        <textarea class="bt-rts-textarea" id="bt-rts-textarea" data-list="${firstList.id}" data-number="${bill.number}" placeholder="Write your Request to Speak comment here...">${esc(item.rtsComment)}</textarea>
-        <div class="bt-rts-hint">This comment will be cleared when the bill's status changes, so you can draft a fresh one for the new hearing.</div>
+        <div class="bt-rts-label-row">
+          <div class="bt-rts-label">My RTS Comment</div>
+          <button class="bt-btn bt-btn--small bt-rts-copy-btn" id="bt-rts-copy" title="Copy to clipboard">&#128203; Copy</button>
+        </div>
+        <textarea class="bt-rts-textarea" id="bt-rts-textarea" data-list="${firstList.id}" data-number="${bill.number}" maxlength="250" placeholder="Write your Request to Speak comment here (250 char limit)...">${esc(item.rtsComment)}</textarea>
+        <div class="bt-rts-footer">
+          <div class="bt-rts-hint">AZLeg clears your RTS comment at each stage — save it here so you can copy &amp; paste it each time.</div>
+          <div class="bt-rts-counter ${charClass}" id="bt-rts-counter">${charCount}/250</div>
+        </div>
       </div>`;
     }
+
+    // Notes area (always visible when tracked, no character limit)
+    html += `<div class="bt-rts-section">
+      <div class="bt-rts-label">My Notes</div>
+      <textarea class="bt-notes-textarea" id="bt-notes-textarea" data-list="${firstList.id}" data-number="${bill.number}" placeholder="Personal notes — not cleared on status change...">${esc(item.notes || '')}</textarea>
+    </div>`;
+
+    // RTS agenda links — populated asynchronously
+    html += `<div class="bt-rts-link-row">
+      <a href="https://apps.azleg.gov/BillStatus/BillOverview/${bill.session || ''}/${esc(bill.number)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link">&#127963; View on AZLeg.gov</a>
+    </div>
+    <div class="bt-rts-agendas" id="bt-rts-agendas" data-bill="${esc(bill.number)}"></div>`;
 
     // RTS Action History
     const historyEntries = buildActionHistory(bill, userActions);
@@ -1099,11 +1124,18 @@
       });
     });
 
-    // RTS comment auto-save
+    // RTS comment auto-save with character counter
     const textarea = body.querySelector('#bt-rts-textarea');
     if (textarea) {
+      const counter = body.querySelector('#bt-rts-counter');
       let saveTimer = null;
       textarea.addEventListener('input', () => {
+        // Update character counter
+        if (counter) {
+          const len = textarea.value.length;
+          counter.textContent = `${len}/250`;
+          counter.className = 'bt-rts-counter' + (len > 250 ? ' bt-rts-counter--over' : len > 200 ? ' bt-rts-counter--warn' : '');
+        }
         clearTimeout(saveTimer);
         saveTimer = setTimeout(() => {
           tracking.updateItem(textarea.dataset.list, textarea.dataset.number, {
@@ -1111,6 +1143,35 @@
             needsAttention: false,
           });
           updateListsBadge();
+        }, 500);
+      });
+    }
+
+    // Copy RTS comment to clipboard
+    const copyBtn = body.querySelector('#bt-rts-copy');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const rtsTextarea = body.querySelector('#bt-rts-textarea');
+        if (rtsTextarea && rtsTextarea.value) {
+          navigator.clipboard.writeText(rtsTextarea.value).then(() => {
+            const original = copyBtn.innerHTML;
+            copyBtn.innerHTML = '&#10003; Copied!';
+            setTimeout(() => { copyBtn.innerHTML = original; }, 2000);
+          });
+        }
+      });
+    }
+
+    // Notes auto-save (no character limit, not cleared on status change)
+    const notesTextarea = body.querySelector('#bt-notes-textarea');
+    if (notesTextarea) {
+      let notesSaveTimer = null;
+      notesTextarea.addEventListener('input', () => {
+        clearTimeout(notesSaveTimer);
+        notesSaveTimer = setTimeout(() => {
+          tracking.updateItem(notesTextarea.dataset.list, notesTextarea.dataset.number, {
+            notes: notesTextarea.value,
+          });
         }, 500);
       });
     }
@@ -1123,6 +1184,90 @@
         showListPopover(addBtn, bill.number);
       });
     }
+  }
+
+  /* ============================================================
+     RTS Agenda Fetcher — populates deep links asynchronously
+     ============================================================ */
+
+  const rtsCache = {}; // billNumber → { data, timestamp }
+  const RTS_CACHE_TTL = 60 * 60 * 1000; // 1 hour client-side
+
+  async function loadRtsAgendas(billNumber) {
+    const container = document.getElementById('bt-rts-agendas');
+    if (!container || container.dataset.bill !== billNumber) return;
+
+    // Check client cache
+    const cached = rtsCache[billNumber];
+    if (cached && Date.now() - cached.timestamp < RTS_CACHE_TTL) {
+      renderRtsAgendas(container, cached.data);
+      return;
+    }
+
+    // Only fetch in production mode
+    if (state.mode === 'demo') {
+      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/TopicSearch" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Request to Speak</a></div>';
+      return;
+    }
+
+    container.innerHTML = '<div class="bt-rts-loading">Checking RTS availability...</div>';
+
+    try {
+      const resp = await fetch(`${state.apiBase}/api/rts/${encodeURIComponent(billNumber)}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+
+      rtsCache[billNumber] = { data, timestamp: Date.now() };
+      // Re-check container is still for this bill (user may have navigated away)
+      if (container.dataset.bill === billNumber) {
+        renderRtsAgendas(container, data);
+      }
+    } catch (err) {
+      console.error('RTS fetch failed:', err);
+      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/TopicSearch" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Request to Speak</a></div>';
+    }
+  }
+
+  function renderRtsAgendas(container, data) {
+    if (!data.session_active) {
+      container.innerHTML = '<div class="bt-rts-inactive">Legislative session not active — RTS unavailable</div>';
+      return;
+    }
+
+    const agendas = (data.agendas || []).filter(a => !a.is_past);
+
+    if (agendas.length === 0) {
+      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/TopicSearch" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Request to Speak</a></div><div class="bt-rts-hint">No upcoming committee hearings found for this bill.</div>';
+      return;
+    }
+
+    let html = '';
+    for (const agenda of agendas) {
+      html += `<div class="bt-rts-agenda-card">
+        <div class="bt-rts-agenda-header">
+          <span class="bt-rts-agenda-committee">${agenda.chamber} ${esc(agenda.committee)}</span>
+          ${agenda.can_rts ? '<span class="bt-rts-open-badge">RTS Open</span>' : '<span class="bt-rts-closed-badge">RTS Closed</span>'}
+        </div>
+        <div class="bt-rts-agenda-details">
+          ${agenda.date ? `<span>${esc(agenda.date)}</span>` : ''}
+          ${agenda.time ? `<span>${esc(agenda.time)}</span>` : ''}
+          ${agenda.room ? `<span>${esc(agenda.room)}</span>` : ''}
+        </div>
+        <div class="bt-rts-agenda-positions">
+          <span class="bt-rts-tally bt-rts-tally--for">${agenda.positions.for} For</span>
+          <span class="bt-rts-tally bt-rts-tally--against">${agenda.positions.against} Against</span>
+          <span class="bt-rts-tally bt-rts-tally--neutral">${agenda.positions.neutral} Neutral</span>
+        </div>
+        <div class="bt-rts-link-row">
+          ${agenda.can_rts
+            ? `<a href="${esc(agenda.rts_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Submit RTS for this hearing</a>`
+            : `<a href="https://apps.azleg.gov/RequestToSpeak/TopicSearch" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link">&#128483; Request to Speak</a>`
+          }
+        </div>
+      </div>`;
+    }
+
+    container.innerHTML = html;
   }
 
   /* ============================================================
@@ -1140,7 +1285,7 @@
     // Attention summary
     const attentionCount = tracking.getAttentionCount();
     attentionEl.innerHTML = attentionCount > 0
-      ? `<div class="bt-attention-banner"><span class="bt-attention-banner-icon">&#9888;&#65039;</span>${attentionCount} bill${attentionCount !== 1 ? 's' : ''} need${attentionCount === 1 ? 's' : ''} attention — status changed, RTS comments cleared</div>`
+      ? `<div class="bt-attention-banner"><span class="bt-attention-banner-icon">&#9888;&#65039;</span>${attentionCount} bill${attentionCount !== 1 ? 's' : ''} need${attentionCount === 1 ? 's' : ''} attention — status changed, re-submit RTS on azleg.gov</div>`
       : '';
 
     // Update settings menu delete list options
@@ -1225,7 +1370,7 @@
 
     // Status change alert (only for active items)
     if (item.needsAttention && !isArchived) {
-      html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed — update your RTS comment</div>`;
+      html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed — re-submit your RTS on azleg.gov</div>`;
     }
 
     // Read-only RTS comment (only if has content, not archived)
@@ -1233,6 +1378,14 @@
       html += `<div class="bt-rts-section bt-rts-section--readonly">
         <div class="bt-rts-label">My RTS Comment</div>
         <div class="bt-rts-readonly">${esc(item.rtsComment)}</div>
+      </div>`;
+    }
+
+    // Read-only notes (only if has content, not archived)
+    if (item.notes && !isArchived) {
+      html += `<div class="bt-rts-section bt-rts-section--readonly">
+        <div class="bt-rts-label">My Notes</div>
+        <div class="bt-rts-readonly">${esc(item.notes)}</div>
       </div>`;
     }
 
