@@ -541,7 +541,7 @@
           ${bill.governor_action ? `<div><dt>Governor</dt><dd>${esc(bill.governor_action)} (${formatDate(bill.governor_action_date)})</dd></div>` : ''}
         </dl>
         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
-          ${bill.azleg_url ? `<a href="${esc(bill.azleg_url)}" target="_blank" rel="noopener" class="bt-detail-azleg">View on azleg.gov &rarr;</a>` : ''}
+          ${bill.azleg_url ? `<a href="${esc(bill.azleg_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-detail-azleg">&#127963; View on AZLeg.gov &rarr;</a>` : ''}
           <button class="bt-btn bt-btn--small bt-detail-add-btn" data-number="${esc(bill.number)}">${isTracked ? '&#10003; On list' : '+ Add to list'}</button>
         </div>
       </div>
@@ -635,10 +635,7 @@
     </div>`;
 
     // RTS agenda links — populated asynchronously
-    html += `<div class="bt-rts-link-row">
-      <a href="https://apps.azleg.gov/BillStatus/BillOverview/${bill.session || ''}/${esc(bill.number)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link">&#127963; View on AZLeg.gov</a>
-    </div>
-    <div class="bt-rts-agendas" id="bt-rts-agendas" data-bill="${esc(bill.number)}"></div>`;
+    html += `<div class="bt-rts-agendas" id="bt-rts-agendas" data-bill="${esc(bill.number)}"></div>`;
 
     // RTS Action History
     const historyEntries = buildActionHistory(bill, userActions);
@@ -1206,7 +1203,7 @@
 
     // Only fetch in production mode
     if (state.mode === 'demo') {
-      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/TopicSearch" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Request to Speak</a></div>';
+      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/MyBillPositions" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Set My Bill Position</a></div>';
       return;
     }
 
@@ -1224,7 +1221,7 @@
       }
     } catch (err) {
       console.error('RTS fetch failed:', err);
-      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/TopicSearch" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Request to Speak</a></div>';
+      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/MyBillPositions" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Set My Bill Position</a></div>';
     }
   }
 
@@ -1237,7 +1234,7 @@
     const agendas = (data.agendas || []).filter(a => !a.is_past);
 
     if (agendas.length === 0) {
-      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/TopicSearch" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Request to Speak</a></div><div class="bt-rts-hint">No upcoming committee hearings found for this bill.</div>';
+      container.innerHTML = '<div class="bt-rts-link-row"><a href="https://apps.azleg.gov/RequestToSpeak/MyBillPositions" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Request to Speak</a></div><div class="bt-rts-hint">No upcoming committee hearings found for this bill.</div>';
       return;
     }
 
@@ -1261,7 +1258,7 @@
         <div class="bt-rts-link-row">
           ${agenda.can_rts
             ? `<a href="${esc(agenda.rts_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Submit RTS for this hearing</a>`
-            : `<a href="https://apps.azleg.gov/RequestToSpeak/TopicSearch" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link">&#128483; Request to Speak</a>`
+            : `<a href="https://apps.azleg.gov/RequestToSpeak/MyBillPositions" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Set My Bill Position</a>`
           }
         </div>
       </div>`;

@@ -625,20 +625,16 @@ a:hover { color: var(--bt-mesa-warm); }
 .bt-detail-meta dd { display: inline; margin: 0; }
 
 .bt-detail-azleg {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
-  margin-top: 12px;
-  padding: 10px 16px;
-  background: var(--bt-sand);
-  border-radius: var(--bt-radius-sm);
-  font-size: 15px;
-  font-weight: 600;
+  margin-top: 0;
   color: var(--bt-terracotta);
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 }
-.bt-detail-azleg:hover { background: var(--bt-sand-dark); }
+.bt-detail-azleg:hover {
+  background: var(--bt-sand);
+  border-color: var(--bt-terracotta);
+}
 
 /* Detail: sections */
 .bt-detail-section {
