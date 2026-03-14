@@ -32,22 +32,22 @@ No API key needed. Just fetch and go.
 
 ```bash
 # Get all bills
-curl "https://cactus-watch-central.alex-logvin.workers.dev/api/bills"
+curl "https://cactus.watch/api/bills"
 
 # Search for education bills
-curl "https://cactus-watch-central.alex-logvin.workers.dev/api/bills?search=education"
+curl "https://cactus.watch/api/bills?search=education"
 
 # House bills that passed committee
-curl "https://cactus-watch-central.alex-logvin.workers.dev/api/bills?chamber=H&status=passed_committee"
+curl "https://cactus.watch/api/bills?chamber=H&status=passed_committee"
 
 # Full detail on a specific bill (sponsors, committee actions, individual votes)
-curl "https://cactus-watch-central.alex-logvin.workers.dev/api/bills/HB2839"
+curl "https://cactus.watch/api/bills/HB2839"
 
 # Session metadata and bill count summary
-curl "https://cactus-watch-central.alex-logvin.workers.dev/api/meta"
+curl "https://cactus.watch/api/meta"
 
 # Bills that changed since a date (for syncing)
-curl "https://cactus-watch-central.alex-logvin.workers.dev/api/bills/sync?since=2026-03-01"
+curl "https://cactus.watch/api/bills/sync?since=2026-03-01"
 ```
 
 ### Filter Options

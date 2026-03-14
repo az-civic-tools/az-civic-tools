@@ -20,7 +20,7 @@ Demo mode activates automatically when:
 
 ### Production Mode (live API)
 
-Used on **Cloudflare Pages** and any host that isn't GitHub Pages. Queries the live [Cactus Watch API](https://cactus-watch-central.alex-logvin.workers.dev) for real-time bill data with server-side filtering and pagination.
+Used on **Cloudflare Pages** and any host that isn't GitHub Pages. Queries the live [Cactus Watch API](https://cactus.watch) for real-time bill data with server-side filtering and pagination.
 
 Production mode activates automatically for any hostname not listed above.
 
@@ -44,12 +44,12 @@ This runs in **demo mode** with the bundled sample data. It's a fully static sit
 Point the frontend at the live Cactus Watch API:
 
 ```html
-<script src="cactus-watch.js" data-api="https://cactus-watch-central.alex-logvin.workers.dev"></script>
+<script src="cactus-watch.js" data-api="https://cactus.watch"></script>
 ```
 
 Or via URL parameter:
 ```
-cactus-watch.html?api=https://cactus-watch-central.alex-logvin.workers.dev
+cactus-watch.html?api=https://cactus.watch
 ```
 
 This gives you real-time data with server-side filtering. The API is free, public, and rate-limited to 100 requests/minute per IP.
@@ -95,8 +95,8 @@ frontend/
 The demo data is a static snapshot. To refresh it from the live API:
 
 ```bash
-curl -s "https://cactus-watch-central.alex-logvin.workers.dev/api/meta" > demo-data/meta.json
-curl -s "https://cactus-watch-central.alex-logvin.workers.dev/api/bills?limit=200" > /tmp/bills.json
+curl -s "https://cactus.watch/api/meta" > demo-data/meta.json
+curl -s "https://cactus.watch/api/bills?limit=200" > /tmp/bills.json
 # Curate a subset and save to demo-data/bills.json
 # Fetch individual bill details to demo-data/bills/{number}.json
 ```
