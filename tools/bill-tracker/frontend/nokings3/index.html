@@ -462,6 +462,7 @@
       <figure class="nk-modal-img-wrap">
         <img class="nk-modal-img" id="nk-modal-img" src="" alt="" draggable="false">
         <div class="nk-img-actions" id="nk-img-actions" hidden>
+          <button class="nk-img-action-btn" id="nk-img-edit" aria-label="Edit image" title="Edit image">&#9999;&#65039;</button>
           <button class="nk-img-action-btn" id="nk-img-delete" aria-label="Delete image" title="Delete image">&#128465;</button>
         </div>
       </figure>
@@ -508,12 +509,42 @@
       <label for="nk-comment-input">Comment <span style="font-weight:400;text-transform:none">(optional)</span></label>
       <input type="text" id="nk-comment-input" placeholder="Add a comment..." maxlength="280">
     </div>
+    <div class="nk-field">
+      <label for="nk-address-input">Address <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <input type="text" id="nk-address-input" placeholder="e.g. 123 Main St, Phoenix, AZ 85001">
+    </div>
     <div class="nk-upload-progress" id="nk-upload-progress">
       <div class="nk-upload-progress-bar" id="nk-upload-progress-bar"></div>
     </div>
     <div class="nk-upload-actions">
       <button class="nk-btn nk-btn--primary" id="nk-upload-submit" disabled>Upload</button>
       <button class="nk-btn nk-btn--secondary" id="nk-upload-cancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="nk-upload-backdrop nk-edit-backdrop" id="nk-edit-backdrop"></div>
+  <div class="nk-upload-modal nk-edit-modal" id="nk-edit-modal" role="dialog" aria-label="Edit image" aria-modal="true">
+    <h3 class="nk-upload-title">Edit Image</h3>
+    <div class="nk-field">
+      <label for="nk-edit-city">City</label>
+      <input type="text" id="nk-edit-city" list="nk-city-list" placeholder="e.g. Phoenix, Tucson, Flagstaff..." required>
+    </div>
+    <div class="nk-field">
+      <label for="nk-edit-source">Source URL <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <input type="url" id="nk-edit-source" placeholder="https://...">
+    </div>
+    <div class="nk-field">
+      <label for="nk-edit-comment">Comment <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <input type="text" id="nk-edit-comment" placeholder="Add a comment..." maxlength="280">
+    </div>
+    <div class="nk-field">
+      <label for="nk-edit-address">Address <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <input type="text" id="nk-edit-address" placeholder="e.g. 123 Main St, Phoenix, AZ 85001">
+    </div>
+    <div class="nk-upload-actions">
+      <button class="nk-btn nk-btn--primary" id="nk-edit-save">Save</button>
+      <button class="nk-btn nk-btn--secondary" id="nk-edit-cancel">Cancel</button>
     </div>
   </div>
 
@@ -564,6 +595,7 @@
       let galleryCity = null;
       let galleryIndex = 0;
       let deleteTargetId = null;
+      let editingImageId = null;
 
       /* --- DOM refs --- */
       const $ = (s) => document.getElementById(s);
@@ -591,6 +623,7 @@
       const cityList = $('nk-city-list');
       const sourceInput = $('nk-source-input');
       const commentInput = $('nk-comment-input');
+      const addressInput = $('nk-address-input');
       const uploadSubmit = $('nk-upload-submit');
       const uploadCancel = $('nk-upload-cancel');
       const uploadProgress = $('nk-upload-progress');
@@ -851,6 +884,7 @@
         cityInput.value = '';
         sourceInput.value = '';
         commentInput.value = '';
+        addressInput.value = '';
         uploadSubmit.disabled = true;
         uploadProgress.style.display = 'none';
         uploadProgressBar.style.width = '0%';
@@ -887,6 +921,7 @@
         formData.append('city', cityInput.value.trim());
         if (sourceInput.value.trim()) formData.append('source_url', sourceInput.value.trim());
         if (commentInput.value.trim()) formData.append('caption', commentInput.value.trim());
+        if (addressInput.value.trim()) formData.append('address', addressInput.value.trim());
         try {
           uploadProgressBar.style.width = '40%';
           const res = await fetch(API_BASE + '/images', { method: 'POST', credentials: 'include', body: formData });
@@ -935,6 +970,85 @@
           confirmDelete.disabled = false;
           alert('Delete failed. Please try again.');
         }
+      });
+
+      /* ============================================================
+         Edit (Admin)
+         ============================================================ */
+      const editBackdrop = $('nk-edit-backdrop');
+      const editModal = $('nk-edit-modal');
+      const editCityInput = $('nk-edit-city');
+      const editSourceInput = $('nk-edit-source');
+      const editCommentInput = $('nk-edit-comment');
+      const editAddressInput = $('nk-edit-address');
+      const editSaveBtn = $('nk-edit-save');
+      const editCancelBtn = $('nk-edit-cancel');
+
+      function openEditModal(imageId) {
+        const img = allImages.find(i => i.id === imageId);
+        if (!img) return;
+        editingImageId = imageId;
+        editCityInput.value = img.city || '';
+        editSourceInput.value = img.source_url || '';
+        editCommentInput.value = img.caption || '';
+        editAddressInput.value = img.address || '';
+        editBackdrop.classList.add('nk-visible');
+        editModal.classList.add('nk-visible');
+        document.body.style.overflow = 'hidden';
+        editCityInput.focus();
+      }
+
+      function closeEditModal() {
+        editBackdrop.classList.remove('nk-visible');
+        editModal.classList.remove('nk-visible');
+        if (!galleryCity) document.body.style.overflow = '';
+        editingImageId = null;
+      }
+
+      async function saveEdit() {
+        if (!editingImageId || !editCityInput.value.trim()) return;
+        editSaveBtn.disabled = true;
+        editSaveBtn.textContent = 'Saving...';
+        try {
+          const body = {
+            city: editCityInput.value.trim(),
+            caption: editCommentInput.value.trim(),
+            source_url: editSourceInput.value.trim(),
+            address: editAddressInput.value.trim(),
+          };
+          const res = await fetch(API_BASE + '/images/' + editingImageId, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          if (!res.ok) throw new Error('Save failed: ' + res.status);
+          closeEditModal();
+          await loadImages();
+          if (galleryCity) {
+            const images = citiesMap[galleryCity];
+            if (images && images.length > 0) {
+              galleryIndex = Math.min(galleryIndex, images.length - 1);
+              updateGalleryImage();
+            }
+          }
+        } catch (err) {
+          console.error('Edit error:', err);
+          alert('Save failed. Please try again.');
+        } finally {
+          editSaveBtn.disabled = false;
+          editSaveBtn.textContent = 'Save';
+        }
+      }
+
+      editSaveBtn.addEventListener('click', saveEdit);
+      editCancelBtn.addEventListener('click', closeEditModal);
+      editBackdrop.addEventListener('click', closeEditModal);
+
+      $('nk-img-edit').addEventListener('click', () => {
+        const images = citiesMap[galleryCity];
+        if (!images) return;
+        openEditModal(images[galleryIndex].id);
       });
 
       /* ============================================================
@@ -1039,7 +1153,7 @@
       ]);
 
       const EVENTS = [
-        { city: 'Tempe', lat: 33.4255, lng: -111.9400, metro: true, events: [
+        { city: 'Tempe', lat: 33.4255, lng: -111.9400, metro: true, address: '2000 E Carson Dr, Tempe, AZ 85282', events: [
           { name: 'NO KINGS Tempe Pedestrian Bridge', url: 'https://www.mobilize.us/nokings/event/785738/' },
           { name: 'NO KINGS Tempe Pedestrian Bridge/March Food and Clothing drive', url: 'https://www.mobilize.us/nokings/event/905961/' },
         ]},
@@ -1054,7 +1168,7 @@
         { city: 'Sun City', lat: 33.6042, lng: -112.2711, metro: true, events: [
           { name: 'NO KINGS Sun City', url: 'https://www.mobilize.us/nokings/event/880182/' },
         ]},
-        { city: 'Scottsdale', lat: 33.4942, lng: -111.9261, metro: true, events: [
+        { city: 'Scottsdale', lat: 33.4942, lng: -111.9261, metro: true, address: '14500 N Northsight Blvd 221, Scottsdale, AZ 85260', events: [
           { name: 'NO KINGS Scottsdale Waterfront', url: 'https://www.mobilize.us/nokings/event/785736/' },
           { name: 'NO KINGS Scottsdale Fashion Square', url: 'https://www.mobilize.us/nokings/event/880146/' },
           { name: 'NO KINGS Scottsdale Civic Center', url: 'https://www.mobilize.us/nokings/event/905945/' },
@@ -1064,7 +1178,7 @@
           { name: 'NO KINGS Queen Creek', url: 'https://www.mobilize.us/nokings/event/785770/' },
           { name: 'NO KINGS Queen Creek Community Rally', url: 'https://www.mobilize.us/nokings/event/906015/' },
         ]},
-        { city: 'Phoenix', lat: 33.4484, lng: -112.0740, metro: true, events: [
+        { city: 'Phoenix', lat: 33.4484, lng: -112.0740, metro: true, address: '1700 W Washington St, Wesley Bolin Plaza, Phoenix, AZ 85007', events: [
           { name: 'NO KINGS Phoenix Capitol', url: 'https://www.mobilize.us/nokings/event/785725/' },
           { name: 'NO KINGS Phoenix Biltmore', url: 'https://www.mobilize.us/nokings/event/880100/' },
           { name: 'NO KINGS Phoenix March', url: 'https://www.mobilize.us/nokings/event/905900/' },
@@ -1073,20 +1187,20 @@
         { city: 'Peoria', lat: 33.5806, lng: -112.2374, metro: true, events: [
           { name: 'NO KINGS Peoria', url: 'https://www.mobilize.us/nokings/event/880160/' },
         ]},
-        { city: 'Mesa', lat: 33.4152, lng: -111.8315, metro: true, events: [
+        { city: 'Mesa', lat: 33.4152, lng: -111.8315, metro: true, address: 'E Southern Ave & S Stapley Dr, Mesa, AZ 85204', events: [
           { name: 'NO KINGS Mesa', url: 'https://www.mobilize.us/nokings/event/785740/' },
         ]},
         { city: 'Maricopa', lat: 33.0581, lng: -112.0476, metro: true, events: [
           { name: 'NO KINGS Maricopa', url: 'https://www.mobilize.us/nokings/event/880170/' },
           { name: 'NO KINGS Maricopa Community', url: 'https://www.mobilize.us/nokings/event/906020/' },
         ]},
-        { city: 'Glendale', lat: 33.5387, lng: -112.1859, metro: true, events: [
+        { city: 'Glendale', lat: 33.5387, lng: -112.1859, metro: true, address: 'Bell Rd & 59th Ave, Glendale, AZ 85308', events: [
           { name: 'NO KINGS Glendale', url: 'https://www.mobilize.us/nokings/event/880150/' },
         ]},
         { city: 'Fountain Hills', lat: 33.6042, lng: -111.7257, metro: true, events: [
           { name: 'NO KINGS Fountain Hills', url: 'https://www.mobilize.us/nokings/event/880190/' },
         ]},
-        { city: 'Chandler', lat: 33.3062, lng: -111.8413, metro: true, events: [
+        { city: 'Chandler', lat: 33.3062, lng: -111.8413, metro: true, address: '439 N Coronado St, Chandler, AZ 85224', events: [
           { name: 'NO KINGS Chandler', url: 'https://www.mobilize.us/nokings/event/785745/' },
         ]},
         { city: 'Buckeye', lat: 33.3703, lng: -112.5838, metro: true, events: [
@@ -1095,7 +1209,7 @@
         { city: 'Apache Junction', lat: 33.4150, lng: -111.5496, metro: true, events: [
           { name: 'NO KINGS Apache Junction', url: 'https://www.mobilize.us/nokings/event/880210/' },
         ]},
-        { city: 'Anthem', lat: 33.8653, lng: -112.1468, metro: true, events: [
+        { city: 'Anthem', lat: 33.8653, lng: -112.1468, metro: true, address: 'W Anthem Way & N Gavilan Peak Pkwy, Anthem, AZ 85086', events: [
           { name: 'NO KINGS Anthem', url: 'https://www.mobilize.us/nokings/event/880220/' },
         ]},
         { city: 'Yuma', lat: 32.6927, lng: -114.6277, metro: false, events: [
@@ -1112,7 +1226,7 @@
         { city: 'Vail', lat: 32.0478, lng: -110.7151, metro: false, events: [
           { name: 'NO KINGS Vail', url: 'https://www.mobilize.us/nokings/event/880260/' },
         ]},
-        { city: 'Tucson', lat: 32.2226, lng: -110.9747, metro: false, events: [
+        { city: 'Tucson', lat: 32.2226, lng: -110.9747, metro: false, address: 'Intersection of Houghton & Rita Rd, Tucson, AZ 85747', events: [
           { name: 'NO KINGS Tucson Downtown', url: 'https://www.mobilize.us/nokings/event/785730/' },
           { name: 'NO KINGS Tucson University', url: 'https://www.mobilize.us/nokings/event/880110/' },
           { name: 'NO KINGS Tucson March', url: 'https://www.mobilize.us/nokings/event/905910/' },
@@ -1121,7 +1235,7 @@
         { city: 'Sierra Vista', lat: 31.5455, lng: -110.2837, metro: false, events: [
           { name: 'NO KINGS Sierra Vista', url: 'https://www.mobilize.us/nokings/event/880270/' },
         ]},
-        { city: 'Sedona', lat: 34.8697, lng: -111.7610, metro: false, events: [
+        { city: 'Sedona', lat: 34.8697, lng: -111.7610, metro: false, address: 'Tlaquepaque, Sedona, AZ 86336', events: [
           { name: 'NO KINGS Sedona', url: 'https://www.mobilize.us/nokings/event/785755/' },
           { name: 'NO KINGS Sedona Tlaquepaque', url: 'https://www.mobilize.us/nokings/event/906005/' },
         ]},
@@ -1138,7 +1252,7 @@
         { city: 'Prescott Valley', lat: 34.6100, lng: -112.3150, metro: false, events: [
           { name: 'NO KINGS Prescott Valley', url: 'https://www.mobilize.us/nokings/event/880310/' },
         ]},
-        { city: 'Prescott', lat: 34.5400, lng: -112.4685, metro: false, events: [
+        { city: 'Prescott', lat: 34.5400, lng: -112.4685, metro: false, address: 'Yavapai County Courthouse Plaza, Prescott, AZ 86301', events: [
           { name: 'NO KINGS Prescott Courthouse', url: 'https://www.mobilize.us/nokings/event/785760/' },
         ]},
         { city: 'Payson', lat: 34.2309, lng: -111.3251, metro: false, events: [
@@ -1174,7 +1288,7 @@
           { name: 'NO KINGS Globe Broad Street', url: 'https://www.mobilize.us/nokings/event/906050/' },
           { name: 'NO KINGS Globe Community', url: 'https://www.mobilize.us/nokings/event/906055/' },
         ]},
-        { city: 'Cottonwood', lat: 34.7392, lng: -112.0099, metro: false, events: [
+        { city: 'Cottonwood', lat: 34.7392, lng: -112.0099, metro: false, address: '350 S 12th St, Cottonwood, AZ 86326', events: [
           { name: 'NO KINGS Cottonwood', url: 'https://www.mobilize.us/nokings/event/880410/' },
           { name: 'NO KINGS Cottonwood Old Town', url: 'https://www.mobilize.us/nokings/event/906060/' },
         ]},

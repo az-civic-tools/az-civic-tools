@@ -20,7 +20,7 @@ import { handleListBills, handleGetBill, handleSyncBills } from './routes/bills.
 import { handleMeta } from './routes/meta.js';
 import { handleScrape, handleScrapeAll } from './routes/scrape.js';
 import { handleRts } from './routes/rts.js';
-import { handleListImages, handleUploadImage, handleGetImage, handleDeleteImage, handleListAdmins, handleAddAdmin, handleUpdateAdmin, handleDeleteAdmin, handleAdminCheck } from './routes/nokings.js';
+import { handleListImages, handleUploadImage, handleGetImage, handleEditImage, handleDeleteImage, handleListAdmins, handleAddAdmin, handleUpdateAdmin, handleDeleteAdmin, handleAdminCheck } from './routes/nokings.js';
 import { runScraper, BILL_PREFIXES } from './scraper.js';
 import { checkRateLimit } from './rate-limit.js';
 
@@ -99,6 +99,9 @@ export default {
       } else if (path.match(/^\/api\/nokings\/image\/[a-zA-Z0-9-]+$/) && request.method === 'GET') {
         const id = path.split('/').pop();
         response = await handleGetImage(request, env, id);
+      } else if (path.match(/^\/api\/nokings\/images\/[a-zA-Z0-9-]+$/) && request.method === 'PATCH') {
+        const id = path.split('/').pop();
+        response = await handleEditImage(request, env, id);
       } else if (path.match(/^\/api\/nokings\/images\/[a-zA-Z0-9-]+$/) && request.method === 'DELETE') {
         const id = path.split('/').pop();
         response = await handleDeleteImage(request, env, id);

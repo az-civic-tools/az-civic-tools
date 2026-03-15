@@ -115,7 +115,7 @@ function generateId() {
  */
 export async function handleListImages(request, env) {
   const result = await env.DB.prepare(`
-    SELECT id, city, image_url, source_url, caption, uploaded_by, uploaded_at
+    SELECT id, city, image_url, source_url, caption, address, uploaded_by, uploaded_at
     FROM nokings_images
     ORDER BY city ASC, uploaded_at DESC
   `).all();
@@ -135,6 +135,7 @@ export async function handleListImages(request, env) {
       image_url: `/api/nokings/image/${row.id}`,
       source_url: row.source_url || null,
       caption: row.caption || null,
+      address: row.address || null,
       uploaded_by: row.uploaded_by,
       uploaded_at: row.uploaded_at,
     });
@@ -297,6 +298,80 @@ export async function handleGetImage(request, env, id) {
       'Content-Length': object.size.toString(),
     },
   });
+}
+
+/**
+ * PATCH /api/nokings/images/:id — Edit image metadata.
+ *
+ * Body: { city?, caption?, source_url?, address? }
+ * Admin only.
+ */
+export async function handleEditImage(request, env, id) {
+  const user = await requireAdmin(request, env);
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+  let body;
+  try { body = await request.json(); } catch {
+    return Response.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  // Check image exists
+  const existing = await env.DB.prepare(
+    'SELECT id FROM nokings_images WHERE id = ?'
+  ).bind(id).first();
+  if (!existing) return Response.json({ error: 'Image not found' }, { status: 404 });
+
+  // Build update fields
+  const updates = [];
+  const bindings = [];
+
+  if (body.city !== undefined) {
+    const city = (body.city || '').trim();
+    if (!city) return Response.json({ error: 'City cannot be empty' }, { status: 400 });
+    updates.push('city = ?');
+    bindings.push(city);
+  }
+  if (body.caption !== undefined) {
+    updates.push('caption = ?');
+    bindings.push(body.caption || null);
+  }
+  if (body.source_url !== undefined) {
+    if (body.source_url && body.source_url.trim()) {
+      try {
+        const parsed = new URL(body.source_url.trim());
+        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+          return Response.json({ error: 'source_url must use http or https' }, { status: 400 });
+        }
+        updates.push('source_url = ?');
+        bindings.push(parsed.href);
+      } catch {
+        return Response.json({ error: 'Invalid source_url' }, { status: 400 });
+      }
+    } else {
+      updates.push('source_url = ?');
+      bindings.push(null);
+    }
+  }
+  if (body.address !== undefined) {
+    updates.push('address = ?');
+    bindings.push(body.address || null);
+  }
+
+  if (updates.length === 0) {
+    return Response.json({ error: 'No fields to update' }, { status: 400 });
+  }
+
+  bindings.push(id);
+  try {
+    await env.DB.prepare(
+      `UPDATE nokings_images SET ${updates.join(', ')} WHERE id = ?`
+    ).bind(...bindings).run();
+  } catch (err) {
+    console.error('Edit image failed:', err);
+    return Response.json({ error: 'Failed to update image' }, { status: 500 });
+  }
+
+  return Response.json({ success: true });
 }
 
 /**
