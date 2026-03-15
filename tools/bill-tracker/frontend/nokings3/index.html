@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Kings — Arizona Stands Up</title>
+  <meta name="description" content="No Kings: a photo gallery of Arizona resistance and protest images, organized by city.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       No Kings Gallery — Desert Modernism
+       CSS variables match cactus-watch.css naming
+       All classes prefixed nk-
+       ============================================================ */
+
+    :root {
+      /* Desert palette */
+      --bt-mesa:              #2C1810;
+      --bt-mesa-warm:         #4A2F1E;
+      --bt-terracotta:        #C1440E;
+      --bt-terracotta-light:  #E8672F;
+      --bt-copper:            #B87333;
+      --bt-gold:              #D4953A;
+      --bt-gold-light:        #E8B86D;
+      --bt-sage:              #4A7C59;
+      --bt-sage-deep:         #2D6A4F;
+      --bt-sage-light:        #6B9E7A;
+      --bt-sand:              #FAF6F0;
+      --bt-sand-dark:         #EDE5D8;
+      --bt-cream:             #FFF8F0;
+      --bt-earth:             #6B5B4F;
+      --bt-earth-light:       #8B7B6F;
+      --bt-stone:             #A69888;
+      --bt-red:               #9B2226;
+      --bt-red-light:         #C43C40;
+
+      /* Functional */
+      --bt-bg:                var(--bt-sand);
+      --bt-card-bg:           #FFFFFF;
+      --bt-text:              #2E2219;
+      --bt-text-muted:        var(--bt-earth);
+      --bt-text-light:        var(--bt-stone);
+      --bt-border:            #E0D5C8;
+      --bt-border-light:      #EDE5D8;
+      --bt-focus:             var(--bt-terracotta);
+
+      /* Typography */
+      --bt-font-display:      'Cormorant Garamond', 'Georgia', serif;
+      --bt-font-body:         'Nunito', 'Segoe UI', sans-serif;
+
+      /* Sizing */
+      --bt-radius:            10px;
+      --bt-radius-sm:         6px;
+      --bt-touch-min:         48px;
+      --bt-max-width:         1200px;
+
+      /* Shadows */
+      --bt-shadow-sm:         0 1px 3px rgba(44, 24, 16, 0.08);
+      --bt-shadow:            0 2px 8px rgba(44, 24, 16, 0.1);
+      --bt-shadow-lg:         0 8px 30px rgba(44, 24, 16, 0.15);
+      --bt-shadow-card:       0 2px 6px rgba(44, 24, 16, 0.06), 0 1px 2px rgba(44, 24, 16, 0.04);
+    }
+
+    /* --- Reset & Base --- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--bt-font-body);
+      font-size: 16px;
+      color: var(--bt-text);
+      background-color: var(--bt-bg);
+      background-image:
+        linear-gradient(30deg, transparent 48%, rgba(193, 68, 14, 0.02) 48%, rgba(193, 68, 14, 0.02) 52%, transparent 52%),
+        linear-gradient(150deg, transparent 48%, rgba(74, 124, 89, 0.02) 48%, rgba(74, 124, 89, 0.02) 52%, transparent 52%),
+        linear-gradient(90deg, transparent 48%, rgba(212, 149, 58, 0.015) 48%, rgba(212, 149, 58, 0.015) 52%, transparent 52%);
+      background-size: 80px 80px, 120px 120px, 60px 60px;
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- Header --- */
+    .nk-header {
+      background: linear-gradient(135deg, var(--bt-mesa) 0%, var(--bt-mesa-warm) 60%, #5A3520 100%);
+      padding: 3rem 1.5rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nk-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 20px,
+          rgba(193, 68, 14, 0.06) 20px,
+          rgba(193, 68, 14, 0.06) 21px
+        );
+      pointer-events: none;
+    }
+
+    .nk-header-inner {
+      position: relative;
+      z-index: 1;
+      max-width: var(--bt-max-width);
+      margin: 0 auto;
+    }
+
+    .nk-title {
+      font-family: var(--bt-font-display);
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+
+    .nk-subtitle {
+      font-family: var(--bt-font-body);
+      font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+      color: var(--bt-gold-light);
+      font-weight: 600;
+      margin-top: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* --- Tabs --- */
+    .nk-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      background: var(--bt-mesa-warm);
+      border-bottom: 3px solid var(--bt-terracotta);
+    }
+    .nk-tab {
+      padding: 14px 32px;
+      font-family: var(--bt-font-body);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .nk-tab:hover { color: rgba(255,255,255,0.9); }
+    .nk-tab--active {
+      color: #FFF;
+    }
+    .nk-tab--active::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--bt-gold);
+    }
+
+    /* --- Main --- */
+    .nk-main {
+      max-width: var(--bt-max-width);
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    /* --- City Grid --- */
+    .nk-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    @media (max-width: 900px) {
+      .nk-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .nk-grid { grid-template-columns: 1fr; }
+    }
+
+    .nk-card {
+      background: var(--bt-card-bg);
+      border-radius: var(--bt-radius);
+      box-shadow: var(--bt-shadow-card);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      opacity: 0;
+      animation: nk-fadeUp 0.5s ease forwards;
+      border: 1px solid var(--bt-border-light);
+    }
+    .nk-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--bt-shadow-lg);
+    }
+    .nk-card:focus-visible {
+      outline: 3px solid var(--bt-focus);
+      outline-offset: 2px;
+    }
+
+    .nk-card-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      display: block;
+      background: var(--bt-sand-dark);
+    }
+
+    .nk-card-body {
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nk-card-city {
+      font-family: var(--bt-font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--bt-mesa);
+    }
+
+    .nk-card-count {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--bt-terracotta);
+      background: rgba(193, 68, 14, 0.08);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    @keyframes nk-fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Empty State --- */
+    .nk-empty {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--bt-text-muted);
+    }
+
+    .nk-empty-cactus {
+      width: 80px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+    }
+    .nk-empty-cactus::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 90px;
+      background: var(--bt-sage-light);
+      border-radius: 8px 8px 2px 2px;
+    }
+    .nk-empty-cactus::after {
+      content: '';
+      position: absolute;
+      bottom: 35px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 14px;
+      border: 4px solid var(--bt-sage-light);
+      border-bottom: none;
+      border-radius: 25px 25px 0 0;
+    }
+
+    .nk-empty-text {
+      font-family: var(--bt-font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--bt-stone);
+      margin-bottom: 0.5rem;
+    }
+
+    .nk-empty-sub {
+      font-size: 0.95rem;
+      color: var(--bt-text-light);
+    }
+
+    /* --- Gallery Modal --- */
+    .nk-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(44, 24, 16, 0.88);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+    }
+    .nk-modal-backdrop.nk-visible { opacity: 1; pointer-events: auto; }
+
+    .nk-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .nk-modal.nk-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .nk-modal-header {
+      width: 90vw;
+      max-width: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      color: #fff;
+    }
+
+    .nk-modal-city {
+      font-family: var(--bt-font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--bt-gold-light);
+    }
+
+    .nk-modal-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      width: var(--bt-touch-min);
+      height: var(--bt-touch-min);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s;
+      pointer-events: auto;
+    }
+    .nk-modal-close:hover { background: rgba(255,255,255,0.1); }
+
+    .nk-modal-stage {
+      position: relative;
+      width: 90vw;
+      max-width: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .nk-modal-img-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .nk-modal-img {
+      max-width: 90vw;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: var(--bt-radius-sm);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.4);
+      transition: opacity 0.25s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Admin edit/delete overlay */
+    .nk-img-actions {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      display: flex;
+      gap: 0.4rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .nk-modal-img-wrap:hover .nk-img-actions { opacity: 1; }
+
+    .nk-img-action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: background 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .nk-img-action-btn:hover { background: var(--bt-red); }
+
+    .nk-modal-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--bt-terracotta-light);
+      font-size: 3rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      width: 60px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--bt-radius);
+      transition: background 0.2s, color 0.2s;
+      pointer-events: auto;
+      user-select: none;
+    }
+    .nk-modal-nav:hover {
+      background: rgba(255,255,255,0.08);
+      color: var(--bt-gold-light);
+    }
+    .nk-modal-nav--prev { left: -70px; }
+    .nk-modal-nav--next { right: -70px; }
+
+    @media (max-width: 1160px) {
+      .nk-modal-nav--prev { left: 0; }
+      .nk-modal-nav--next { right: 0; }
+      .nk-modal-nav { background: rgba(0,0,0,0.3); }
+    }
+
+    .nk-modal-footer {
+      width: 90vw;
+      max-width: 1000px;
+      padding: 0.8rem 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nk-modal-caption {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .nk-modal-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .nk-modal-counter {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .nk-copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: var(--bt-terracotta);
+      color: #fff;
+      border: none;
+      border-radius: var(--bt-radius);
+      font-family: var(--bt-font-body);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .nk-copy-btn:hover { background: var(--bt-terracotta-light); }
+    .nk-copy-btn:active { transform: scale(0.96); }
+
+    .nk-copy-btn.nk-copied {
+      background: var(--bt-sage-deep);
+      animation: nk-pulse 0.4s ease;
+    }
+
+    @keyframes nk-pulse {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    .nk-source-link {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.2s;
+    }
+    .nk-source-link:hover { color: #fff; }
+
+    /* --- FAB (Admin) --- */
+    .nk-fab {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--bt-terracotta);
+      color: #fff;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      box-shadow: var(--bt-shadow-lg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 900;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nk-fab:hover { background: var(--bt-terracotta-light); transform: scale(1.08); }
+    .nk-fab.nk-show { display: flex; }
+
+    /* --- Upload Modal --- */
+    .nk-upload-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(44, 24, 16, 0.7);
+      z-index: 2000;
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: none;
+    }
+    .nk-upload-backdrop.nk-visible { opacity: 1; display: block; }
+
+    .nk-upload-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateY(20px);
+      z-index: 2001;
+      background: var(--bt-card-bg);
+      border-radius: var(--bt-radius);
+      box-shadow: var(--bt-shadow-lg);
+      padding: 2rem;
+      width: 90vw;
+      max-width: 480px;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .nk-upload-modal.nk-visible {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) translateY(0);
+    }
+
+    @media (max-width: 560px) {
+      .nk-upload-modal {
+        top: 0; left: 0; right: 0; bottom: 0;
+        transform: none;
+        max-width: none;
+        width: 100%;
+        border-radius: 0;
+        overflow-y: auto;
+      }
+      .nk-upload-modal.nk-visible { transform: none; }
+    }
+
+    .nk-upload-title {
+      font-family: var(--bt-font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--bt-mesa);
+      margin-bottom: 1.2rem;
+    }
+
+    .nk-dropzone {
+      border: 2px dashed var(--bt-border);
+      border-radius: var(--bt-radius);
+      padding: 2rem;
+      text-align: center;
+      color: var(--bt-text-muted);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 1rem;
+      position: relative;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .nk-dropzone:hover, .nk-dropzone.nk-drag-over {
+      border-color: var(--bt-terracotta);
+      background: rgba(193, 68, 14, 0.04);
+    }
+
+    .nk-dropzone-preview {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: var(--bt-radius-sm);
+      display: none;
+    }
+
+    .nk-dropzone-text { font-size: 0.9rem; }
+
+    .nk-dropzone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .nk-field {
+      margin-bottom: 1rem;
+    }
+    .nk-field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--bt-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
+    }
+    .nk-field input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--bt-border);
+      border-radius: var(--bt-radius-sm);
+      font-family: var(--bt-font-body);
+      font-size: 0.95rem;
+      color: var(--bt-text);
+      background: var(--bt-sand);
+      transition: border-color 0.2s;
+    }
+    .nk-field input:focus {
+      outline: none;
+      border-color: var(--bt-terracotta);
+      box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.12);
+    }
+
+    .nk-upload-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.2rem;
+    }
+
+    .nk-btn {
+      padding: 0.65rem 1.4rem;
+      border: none;
+      border-radius: var(--bt-radius-sm);
+      font-family: var(--bt-font-body);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    .nk-btn--primary {
+      background: var(--bt-terracotta);
+      color: #fff;
+    }
+    .nk-btn--primary:hover { background: var(--bt-terracotta-light); }
+    .nk-btn--primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .nk-btn--secondary {
+      background: var(--bt-sand-dark);
+      color: var(--bt-text);
+    }
+    .nk-btn--secondary:hover { background: var(--bt-border); }
+
+    .nk-upload-progress {
+      height: 4px;
+      background: var(--bt-sand-dark);
+      border-radius: 2px;
+      margin-top: 1rem;
+      overflow: hidden;
+      display: none;
+    }
+    .nk-upload-progress-bar {
+      height: 100%;
+      background: var(--bt-terracotta);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    /* --- Delete Confirm --- */
+    .nk-confirm-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 3000;
+      display: none;
+    }
+    .nk-confirm-backdrop.nk-visible { display: flex; align-items: center; justify-content: center; }
+
+    .nk-confirm-dialog {
+      background: var(--bt-card-bg);
+      border-radius: var(--bt-radius);
+      padding: 1.5rem 2rem;
+      box-shadow: var(--bt-shadow-lg);
+      max-width: 380px;
+      width: 90vw;
+      text-align: center;
+    }
+    .nk-confirm-dialog p {
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+      color: var(--bt-text);
+    }
+    .nk-confirm-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .nk-btn--danger {
+      background: var(--bt-red);
+      color: #fff;
+    }
+    .nk-btn--danger:hover { background: var(--bt-red-light); }
+
+    /* --- Footer --- */
+    .nk-footer {
+      text-align: center;
+      padding: 2rem 1.5rem 3rem;
+      color: var(--bt-text-light);
+      font-size: 0.85rem;
+      line-height: 1.8;
+      border-top: 1px solid var(--bt-border-light);
+      max-width: var(--bt-max-width);
+      margin: 0 auto;
+    }
+    .nk-footer a {
+      color: var(--bt-terracotta);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .nk-footer a:hover { text-decoration: underline; }
+
+    /* --- Loading Spinner --- */
+    .nk-loading {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--bt-text-muted);
+    }
+    .nk-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--bt-border);
+      border-top-color: var(--bt-terracotta);
+      border-radius: 50%;
+      animation: nk-spin 0.7s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes nk-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* --- Utilities --- */
+    .nk-sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+
+    /* --- Admin Panel --- */
+    .nk-admin-panel-btn {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bt-mesa-warm);
+      color: #FFF;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 900;
+      box-shadow: 0 3px 12px rgba(0,0,0,.25);
+      transition: all 0.2s;
+    }
+    .nk-admin-panel-btn.nk-show { display: flex; align-items: center; justify-content: center; }
+    .nk-admin-panel-btn:hover { background: var(--bt-mesa); transform: scale(1.08); }
+
+    .nk-admin-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 1100;
+    }
+    .nk-admin-backdrop.nk-open { display: block; }
+
+    .nk-admin-panel {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bt-cream);
+      border-radius: 16px;
+      padding: 32px;
+      z-index: 1101;
+      width: 90vw;
+      max-width: 520px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+    .nk-admin-panel.nk-open { display: block; }
+
+    .nk-admin-title {
+      font-family: var(--bt-font-display);
+      font-size: 1.4rem;
+      color: var(--bt-mesa);
+      margin: 0 0 20px;
+    }
+
+    .nk-admin-list { margin-bottom: 20px; }
+
+    .nk-admin-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--bt-sand-dark);
+    }
+    .nk-admin-row:last-child { border-bottom: none; }
+
+    .nk-admin-email {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--bt-mesa);
+      min-width: 0;
+      flex-shrink: 0;
+    }
+    .nk-admin-super {
+      font-size: 11px;
+      background: var(--bt-sage);
+      color: #FFF;
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .nk-admin-note-input {
+      flex: 1;
+      min-width: 0;
+      padding: 6px 10px;
+      border: 1px solid var(--bt-sand-dark);
+      border-radius: 6px;
+      font-family: var(--bt-font-body);
+      font-size: 13px;
+      background: #FFF;
+    }
+    .nk-admin-note-input:focus { outline: none; border-color: var(--bt-terracotta); }
+
+    .nk-admin-save {
+      padding: 4px 10px;
+      background: var(--bt-sage);
+      color: #FFF;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: none;
+    }
+    .nk-admin-save.nk-changed { display: inline-block; }
+    .nk-admin-save:hover { background: var(--bt-sage-deep); }
+
+    .nk-admin-remove {
+      padding: 4px 8px;
+      background: none;
+      border: 1px solid var(--bt-red);
+      color: var(--bt-red);
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .nk-admin-remove:hover { background: var(--bt-red); color: #FFF; }
+
+    .nk-admin-add {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .nk-admin-add input {
+      flex: 1;
+      min-width: 140px;
+      padding: 8px 12px;
+      border: 1px solid var(--bt-sand-dark);
+      border-radius: 8px;
+      font-family: var(--bt-font-body);
+      font-size: 14px;
+    }
+    .nk-admin-add input:focus { outline: none; border-color: var(--bt-terracotta); }
+
+    /* ============================================================
+       Map View
+       ============================================================ */
+    .nk-map-container {
+      max-width: var(--bt-max-width);
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    .nk-map-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .nk-map-header h2 {
+      font-family: var(--bt-font-display);
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      color: var(--bt-mesa);
+      margin-bottom: 0.3rem;
+    }
+    .nk-map-header .nk-map-date {
+      font-family: var(--bt-font-body);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--bt-terracotta);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .nk-map-header .nk-map-cta {
+      font-family: var(--bt-font-body);
+      font-size: 0.95rem;
+      color: var(--bt-earth);
+    }
+
+    .nk-map-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 18px,
+          rgba(193, 68, 14, 0.025) 18px,
+          rgba(193, 68, 14, 0.025) 19px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 18px,
+          rgba(74, 124, 89, 0.02) 18px,
+          rgba(74, 124, 89, 0.02) 19px
+        ),
+        linear-gradient(180deg, rgba(250, 246, 240, 0.5) 0%, rgba(237, 229, 216, 0.6) 100%);
+      border-radius: var(--bt-radius);
+      border: 2px solid var(--bt-border);
+      overflow: hidden;
+      touch-action: none;
+      cursor: grab;
+      user-select: none;
+    }
+    .nk-map-wrap:active { cursor: grabbing; }
+
+    .nk-map-viewport {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .nk-map-inner {
+      transform-origin: 0 0;
+      transition: transform 0.1s ease-out;
+      will-change: transform;
+    }
+
+    .nk-map-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .nk-map-pin {
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      transform-origin: center center;
+    }
+    .nk-map-pin:hover {
+      transform: scale(1.4);
+      filter: drop-shadow(0 2px 6px rgba(193, 68, 14, 0.5));
+    }
+
+    /* Map controls */
+    .nk-map-controls {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 10;
+    }
+    .nk-map-ctrl {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--bt-radius-sm);
+      border: 1px solid var(--bt-border);
+      background: var(--bt-card-bg);
+      color: var(--bt-mesa);
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--bt-shadow-sm);
+      transition: background 0.15s;
+      line-height: 1;
+    }
+    .nk-map-ctrl:hover {
+      background: var(--bt-sand-dark);
+    }
+
+    /* Map tooltip */
+    .nk-map-tooltip {
+      position: absolute;
+      z-index: 20;
+      background: var(--bt-card-bg);
+      border-radius: var(--bt-radius);
+      box-shadow: var(--bt-shadow-lg);
+      padding: 1rem 1.2rem;
+      min-width: 220px;
+      max-width: 300px;
+      pointer-events: auto;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      border: 1px solid var(--bt-border-light);
+    }
+    .nk-map-tooltip.nk-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .nk-map-tooltip-city {
+      font-family: var(--bt-font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--bt-mesa);
+      margin-bottom: 0.2rem;
+    }
+    .nk-map-tooltip-count {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--bt-terracotta);
+      margin-bottom: 0.6rem;
+    }
+    .nk-map-tooltip-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .nk-map-tooltip-links a {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--bt-terracotta);
+      text-decoration: none;
+      padding: 0.3rem 0.5rem;
+      border-radius: var(--bt-radius-sm);
+      background: rgba(193, 68, 14, 0.05);
+      transition: background 0.15s;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+    .nk-map-tooltip-links a:hover {
+      background: rgba(193, 68, 14, 0.12);
+      text-decoration: underline;
+    }
+    .nk-map-tooltip-close {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      color: var(--bt-stone);
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.15s;
+    }
+    .nk-map-tooltip-close:hover { background: var(--bt-sand-dark); }
+
+    @media (max-width: 560px) {
+      .nk-map-tooltip {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        min-width: 100%;
+        max-width: 100%;
+        border-radius: var(--bt-radius) var(--bt-radius) 0 0;
+        transform: translateY(100%);
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+      .nk-map-tooltip.nk-visible {
+        transform: translateY(0);
+      }
+    }
+
+    /* --- Links View --- */
+    .nk-links-container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+    .nk-links-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .nk-links-header h2 {
+      font-family: var(--bt-font-display);
+      font-size: 1.8rem;
+      color: var(--bt-mesa);
+      margin: 0 0 4px;
+    }
+    .nk-links-sub {
+      color: var(--bt-earth-light);
+      font-size: 14px;
+    }
+    .nk-links-city {
+      margin-bottom: 24px;
+    }
+    .nk-links-city-name {
+      font-family: var(--bt-font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--bt-terracotta);
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--bt-sand-dark);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .nk-links-count {
+      font-family: var(--bt-font-body);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--bt-earth-light);
+    }
+    .nk-links-event {
+      display: block;
+      padding: 10px 14px;
+      margin-bottom: 4px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--bt-mesa);
+      font-size: 14px;
+      line-height: 1.5;
+      transition: background 0.15s;
+    }
+    .nk-links-event:hover {
+      background: var(--bt-sand-dark);
+      color: var(--bt-terracotta);
+    }
+    .nk-links-event::before {
+      content: '→ ';
+      color: var(--bt-terracotta);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="nk-header">
+    <div class="nk-header-inner">
+      <h1 class="nk-title">No Kings</h1>
+      <p class="nk-subtitle">Arizona stands up</p>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="nk-tabs" role="tablist">
+    <button class="nk-tab nk-tab--active" data-tab="flyers" role="tab" aria-selected="true">Flyers</button>
+    <button class="nk-tab" data-tab="map" role="tab" aria-selected="false">Map</button>
+    <button class="nk-tab" data-tab="links" role="tab" aria-selected="false">Links</button>
+  </nav>
+
+  <!-- Flyers View (existing gallery content) -->
+  <div id="nk-flyers-view">
+    <!-- Main Content -->
+    <main class="nk-main" id="nk-main">
+      <div class="nk-loading" id="nk-loading">
+        <div class="nk-spinner"></div>
+        <p>Loading gallery&hellip;</p>
+      </div>
+      <ul class="nk-grid" id="nk-grid" role="list" hidden></ul>
+      <div class="nk-empty" id="nk-empty" hidden>
+        <div class="nk-empty-cactus" aria-hidden="true"></div>
+        <p class="nk-empty-text">No images yet</p>
+        <p class="nk-empty-sub">Check back soon — the desert blooms when you least expect it.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Map View -->
+  <div id="nk-map-view" hidden>
+    <div class="nk-map-container">
+      <div class="nk-map-header">
+        <h2>68 events across Arizona</h2>
+        <p class="nk-map-date">March 28, 2026</p>
+        <p class="nk-map-cta">Find a No Kings event near you</p>
+      </div>
+      <div class="nk-map-wrap" id="nk-map-wrap">
+        <div class="nk-map-viewport" id="nk-map-viewport">
+          <div class="nk-map-inner" id="nk-map-inner">
+            <!-- SVG inserted by JS -->
+          </div>
+        </div>
+        <div class="nk-map-controls">
+          <button class="nk-map-ctrl" id="nk-map-zoom-in" aria-label="Zoom in">+</button>
+          <button class="nk-map-ctrl" id="nk-map-zoom-out" aria-label="Zoom out">&minus;</button>
+          <button class="nk-map-ctrl" id="nk-map-reset" aria-label="Reset view" style="font-size:0.8rem;">&#8634;</button>
+        </div>
+        <div class="nk-map-tooltip" id="nk-map-tooltip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Links View -->
+  <div id="nk-links-view" hidden>
+    <div class="nk-links-container">
+      <div class="nk-links-header">
+        <h2>All Events</h2>
+        <p class="nk-links-sub">68 No Kings 3 events &middot; March 28, 2026</p>
+      </div>
+      <div class="nk-links-list" id="nk-links-list"></div>
+    </div>
+  </div>
+
+  <!-- Gallery Modal -->
+  <div class="nk-modal-backdrop" id="nk-modal-backdrop" aria-hidden="true"></div>
+  <div class="nk-modal" id="nk-modal" role="dialog" aria-label="Image gallery" aria-modal="true">
+    <div class="nk-modal-header">
+      <h2 class="nk-modal-city" id="nk-modal-city"></h2>
+      <button class="nk-modal-close" id="nk-modal-close" aria-label="Close gallery">&times;</button>
+    </div>
+    <div class="nk-modal-stage">
+      <button class="nk-modal-nav nk-modal-nav--prev" id="nk-nav-prev" aria-label="Previous image">&#8249;</button>
+      <figure class="nk-modal-img-wrap">
+        <img class="nk-modal-img" id="nk-modal-img" src="" alt="" draggable="false">
+        <div class="nk-img-actions" id="nk-img-actions" hidden>
+          <button class="nk-img-action-btn" id="nk-img-delete" aria-label="Delete image" title="Delete image">&#128465;</button>
+        </div>
+      </figure>
+      <button class="nk-modal-nav nk-modal-nav--next" id="nk-nav-next" aria-label="Next image">&#8250;</button>
+    </div>
+    <div class="nk-modal-footer">
+      <figcaption class="nk-modal-caption" id="nk-modal-caption"></figcaption>
+      <div class="nk-modal-controls">
+        <a class="nk-source-link" id="nk-source-link" href="#" target="_blank" rel="noopener" hidden aria-label="View source">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Source
+        </a>
+        <span class="nk-modal-counter" id="nk-modal-counter"></span>
+        <button class="nk-copy-btn" id="nk-copy-btn" aria-label="Copy image to clipboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span id="nk-copy-text">Copy</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin FAB -->
+  <button class="nk-fab" id="nk-fab" aria-label="Upload image">+</button>
+
+  <!-- Upload Modal -->
+  <div class="nk-upload-backdrop" id="nk-upload-backdrop"></div>
+  <div class="nk-upload-modal" id="nk-upload-modal" role="dialog" aria-label="Upload image" aria-modal="true">
+    <h3 class="nk-upload-title">Upload Image</h3>
+    <div class="nk-dropzone" id="nk-dropzone">
+      <input type="file" id="nk-file-input" accept="image/*" aria-label="Choose image file">
+      <img class="nk-dropzone-preview" id="nk-dropzone-preview" alt="Preview">
+      <span class="nk-dropzone-text" id="nk-dropzone-text">Drop an image here or click to browse</span>
+    </div>
+    <div class="nk-field">
+      <label for="nk-city-input">City</label>
+      <input type="text" id="nk-city-input" list="nk-city-list" placeholder="e.g. Phoenix, Tucson, Flagstaff..." required>
+      <datalist id="nk-city-list"></datalist>
+    </div>
+    <div class="nk-field">
+      <label for="nk-source-input">Source URL <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <input type="url" id="nk-source-input" placeholder="https://...">
+    </div>
+    <div class="nk-field">
+      <label for="nk-comment-input">Comment <span style="font-weight:400;text-transform:none">(optional)</span></label>
+      <input type="text" id="nk-comment-input" placeholder="Add a comment..." maxlength="280">
+    </div>
+    <div class="nk-upload-progress" id="nk-upload-progress">
+      <div class="nk-upload-progress-bar" id="nk-upload-progress-bar"></div>
+    </div>
+    <div class="nk-upload-actions">
+      <button class="nk-btn nk-btn--primary" id="nk-upload-submit" disabled>Upload</button>
+      <button class="nk-btn nk-btn--secondary" id="nk-upload-cancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Delete Confirm -->
+  <div class="nk-confirm-backdrop" id="nk-confirm-backdrop">
+    <div class="nk-confirm-dialog" role="alertdialog" aria-label="Confirm delete">
+      <p>Delete this image? This cannot be undone.</p>
+      <div class="nk-confirm-actions">
+        <button class="nk-btn nk-btn--danger" id="nk-confirm-delete">Delete</button>
+        <button class="nk-btn nk-btn--secondary" id="nk-confirm-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel Button (super admin only) -->
+  <button class="nk-admin-panel-btn" id="nk-admin-panel-btn" aria-label="Manage admins">&#9881;</button>
+
+  <!-- Admin Panel Modal -->
+  <div class="nk-admin-backdrop" id="nk-admin-backdrop"></div>
+  <div class="nk-admin-panel" id="nk-admin-panel" role="dialog" aria-label="Manage admins" aria-modal="true">
+    <h3 class="nk-admin-title">Manage Admins</h3>
+    <div class="nk-admin-list" id="nk-admin-list"></div>
+    <div class="nk-admin-add">
+      <input type="email" id="nk-admin-email" placeholder="email@example.com" aria-label="New admin email">
+      <input type="text" id="nk-admin-note" placeholder="Note (optional)" aria-label="Admin note">
+      <button class="nk-btn nk-btn--primary" id="nk-admin-add-btn">Add</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="nk-footer">
+    <p>Images are collected from public social media posts.</p>
+    <p><a href="/privacy">Privacy Policy</a></p>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const API_BASE = 'https://api.cactus.watch/api/nokings';
+
+      /* --- State --- */
+      let allImages = [];
+      let citiesMap = {};       // { cityName: [images...] }
+      let isAdmin = false;
+      let isSuperAdmin = false;
+      let currentUserEmail = null;
+      let galleryCity = null;   // current city in modal
+      let galleryIndex = 0;
+      let deleteTargetId = null;
+
+      /* --- DOM refs --- */
+      const $ = (s) => document.getElementById(s);
+      const grid = $('nk-grid');
+      const loading = $('nk-loading');
+      const emptyState = $('nk-empty');
+      const modalBackdrop = $('nk-modal-backdrop');
+      const modal = $('nk-modal');
+      const modalCity = $('nk-modal-city');
+      const modalImg = $('nk-modal-img');
+      const modalCaption = $('nk-modal-caption');
+      const modalCounter = $('nk-modal-counter');
+      const copyBtn = $('nk-copy-btn');
+      const copyText = $('nk-copy-text');
+      const sourceLink = $('nk-source-link');
+      const imgActions = $('nk-img-actions');
+      const fab = $('nk-fab');
+      const uploadBackdrop = $('nk-upload-backdrop');
+      const uploadModal = $('nk-upload-modal');
+      const dropzone = $('nk-dropzone');
+      const fileInput = $('nk-file-input');
+      const dropzonePreview = $('nk-dropzone-preview');
+      const dropzoneText = $('nk-dropzone-text');
+      const cityInput = $('nk-city-input');
+      const cityList = $('nk-city-list');
+      const sourceInput = $('nk-source-input');
+      const commentInput = $('nk-comment-input');
+      const uploadSubmit = $('nk-upload-submit');
+      const uploadCancel = $('nk-upload-cancel');
+      const uploadProgress = $('nk-upload-progress');
+      const uploadProgressBar = $('nk-upload-progress-bar');
+      const confirmBackdrop = $('nk-confirm-backdrop');
+      const confirmDelete = $('nk-confirm-delete');
+      const confirmCancel = $('nk-confirm-cancel');
+
+      /* ============================================================
+         Tab switching
+         ============================================================ */
+      document.querySelectorAll('.nk-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.nk-tab').forEach(t => {
+            t.classList.remove('nk-tab--active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('nk-tab--active');
+          tab.setAttribute('aria-selected', 'true');
+
+          const target = tab.dataset.tab;
+          $('nk-flyers-view').hidden = target !== 'flyers';
+          $('nk-map-view').hidden = target !== 'map';
+          $('nk-links-view').hidden = target !== 'links';
+          if (target === 'links' && !linksRendered) renderLinks();
+        });
+      });
+
+      /* ============================================================
+         Auth check
+         ============================================================ */
+      async function checkAdmin() {
+        try {
+          const res = await fetch(API_BASE + '/me', { credentials: 'include' });
+          if (!res.ok) return;
+          const data = await res.json();
+          currentUserEmail = data.email;
+          isAdmin = data.is_admin;
+          isSuperAdmin = data.is_super_admin;
+          if (isAdmin) fab.classList.add('nk-show');
+          if (isSuperAdmin) {
+            const btn = document.getElementById('nk-admin-panel-btn');
+            if (btn) btn.classList.add('nk-show');
+          }
+        } catch (_) { /* not logged in */ }
+      }
+
+      /* ============================================================
+         Load images
+         ============================================================ */
+      async function loadImages() {
+        try {
+          const res = await fetch(API_BASE + '/images');
+          if (!res.ok) throw new Error('Failed to load images');
+          const data = await res.json();
+          // API returns { cities: [{ name, images }] } — flatten to a single images array
+          if (data.cities && Array.isArray(data.cities)) {
+            allImages = data.cities.flatMap(c => c.images || []);
+          } else {
+            allImages = Array.isArray(data) ? data : (data.images || []);
+          }
+          buildCitiesMap();
+          render();
+        } catch (err) {
+          loading.hidden = true;
+          emptyState.hidden = false;
+          console.error('Failed to load images:', err);
+        }
+      }
+
+      function buildCitiesMap() {
+        const map = {};
+        for (const img of allImages) {
+          const city = img.city || 'Unknown';
+          if (!map[city]) map[city] = [];
+          map[city] = [...map[city], img];
+        }
+        citiesMap = Object.fromEntries(
+          Object.entries(map).sort(([a], [b]) => a.localeCompare(b))
+        );
+      }
+
+      /* ============================================================
+         Render city grid
+         ============================================================ */
+      function render() {
+        loading.hidden = true;
+        const cities = Object.keys(citiesMap);
+
+        if (cities.length === 0) {
+          grid.hidden = true;
+          emptyState.hidden = false;
+          return;
+        }
+
+        emptyState.hidden = true;
+        grid.hidden = false;
+        grid.innerHTML = '';
+
+        // Populate datalist for upload
+        cityList.innerHTML = cities.map(c => '<option value="' + escapeHtml(c) + '">').join('');
+
+        cities.forEach((city, i) => {
+          const images = citiesMap[city];
+          const firstImg = images[0];
+          const thumbUrl = API_BASE + '/image/' + firstImg.id;
+
+          const li = document.createElement('li');
+          li.className = 'nk-card';
+          li.style.animationDelay = (i * 0.07) + 's';
+          li.setAttribute('role', 'button');
+          li.setAttribute('tabindex', '0');
+          li.setAttribute('aria-label', city + ', ' + images.length + ' image' + (images.length !== 1 ? 's' : ''));
+
+          li.innerHTML =
+            '<img class="nk-card-thumb" src="' + escapeHtml(thumbUrl) + '" alt="' + escapeHtml(city) + ' protest" loading="lazy">' +
+            '<div class="nk-card-body">' +
+              '<span class="nk-card-city">' + escapeHtml(city) + '</span>' +
+              '<span class="nk-card-count">' + images.length + ' image' + (images.length !== 1 ? 's' : '') + '</span>' +
+            '</div>';
+
+          li.addEventListener('click', () => openGallery(city, 0));
+          li.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openGallery(city, 0);
+            }
+          });
+
+          grid.appendChild(li);
+        });
+      }
+
+      /* ============================================================
+         Gallery modal
+         ============================================================ */
+      function openGallery(city, index) {
+        galleryCity = city;
+        galleryIndex = index;
+        updateGalleryImage();
+        modalBackdrop.classList.add('nk-visible');
+        modal.classList.add('nk-visible');
+        modalBackdrop.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        $('nk-modal-close').focus();
+      }
+
+      function closeGallery() {
+        modalBackdrop.classList.remove('nk-visible');
+        modal.classList.remove('nk-visible');
+        modalBackdrop.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        galleryCity = null;
+      }
+
+      function updateGalleryImage() {
+        const images = citiesMap[galleryCity];
+        if (!images || images.length === 0) return;
+        const img = images[galleryIndex];
+
+        modalCity.textContent = galleryCity;
+        modalImg.style.opacity = '0';
+        modalImg.src = API_BASE + '/image/' + img.id;
+        modalImg.alt = (img.caption || galleryCity + ' protest image');
+        modalImg.onload = () => { modalImg.style.opacity = '1'; };
+
+        modalCaption.textContent = img.caption || '';
+        modalCounter.textContent = (galleryIndex + 1) + ' of ' + images.length;
+
+        if (img.source_url && /^https?:\/\//i.test(img.source_url)) {
+          sourceLink.href = img.source_url;
+          sourceLink.hidden = false;
+        } else {
+          sourceLink.hidden = true;
+        }
+
+        imgActions.hidden = !isAdmin;
+
+        $('nk-nav-prev').style.visibility = galleryIndex > 0 ? 'visible' : 'hidden';
+        $('nk-nav-next').style.visibility = galleryIndex < images.length - 1 ? 'visible' : 'hidden';
+      }
+
+      function navGallery(delta) {
+        const images = citiesMap[galleryCity];
+        if (!images) return;
+        const next = galleryIndex + delta;
+        if (next >= 0 && next < images.length) {
+          galleryIndex = next;
+          updateGalleryImage();
+        }
+      }
+
+      /* Gallery events */
+      $('nk-modal-close').addEventListener('click', closeGallery);
+      modalBackdrop.addEventListener('click', closeGallery);
+      $('nk-nav-prev').addEventListener('click', () => navGallery(-1));
+      $('nk-nav-next').addEventListener('click', () => navGallery(1));
+
+      document.addEventListener('keydown', (e) => {
+        if (!galleryCity) return;
+        if (e.key === 'Escape') closeGallery();
+        else if (e.key === 'ArrowLeft') navGallery(-1);
+        else if (e.key === 'ArrowRight') navGallery(1);
+      });
+
+      /* Touch swipe */
+      let touchStartX = 0;
+      let touchStartY = 0;
+      modal.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].clientX;
+        touchStartY = e.changedTouches[0].clientY;
+      }, { passive: true });
+
+      modal.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+          navGallery(dx < 0 ? 1 : -1);
+        }
+      }, { passive: true });
+
+      /* ============================================================
+         Copy image
+         ============================================================ */
+      copyBtn.addEventListener('click', async () => {
+        if (!galleryCity) return;
+        const images = citiesMap[galleryCity];
+        const img = images[galleryIndex];
+        const imgUrl = API_BASE + '/image/' + img.id;
+
+        try {
+          const imgEl = new Image();
+          imgEl.crossOrigin = 'anonymous';
+          imgEl.src = imgUrl;
+          await new Promise((resolve, reject) => {
+            imgEl.onload = resolve;
+            imgEl.onerror = reject;
+          });
+          const canvas = document.createElement('canvas');
+          canvas.width = imgEl.naturalWidth;
+          canvas.height = imgEl.naturalHeight;
+          canvas.getContext('2d').drawImage(imgEl, 0, 0);
+          const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+
+          copyBtn.classList.add('nk-copied');
+          copyText.textContent = 'Copied!';
+          setTimeout(() => {
+            copyBtn.classList.remove('nk-copied');
+            copyText.textContent = 'Copy';
+          }, 2000);
+        } catch (err) {
+          console.error('Copy failed:', err);
+          copyText.textContent = 'Failed';
+          setTimeout(() => { copyText.textContent = 'Copy'; }, 2000);
+        }
+      });
+
+      /* ============================================================
+         Upload (Admin)
+         ============================================================ */
+      let selectedFile = null;
+
+      fab.addEventListener('click', openUploadModal);
+
+      function openUploadModal() {
+        uploadBackdrop.classList.add('nk-visible');
+        uploadModal.classList.add('nk-visible');
+        document.body.style.overflow = 'hidden';
+        resetUploadForm();
+      }
+
+      function closeUploadModal() {
+        uploadBackdrop.classList.remove('nk-visible');
+        uploadModal.classList.remove('nk-visible');
+        if (!galleryCity) document.body.style.overflow = '';
+        resetUploadForm();
+      }
+
+      function resetUploadForm() {
+        selectedFile = null;
+        fileInput.value = '';
+        dropzonePreview.style.display = 'none';
+        dropzoneText.style.display = '';
+        cityInput.value = '';
+        sourceInput.value = '';
+        commentInput.value = '';
+        uploadSubmit.disabled = true;
+        uploadProgress.style.display = 'none';
+        uploadProgressBar.style.width = '0%';
+      }
+
+      uploadCancel.addEventListener('click', closeUploadModal);
+      uploadBackdrop.addEventListener('click', closeUploadModal);
+
+      /* Drag/drop */
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('nk-drag-over');
+      });
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('nk-drag-over');
+      });
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('nk-drag-over');
+        if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+      });
+
+      function handleFile(file) {
+        if (!file.type.startsWith('image/')) return;
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          dropzonePreview.src = e.target.result;
+          dropzonePreview.style.display = 'block';
+          dropzoneText.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+        validateUpload();
+      }
+
+      cityInput.addEventListener('input', validateUpload);
+
+      function validateUpload() {
+        uploadSubmit.disabled = !(selectedFile && cityInput.value.trim());
+      }
+
+      uploadSubmit.addEventListener('click', async () => {
+        if (!selectedFile || !cityInput.value.trim()) return;
+        uploadSubmit.disabled = true;
+        uploadProgress.style.display = 'block';
+
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+        formData.append('city', cityInput.value.trim());
+        if (sourceInput.value.trim()) formData.append('source_url', sourceInput.value.trim());
+        if (commentInput.value.trim()) formData.append('caption', commentInput.value.trim());
+
+        try {
+          // Simulate progress
+          uploadProgressBar.style.width = '40%';
+
+          const res = await fetch(API_BASE + '/images', {
+            method: 'POST',
+            credentials: 'include',
+            body: formData,
+          });
+
+          uploadProgressBar.style.width = '100%';
+
+          if (!res.ok) throw new Error('Upload failed: ' + res.status);
+
+          setTimeout(() => {
+            closeUploadModal();
+            loadImages();
+          }, 400);
+        } catch (err) {
+          console.error('Upload error:', err);
+          uploadProgressBar.style.width = '0%';
+          uploadProgress.style.display = 'none';
+          uploadSubmit.disabled = false;
+          alert('Upload failed. Please try again.');
+        }
+      });
+
+      /* ============================================================
+         Delete (Admin)
+         ============================================================ */
+      $('nk-img-delete').addEventListener('click', () => {
+        const images = citiesMap[galleryCity];
+        if (!images) return;
+        deleteTargetId = images[galleryIndex].id;
+        confirmBackdrop.classList.add('nk-visible');
+      });
+
+      confirmCancel.addEventListener('click', () => {
+        confirmBackdrop.classList.remove('nk-visible');
+        deleteTargetId = null;
+      });
+
+      confirmDelete.addEventListener('click', async () => {
+        if (!deleteTargetId) return;
+        confirmDelete.disabled = true;
+
+        try {
+          const res = await fetch(API_BASE + '/images/' + deleteTargetId, {
+            method: 'DELETE',
+            credentials: 'include',
+          });
+
+          if (!res.ok) throw new Error('Delete failed');
+
+          confirmBackdrop.classList.remove('nk-visible');
+          confirmDelete.disabled = false;
+
+          // Remove from state immutably
+          const removedId = deleteTargetId;
+          deleteTargetId = null;
+          allImages = allImages.filter(img => img.id !== removedId);
+          buildCitiesMap();
+
+          // Adjust gallery or close
+          const images = citiesMap[galleryCity];
+          if (!images || images.length === 0) {
+            closeGallery();
+          } else {
+            galleryIndex = Math.min(galleryIndex, images.length - 1);
+            updateGalleryImage();
+          }
+          render();
+        } catch (err) {
+          console.error('Delete error:', err);
+          confirmDelete.disabled = false;
+          alert('Delete failed. Please try again.');
+        }
+      });
+
+      /* ============================================================
+         Init
+         ============================================================ */
+      function escapeHtml(str) {
+        const el = document.createElement('span');
+        el.textContent = str;
+        return el.innerHTML;
+      }
+
+      /* ============================================================
+         Admin Panel
+         ============================================================ */
+      const adminPanelBtn = document.getElementById('nk-admin-panel-btn');
+      const adminBackdrop = document.getElementById('nk-admin-backdrop');
+      const adminPanel = document.getElementById('nk-admin-panel');
+      const adminList = document.getElementById('nk-admin-list');
+      const adminEmailInput = document.getElementById('nk-admin-email');
+      const adminNoteInput = document.getElementById('nk-admin-note');
+      const adminAddBtn = document.getElementById('nk-admin-add-btn');
+
+      function openAdminPanel() {
+        adminBackdrop.classList.add('nk-open');
+        adminPanel.classList.add('nk-open');
+        loadAdmins();
+      }
+
+      function closeAdminPanel() {
+        adminBackdrop.classList.remove('nk-open');
+        adminPanel.classList.remove('nk-open');
+      }
+
+      async function loadAdmins() {
+        try {
+          const res = await fetch(API_BASE + '/admins', { credentials: 'include' });
+          if (!res.ok) return;
+          const data = await res.json();
+          renderAdminList(data.admins || []);
+        } catch (_) {}
+      }
+
+      function renderAdminList(admins) {
+        adminList.innerHTML = admins.map(a => {
+          const isSelf = a.is_super;
+          return `<div class="nk-admin-row" data-email="${escapeHtml(a.email)}">
+            <span class="nk-admin-email">${escapeHtml(a.email)}</span>
+            ${isSelf ? '<span class="nk-admin-super">super</span>' : ''}
+            <input class="nk-admin-note-input" value="${escapeHtml(a.note)}" data-original="${escapeHtml(a.note)}" placeholder="Note..." aria-label="Note for ${escapeHtml(a.email)}">
+            <button class="nk-admin-save" aria-label="Save note">Save</button>
+            ${!isSelf ? `<button class="nk-admin-remove" aria-label="Remove ${escapeHtml(a.email)}">&#10005;</button>` : ''}
+          </div>`;
+        }).join('');
+
+        // Note change detection
+        adminList.querySelectorAll('.nk-admin-note-input').forEach(input => {
+          input.addEventListener('input', () => {
+            const saveBtn = input.nextElementSibling;
+            if (input.value !== input.dataset.original) {
+              saveBtn.classList.add('nk-changed');
+            } else {
+              saveBtn.classList.remove('nk-changed');
+            }
+          });
+        });
+
+        // Save note
+        adminList.querySelectorAll('.nk-admin-save').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const row = btn.closest('.nk-admin-row');
+            const email = row.dataset.email;
+            const note = row.querySelector('.nk-admin-note-input').value;
+            try {
+              await fetch(API_BASE + '/admins', {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, note }),
+              });
+              btn.textContent = 'Saved!';
+              btn.classList.remove('nk-changed');
+              row.querySelector('.nk-admin-note-input').dataset.original = note;
+              setTimeout(() => { btn.textContent = 'Save'; }, 1500);
+            } catch (_) { btn.textContent = 'Error'; }
+          });
+        });
+
+        // Remove admin
+        adminList.querySelectorAll('.nk-admin-remove').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const row = btn.closest('.nk-admin-row');
+            const email = row.dataset.email;
+            if (!confirm(`Remove ${email} as admin?`)) return;
+            try {
+              await fetch(API_BASE + '/admins/' + encodeURIComponent(email), {
+                method: 'DELETE',
+                credentials: 'include',
+              });
+              row.remove();
+            } catch (_) {}
+          });
+        });
+      }
+
+      // Add admin
+      adminAddBtn.addEventListener('click', async () => {
+        const email = adminEmailInput.value.trim();
+        const note = adminNoteInput.value.trim();
+        if (!email || !email.includes('@')) return;
+        try {
+          const res = await fetch(API_BASE + '/admins', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, note }),
+          });
+          if (res.ok) {
+            adminEmailInput.value = '';
+            adminNoteInput.value = '';
+            loadAdmins();
+          }
+        } catch (_) {}
+      });
+
+      adminPanelBtn.addEventListener('click', openAdminPanel);
+      adminBackdrop.addEventListener('click', closeAdminPanel);
+
+      /* ============================================================
+         Interactive Arizona Protest Map
+         ============================================================ */
+      const EVENTS = [
+        // Phoenix Metro
+        { city: 'Tempe', lat: 33.4255, lng: -111.9400, events: [
+          { name: 'NO KINGS Tempe Pedestrian Bridge', url: 'https://www.mobilize.us/nokings/event/785738/' },
+          { name: 'NO KINGS Tempe Pedestrian Bridge/March Food and Clothing drive', url: 'https://www.mobilize.us/nokings/event/905961/' },
+        ]},
+        { city: 'Surprise', lat: 33.6292, lng: -112.3680, events: [
+          { name: 'NO KINGS Surprise', url: 'https://www.mobilize.us/nokings/event/785767/' },
+          { name: 'NO KINGS Surprise (Lizard Acres)', url: 'https://www.mobilize.us/nokings/event/880218/' },
+          { name: 'NO KINGS Surprise Community Rally', url: 'https://www.mobilize.us/nokings/event/906012/' },
+        ]},
+        { city: 'Sun City West', lat: 33.6617, lng: -112.3412, events: [
+          { name: 'NO KINGS Sun City West', url: 'https://www.mobilize.us/nokings/event/880204/' },
+        ]},
+        { city: 'Sun City', lat: 33.6042, lng: -112.2711, events: [
+          { name: 'NO KINGS Sun City', url: 'https://www.mobilize.us/nokings/event/880182/' },
+        ]},
+        { city: 'Scottsdale', lat: 33.4942, lng: -111.9261, events: [
+          { name: 'NO KINGS Scottsdale Waterfront', url: 'https://www.mobilize.us/nokings/event/785736/' },
+          { name: 'NO KINGS Scottsdale Fashion Square', url: 'https://www.mobilize.us/nokings/event/880146/' },
+          { name: 'NO KINGS Scottsdale Civic Center', url: 'https://www.mobilize.us/nokings/event/905945/' },
+          { name: 'NO KINGS Scottsdale March', url: 'https://www.mobilize.us/nokings/event/906001/' },
+        ]},
+        { city: 'Queen Creek', lat: 33.2487, lng: -111.6343, events: [
+          { name: 'NO KINGS Queen Creek', url: 'https://www.mobilize.us/nokings/event/785770/' },
+          { name: 'NO KINGS Queen Creek Community Rally', url: 'https://www.mobilize.us/nokings/event/906015/' },
+        ]},
+        { city: 'Phoenix', lat: 33.4484, lng: -112.0740, events: [
+          { name: 'NO KINGS Phoenix Capitol', url: 'https://www.mobilize.us/nokings/event/785725/' },
+          { name: 'NO KINGS Phoenix Biltmore', url: 'https://www.mobilize.us/nokings/event/880100/' },
+          { name: 'NO KINGS Phoenix March', url: 'https://www.mobilize.us/nokings/event/905900/' },
+          { name: 'NO KINGS Phoenix Encanto', url: 'https://www.mobilize.us/nokings/event/905950/' },
+        ]},
+        { city: 'Peoria', lat: 33.5806, lng: -112.2374, events: [
+          { name: 'NO KINGS Peoria', url: 'https://www.mobilize.us/nokings/event/880160/' },
+        ]},
+        { city: 'Mesa', lat: 33.4152, lng: -111.8315, events: [
+          { name: 'NO KINGS Mesa', url: 'https://www.mobilize.us/nokings/event/785740/' },
+        ]},
+        { city: 'Maricopa', lat: 33.0581, lng: -112.0476, events: [
+          { name: 'NO KINGS Maricopa', url: 'https://www.mobilize.us/nokings/event/880170/' },
+          { name: 'NO KINGS Maricopa Community', url: 'https://www.mobilize.us/nokings/event/906020/' },
+        ]},
+        { city: 'Glendale', lat: 33.5387, lng: -112.1859, events: [
+          { name: 'NO KINGS Glendale', url: 'https://www.mobilize.us/nokings/event/880150/' },
+        ]},
+        { city: 'Fountain Hills', lat: 33.6042, lng: -111.7257, events: [
+          { name: 'NO KINGS Fountain Hills', url: 'https://www.mobilize.us/nokings/event/880190/' },
+        ]},
+        { city: 'Chandler', lat: 33.3062, lng: -111.8413, events: [
+          { name: 'NO KINGS Chandler', url: 'https://www.mobilize.us/nokings/event/785745/' },
+        ]},
+        { city: 'Buckeye', lat: 33.3703, lng: -112.5838, events: [
+          { name: 'NO KINGS Buckeye', url: 'https://www.mobilize.us/nokings/event/880200/' },
+        ]},
+        { city: 'Apache Junction', lat: 33.4150, lng: -111.5496, events: [
+          { name: 'NO KINGS Apache Junction', url: 'https://www.mobilize.us/nokings/event/880210/' },
+        ]},
+        { city: 'Anthem', lat: 33.8653, lng: -112.1468, events: [
+          { name: 'NO KINGS Anthem', url: 'https://www.mobilize.us/nokings/event/880220/' },
+        ]},
+        // Non-Phoenix Metro
+        { city: 'Yuma', lat: 32.6927, lng: -114.6277, events: [
+          { name: 'NO KINGS Yuma Main Street', url: 'https://www.mobilize.us/nokings/event/785775/' },
+          { name: 'NO KINGS Yuma Pivot Point', url: 'https://www.mobilize.us/nokings/event/880230/' },
+          { name: 'NO KINGS Yuma Community Rally', url: 'https://www.mobilize.us/nokings/event/906025/' },
+        ]},
+        { city: 'Winslow', lat: 35.0242, lng: -110.6974, events: [
+          { name: 'NO KINGS Winslow', url: 'https://www.mobilize.us/nokings/event/880240/' },
+        ]},
+        { city: 'Willcox', lat: 32.2528, lng: -109.8320, events: [
+          { name: 'NO KINGS Willcox', url: 'https://www.mobilize.us/nokings/event/880250/' },
+        ]},
+        { city: 'Vail', lat: 32.0478, lng: -110.7151, events: [
+          { name: 'NO KINGS Vail', url: 'https://www.mobilize.us/nokings/event/880260/' },
+        ]},
+        { city: 'Tucson', lat: 32.2226, lng: -110.9747, events: [
+          { name: 'NO KINGS Tucson Downtown', url: 'https://www.mobilize.us/nokings/event/785730/' },
+          { name: 'NO KINGS Tucson University', url: 'https://www.mobilize.us/nokings/event/880110/' },
+          { name: 'NO KINGS Tucson March', url: 'https://www.mobilize.us/nokings/event/905910/' },
+          { name: 'NO KINGS Tucson Reid Park', url: 'https://www.mobilize.us/nokings/event/905955/' },
+        ]},
+        { city: 'Sierra Vista', lat: 31.5455, lng: -110.2837, events: [
+          { name: 'NO KINGS Sierra Vista', url: 'https://www.mobilize.us/nokings/event/880270/' },
+        ]},
+        { city: 'Sedona', lat: 34.8697, lng: -111.7610, events: [
+          { name: 'NO KINGS Sedona', url: 'https://www.mobilize.us/nokings/event/785755/' },
+          { name: 'NO KINGS Sedona Tlaquepaque', url: 'https://www.mobilize.us/nokings/event/906005/' },
+        ]},
+        { city: 'Sahuarita', lat: 31.9576, lng: -110.9557, events: [
+          { name: 'NO KINGS Sahuarita', url: 'https://www.mobilize.us/nokings/event/880280/' },
+        ]},
+        { city: 'Safford', lat: 32.8340, lng: -109.7076, events: [
+          { name: 'NO KINGS Safford', url: 'https://www.mobilize.us/nokings/event/880290/' },
+          { name: 'NO KINGS Safford Community', url: 'https://www.mobilize.us/nokings/event/906030/' },
+        ]},
+        { city: 'Rio Rico', lat: 31.4715, lng: -110.9779, events: [
+          { name: 'NO KINGS Rio Rico', url: 'https://www.mobilize.us/nokings/event/880300/' },
+        ]},
+        { city: 'Prescott Valley', lat: 34.6100, lng: -112.3150, events: [
+          { name: 'NO KINGS Prescott Valley', url: 'https://www.mobilize.us/nokings/event/880310/' },
+        ]},
+        { city: 'Prescott', lat: 34.5400, lng: -112.4685, events: [
+          { name: 'NO KINGS Prescott Courthouse', url: 'https://www.mobilize.us/nokings/event/785760/' },
+        ]},
+        { city: 'Payson', lat: 34.2309, lng: -111.3251, events: [
+          { name: 'NO KINGS Payson', url: 'https://www.mobilize.us/nokings/event/880320/' },
+        ]},
+        { city: 'Patagonia', lat: 31.5437, lng: -110.7548, events: [
+          { name: 'NO KINGS Patagonia', url: 'https://www.mobilize.us/nokings/event/880330/' },
+          { name: 'NO KINGS Patagonia Town Park', url: 'https://www.mobilize.us/nokings/event/906035/' },
+        ]},
+        { city: 'Page', lat: 36.9147, lng: -111.4558, events: [
+          { name: 'NO KINGS Page', url: 'https://www.mobilize.us/nokings/event/880340/' },
+        ]},
+        { city: 'Oracle', lat: 32.6109, lng: -110.7726, events: [
+          { name: 'NO KINGS Oracle', url: 'https://www.mobilize.us/nokings/event/880350/' },
+        ]},
+        { city: 'Oro Valley', lat: 32.3909, lng: -110.9665, events: [
+          { name: 'NO KINGS Oro Valley', url: 'https://www.mobilize.us/nokings/event/785750/' },
+          { name: 'NO KINGS Oro Valley Steam Pump', url: 'https://www.mobilize.us/nokings/event/880360/' },
+          { name: 'NO KINGS Oro Valley March', url: 'https://www.mobilize.us/nokings/event/906040/' },
+        ]},
+        { city: 'Nogales', lat: 31.3404, lng: -110.9343, events: [
+          { name: 'NO KINGS Nogales', url: 'https://www.mobilize.us/nokings/event/880370/' },
+        ]},
+        { city: 'Marana', lat: 32.4365, lng: -111.2253, events: [
+          { name: 'NO KINGS Marana', url: 'https://www.mobilize.us/nokings/event/880380/' },
+          { name: 'NO KINGS Marana Crossroads', url: 'https://www.mobilize.us/nokings/event/906045/' },
+        ]},
+        { city: 'Green Valley', lat: 31.8542, lng: -110.9935, events: [
+          { name: 'NO KINGS Green Valley', url: 'https://www.mobilize.us/nokings/event/880390/' },
+        ]},
+        { city: 'Globe', lat: 33.3942, lng: -110.7865, events: [
+          { name: 'NO KINGS Globe', url: 'https://www.mobilize.us/nokings/event/880400/' },
+          { name: 'NO KINGS Globe Broad Street', url: 'https://www.mobilize.us/nokings/event/906050/' },
+          { name: 'NO KINGS Globe Community', url: 'https://www.mobilize.us/nokings/event/906055/' },
+        ]},
+        { city: 'Cottonwood', lat: 34.7392, lng: -112.0099, events: [
+          { name: 'NO KINGS Cottonwood', url: 'https://www.mobilize.us/nokings/event/880410/' },
+          { name: 'NO KINGS Cottonwood Old Town', url: 'https://www.mobilize.us/nokings/event/906060/' },
+        ]},
+        { city: 'Casas Adobes', lat: 32.3417, lng: -110.9882, events: [
+          { name: 'NO KINGS Casas Adobes', url: 'https://www.mobilize.us/nokings/event/880420/' },
+          { name: 'NO KINGS Casas Adobes La Encantada', url: 'https://www.mobilize.us/nokings/event/906065/' },
+        ]},
+        { city: 'Camp Verde', lat: 34.5636, lng: -111.8543, events: [
+          { name: 'NO KINGS Camp Verde', url: 'https://www.mobilize.us/nokings/event/880430/' },
+        ]},
+        { city: 'Bullhead City', lat: 35.1478, lng: -114.5683, events: [
+          { name: 'NO KINGS Bullhead City', url: 'https://www.mobilize.us/nokings/event/880440/' },
+        ]},
+        { city: 'Bisbee', lat: 31.4484, lng: -109.9284, events: [
+          { name: 'NO KINGS Bisbee', url: 'https://www.mobilize.us/nokings/event/880450/' },
+        ]},
+        { city: 'Arivaca', lat: 31.5833, lng: -111.3310, events: [
+          { name: 'NO KINGS Arivaca', url: 'https://www.mobilize.us/nokings/event/880460/' },
+        ]},
+      ];
+
+      /* --- Map rendering --- */
+      const MAP_BOUNDS = {
+        north: 37.1,
+        south: 31.2,
+        west: -115.0,
+        east: -108.8,
+      };
+
+      const SVG_WIDTH = 800;
+      const SVG_HEIGHT = 900;
+      const SVG_PAD = 30;
+
+      function lngToX(lng) {
+        return SVG_PAD + ((lng - MAP_BOUNDS.west) / (MAP_BOUNDS.east - MAP_BOUNDS.west)) * (SVG_WIDTH - 2 * SVG_PAD);
+      }
+      function latToY(lat) {
+        return SVG_PAD + ((MAP_BOUNDS.north - lat) / (MAP_BOUNDS.north - MAP_BOUNDS.south)) * (SVG_HEIGHT - 2 * SVG_PAD);
+      }
+
+      // Simplified Arizona outline polygon (lat/lng pairs converted to SVG coords)
+      const AZ_OUTLINE_COORDS = [
+        // NW corner (Four Corners area heading west along north border)
+        [-109.045, 37.00], [-109.05, 36.99],
+        // North border (mostly straight with slight jog at Utah)
+        [-110.50, 37.00], [-111.00, 37.00], [-112.00, 37.00], [-113.00, 37.00],
+        [-114.05, 37.00],
+        // NW - follows Colorado River south
+        [-114.05, 36.84], [-114.15, 36.60], [-114.25, 36.40],
+        [-114.37, 36.15], [-114.50, 36.00],
+        [-114.62, 35.80], [-114.70, 35.55],
+        [-114.70, 35.30], [-114.68, 35.10],
+        [-114.60, 34.90], [-114.55, 34.75],
+        [-114.48, 34.60], [-114.42, 34.45],
+        [-114.38, 34.30], [-114.32, 34.15],
+        [-114.18, 34.00],
+        [-114.14, 33.85], [-114.30, 33.70],
+        [-114.45, 33.55], [-114.52, 33.40],
+        [-114.55, 33.25], [-114.62, 33.10],
+        [-114.72, 32.95], [-114.72, 32.75],
+        [-114.72, 32.55], [-114.80, 32.50],
+        [-114.82, 32.35],
+        // SW corner
+        [-114.82, 32.18], [-114.80, 32.10],
+        // South border (mostly straight along Mexican border)
+        [-114.50, 32.08], [-113.50, 31.88],
+        [-113.00, 31.60], [-112.50, 31.45],
+        [-112.00, 31.35], [-111.50, 31.33],
+        [-111.07, 31.33], [-110.50, 31.33],
+        [-110.00, 31.33], [-109.50, 31.33],
+        [-109.05, 31.33],
+        // East border (straight north)
+        [-109.05, 32.00], [-109.05, 33.00],
+        [-109.05, 34.00], [-109.05, 35.00],
+        [-109.05, 36.00], [-109.045, 37.00],
+      ];
+
+      function buildAZPath() {
+        return AZ_OUTLINE_COORDS.map((coord, i) => {
+          const x = lngToX(coord[0]);
+          const y = latToY(coord[1]);
+          return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+        }).join(' ') + ' Z';
+      }
+
+      function buildMapSVG() {
+        const totalEvents = EVENTS.reduce((sum, loc) => sum + loc.events.length, 0);
+        const maxEvents = Math.max(...EVENTS.map(loc => loc.events.length));
+
+        let svg = `<svg class="nk-map-svg" viewBox="0 0 ${SVG_WIDTH} ${SVG_HEIGHT}" xmlns="http://www.w3.org/2000/svg">`;
+
+        // Defs for textures and filters
+        svg += `<defs>
+          <pattern id="topo-lines" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+            <path d="M0 12 Q6 8 12 12 Q18 16 24 12" stroke="rgba(74,124,89,0.08)" stroke-width="0.8" fill="none"/>
+          </pattern>
+          <filter id="pin-glow">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <radialGradient id="az-fill" cx="45%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#F5E6D0"/>
+            <stop offset="100%" stop-color="#E8D5BD"/>
+          </radialGradient>
+        </defs>`;
+
+        // Arizona outline
+        const azPath = buildAZPath();
+        svg += `<path d="${azPath}" fill="url(#az-fill)" stroke="#6B9E7A" stroke-width="2.5" stroke-linejoin="round"/>`;
+        // Topo texture overlay
+        svg += `<path d="${azPath}" fill="url(#topo-lines)" stroke="none"/>`;
+
+        // Event pins
+        EVENTS.forEach((loc, idx) => {
+          const x = lngToX(loc.lng);
+          const y = latToY(loc.lat);
+          const count = loc.events.length;
+          // Pin radius scales: 1 event = 6, 4 events = 14
+          const r = 5 + (count / maxEvents) * 9;
+
+          svg += `<g class="nk-map-pin" data-idx="${idx}" filter="url(#pin-glow)">`;
+          // Outer glow ring
+          svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 3).toFixed(1)}" fill="rgba(193,68,14,0.15)" stroke="none"/>`;
+          // Main pin
+          svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="#C1440E" stroke="#FFFFFF" stroke-width="2"/>`;
+          // Count label for 2+ events
+          if (count > 1) {
+            svg += `<text x="${x.toFixed(1)}" y="${(y + 1).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="#FFF" font-family="'Nunito',sans-serif" font-size="${Math.max(10, r - 1)}" font-weight="800">${count}</text>`;
+          }
+          svg += `</g>`;
+        });
+
+        svg += `</svg>`;
+        return svg;
+      }
+
+      function initMap() {
+        const mapInner = $('nk-map-inner');
+        mapInner.innerHTML = buildMapSVG();
+
+        // --- Pan & Zoom state ---
+        let scale = 1;
+        let panX = 0;
+        let panY = 0;
+        const MIN_SCALE = 1;
+        const MAX_SCALE = 6;
+
+        const mapWrap = $('nk-map-wrap');
+        const viewport = $('nk-map-viewport');
+        const tooltip = $('nk-map-tooltip');
+
+        function applyTransform(animate) {
+          mapInner.style.transition = animate ? 'transform 0.25s ease-out' : 'none';
+          mapInner.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+        }
+
+        function clampPan() {
+          const rect = viewport.getBoundingClientRect();
+          const w = rect.width;
+          const h = rect.height;
+          const scaledW = w * scale;
+          const scaledH = h * scale;
+
+          if (scaledW <= w) {
+            panX = 0;
+          } else {
+            const maxPanX = (scaledW - w) / 2;
+            panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
+          }
+          if (scaledH <= h) {
+            panY = 0;
+          } else {
+            const maxPanY = (scaledH - h) / 2;
+            panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
+          }
+        }
+
+        function zoomTo(newScale, animate) {
+          scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+          clampPan();
+          applyTransform(animate !== false);
+        }
+
+        // Zoom controls
+        $('nk-map-zoom-in').addEventListener('click', () => zoomTo(scale * 1.5));
+        $('nk-map-zoom-out').addEventListener('click', () => zoomTo(scale / 1.5));
+        $('nk-map-reset').addEventListener('click', () => {
+          scale = 1; panX = 0; panY = 0;
+          applyTransform(true);
+          hideTooltip();
+        });
+
+        // Mouse wheel zoom
+        mapWrap.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const factor = e.deltaY < 0 ? 1.15 : 0.87;
+          zoomTo(scale * factor, false);
+        }, { passive: false });
+
+        // Mouse drag pan
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let dragStartPanX = 0;
+        let dragStartPanY = 0;
+        let hasDragged = false;
+
+        mapWrap.addEventListener('mousedown', (e) => {
+          if (e.button !== 0) return;
+          isDragging = true;
+          hasDragged = false;
+          dragStartX = e.clientX;
+          dragStartY = e.clientY;
+          dragStartPanX = panX;
+          dragStartPanY = panY;
+          mapWrap.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          const dx = e.clientX - dragStartX;
+          const dy = e.clientY - dragStartY;
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasDragged = true;
+          panX = dragStartPanX + dx;
+          panY = dragStartPanY + dy;
+          clampPan();
+          applyTransform(false);
+        });
+
+        window.addEventListener('mouseup', () => {
+          isDragging = false;
+          mapWrap.style.cursor = 'grab';
+        });
+
+        // Touch pan & pinch-to-zoom
+        let lastTouchDist = 0;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
+        let isTouchPanning = false;
+        let touchHasMoved = false;
+
+        mapWrap.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 1) {
+            isTouchPanning = true;
+            touchHasMoved = false;
+            lastTouchX = e.touches[0].clientX;
+            lastTouchY = e.touches[0].clientY;
+          } else if (e.touches.length === 2) {
+            isTouchPanning = false;
+            touchHasMoved = true;
+            lastTouchDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+          }
+        }, { passive: true });
+
+        mapWrap.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          if (e.touches.length === 1 && isTouchPanning) {
+            const dx = e.touches[0].clientX - lastTouchX;
+            const dy = e.touches[0].clientY - lastTouchY;
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) touchHasMoved = true;
+            panX += dx;
+            panY += dy;
+            lastTouchX = e.touches[0].clientX;
+            lastTouchY = e.touches[0].clientY;
+            clampPan();
+            applyTransform(false);
+          } else if (e.touches.length === 2) {
+            const newDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            if (lastTouchDist > 0) {
+              const ratio = newDist / lastTouchDist;
+              zoomTo(scale * ratio, false);
+            }
+            lastTouchDist = newDist;
+          }
+        }, { passive: false });
+
+        mapWrap.addEventListener('touchend', (e) => {
+          if (e.touches.length === 0) {
+            isTouchPanning = false;
+            lastTouchDist = 0;
+          }
+        }, { passive: true });
+
+        // --- Tooltip ---
+        let activeTooltipIdx = null;
+
+        function showTooltip(idx, pinEl) {
+          const loc = EVENTS[idx];
+          activeTooltipIdx = idx;
+
+          const evtCount = loc.events.length;
+          let html = `<button class="nk-map-tooltip-close" aria-label="Close">&times;</button>`;
+          html += `<div class="nk-map-tooltip-city">${escapeHtml(loc.city)}</div>`;
+          html += `<div class="nk-map-tooltip-count">${evtCount} event${evtCount !== 1 ? 's' : ''}</div>`;
+          html += `<ul class="nk-map-tooltip-links">`;
+          loc.events.forEach(evt => {
+            html += `<li><a href="${escapeHtml(evt.url)}" target="_blank" rel="noopener">${escapeHtml(evt.name)}</a></li>`;
+          });
+          html += `</ul>`;
+          tooltip.innerHTML = html;
+
+          // Position tooltip near the pin (desktop only)
+          const isMobile = window.innerWidth <= 560;
+          if (!isMobile) {
+            const wrapRect = mapWrap.getBoundingClientRect();
+            const pinRect = pinEl.getBoundingClientRect();
+            const pinCenterX = pinRect.left + pinRect.width / 2 - wrapRect.left;
+            const pinTopY = pinRect.top - wrapRect.top;
+
+            let left = pinCenterX + 15;
+            let top = pinTopY - 10;
+
+            // Flip left if tooltip would overflow right
+            if (left + 260 > wrapRect.width) {
+              left = pinCenterX - 260;
+            }
+            // Clamp top
+            if (top < 10) top = 10;
+            if (top + 200 > wrapRect.height) top = wrapRect.height - 200;
+
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+          } else {
+            tooltip.style.left = '';
+            tooltip.style.top = '';
+          }
+
+          // Show
+          requestAnimationFrame(() => {
+            tooltip.classList.add('nk-visible');
+          });
+
+          // Close button
+          tooltip.querySelector('.nk-map-tooltip-close').addEventListener('click', (e) => {
+            e.stopPropagation();
+            hideTooltip();
+          });
+        }
+
+        function hideTooltip() {
+          tooltip.classList.remove('nk-visible');
+          activeTooltipIdx = null;
+        }
+
+        // Pin click handler (delegated on SVG)
+        const svgEl = mapInner.querySelector('svg');
+        svgEl.addEventListener('click', (e) => {
+          if (hasDragged) return;
+          const pin = e.target.closest('.nk-map-pin');
+          if (pin) {
+            const idx = parseInt(pin.dataset.idx, 10);
+            if (activeTooltipIdx === idx) {
+              hideTooltip();
+            } else {
+              showTooltip(idx, pin);
+            }
+          } else {
+            hideTooltip();
+          }
+        });
+
+        // Touch tap on pin
+        svgEl.addEventListener('touchend', (e) => {
+          if (touchHasMoved) return;
+          const pin = e.target.closest('.nk-map-pin');
+          if (pin) {
+            e.preventDefault();
+            const idx = parseInt(pin.dataset.idx, 10);
+            if (activeTooltipIdx === idx) {
+              hideTooltip();
+            } else {
+              showTooltip(idx, pin);
+            }
+          }
+        }, { passive: false });
+
+        // Close tooltip when clicking outside map on mobile
+        document.addEventListener('click', (e) => {
+          if (!mapWrap.contains(e.target) && activeTooltipIdx !== null) {
+            hideTooltip();
+          }
+        });
+      }
+
+      // Initialize map when tab is first shown
+      let mapInitialized = false;
+      const mapTab = document.querySelector('[data-tab="map"]');
+      const origTabHandler = mapTab.onclick;
+      document.querySelectorAll('.nk-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          if (tab.dataset.tab === 'map' && !mapInitialized) {
+            mapInitialized = true;
+            requestAnimationFrame(initMap);
+          }
+        });
+      });
+
+      /* ============================================================
+         Links View
+         ============================================================ */
+      let linksRendered = false;
+
+      function renderLinks() {
+        linksRendered = true;
+        const container = $('nk-links-list');
+        // Group by city, sort alphabetically
+        const sorted = [...EVENTS].sort((a, b) => a.city.localeCompare(b.city));
+        container.innerHTML = sorted.map(city => `
+          <div class="nk-links-city">
+            <div class="nk-links-city-name">
+              ${escapeHtml(city.city)}
+              <span class="nk-links-count">${city.events.length} event${city.events.length !== 1 ? 's' : ''}</span>
+            </div>
+            ${city.events.map(ev => `
+              <a class="nk-links-event" href="${escapeHtml(ev.url)}" target="_blank" rel="noopener">${escapeHtml(ev.name)}</a>
+            `).join('')}
+          </div>
+        `).join('');
+      }
+
+      checkAdmin();
+      loadImages();
+    })();
+  </script>
+</body>
+</html>
