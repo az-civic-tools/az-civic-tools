@@ -9,14 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* ============================================================
-       No Kings Gallery — Desert Modernism
-       CSS variables match cactus-watch.css naming
-       All classes prefixed nk-
-       ============================================================ */
-
     :root {
-      /* Desert palette */
       --bt-mesa:              #2C1810;
       --bt-mesa-warm:         #4A2F1E;
       --bt-terracotta:        #C1440E;
@@ -35,8 +28,6 @@
       --bt-stone:             #A69888;
       --bt-red:               #9B2226;
       --bt-red-light:         #C43C40;
-
-      /* Functional */
       --bt-bg:                var(--bt-sand);
       --bt-card-bg:           #FFFFFF;
       --bt-text:              #2E2219;
@@ -45,25 +36,18 @@
       --bt-border:            #E0D5C8;
       --bt-border-light:      #EDE5D8;
       --bt-focus:             var(--bt-terracotta);
-
-      /* Typography */
       --bt-font-display:      'Cormorant Garamond', 'Georgia', serif;
       --bt-font-body:         'Nunito', 'Segoe UI', sans-serif;
-
-      /* Sizing */
       --bt-radius:            10px;
       --bt-radius-sm:         6px;
       --bt-touch-min:         48px;
       --bt-max-width:         1200px;
-
-      /* Shadows */
       --bt-shadow-sm:         0 1px 3px rgba(44, 24, 16, 0.08);
       --bt-shadow:            0 2px 8px rgba(44, 24, 16, 0.1);
       --bt-shadow-lg:         0 8px 30px rgba(44, 24, 16, 0.15);
       --bt-shadow-card:       0 2px 6px rgba(44, 24, 16, 0.06), 0 1px 2px rgba(44, 24, 16, 0.04);
     }
 
-    /* --- Reset & Base --- */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -89,1132 +73,375 @@
       position: relative;
       overflow: hidden;
     }
-
     .nk-header::before {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        repeating-linear-gradient(
-          -45deg,
-          transparent,
-          transparent 20px,
-          rgba(193, 68, 14, 0.06) 20px,
-          rgba(193, 68, 14, 0.06) 21px
-        );
+      background: repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(193, 68, 14, 0.06) 20px, rgba(193, 68, 14, 0.06) 21px);
       pointer-events: none;
     }
-
-    .nk-header-inner {
-      position: relative;
-      z-index: 1;
-      max-width: var(--bt-max-width);
-      margin: 0 auto;
-    }
-
+    .nk-header-inner { position: relative; z-index: 1; max-width: var(--bt-max-width); margin: 0 auto; }
     .nk-title {
       font-family: var(--bt-font-display);
       font-size: clamp(3rem, 8vw, 5.5rem);
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.04em;
-      line-height: 1.05;
-      text-transform: uppercase;
+      font-weight: 700; color: #fff;
+      letter-spacing: 0.04em; line-height: 1.05; text-transform: uppercase;
     }
-
     .nk-subtitle {
       font-family: var(--bt-font-body);
       font-size: clamp(0.95rem, 2.5vw, 1.15rem);
-      color: var(--bt-gold-light);
-      font-weight: 600;
-      margin-top: 0.6rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
+      color: var(--bt-gold-light); font-weight: 600;
+      margin-top: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
     }
 
     /* --- Tabs --- */
-    .nk-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      background: var(--bt-mesa-warm);
-      border-bottom: 3px solid var(--bt-terracotta);
-    }
+    .nk-tabs { display: flex; justify-content: center; gap: 0; background: var(--bt-mesa-warm); border-bottom: 3px solid var(--bt-terracotta); }
     .nk-tab {
-      padding: 14px 32px;
-      font-family: var(--bt-font-body);
-      font-weight: 700;
-      font-size: 15px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
+      padding: 14px 32px; font-family: var(--bt-font-body); font-weight: 700; font-size: 15px;
+      letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.6);
+      background: none; border: none; cursor: pointer; transition: all 0.2s; position: relative;
     }
     .nk-tab:hover { color: rgba(255,255,255,0.9); }
-    .nk-tab--active {
-      color: #FFF;
-    }
+    .nk-tab--active { color: #FFF; }
     .nk-tab--active::after {
-      content: '';
-      position: absolute;
-      bottom: -3px;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: var(--bt-gold);
+      content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 3px; background: var(--bt-gold);
     }
 
     /* --- Main --- */
-    .nk-main {
-      max-width: var(--bt-max-width);
-      margin: 0 auto;
-      padding: 2rem 1.5rem 3rem;
-    }
+    .nk-main { max-width: var(--bt-max-width); margin: 0 auto; padding: 2rem 1.5rem 3rem; }
 
     /* --- City Grid --- */
-    .nk-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      list-style: none;
-    }
-
-    @media (max-width: 900px) {
-      .nk-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 560px) {
-      .nk-grid { grid-template-columns: 1fr; }
-    }
+    .nk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; list-style: none; }
+    @media (max-width: 900px) { .nk-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .nk-grid { grid-template-columns: 1fr; } }
 
     .nk-card {
-      background: var(--bt-card-bg);
-      border-radius: var(--bt-radius);
-      box-shadow: var(--bt-shadow-card);
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      opacity: 0;
-      animation: nk-fadeUp 0.5s ease forwards;
-      border: 1px solid var(--bt-border-light);
+      background: var(--bt-card-bg); border-radius: var(--bt-radius); box-shadow: var(--bt-shadow-card);
+      overflow: hidden; cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease;
+      opacity: 0; animation: nk-fadeUp 0.5s ease forwards; border: 1px solid var(--bt-border-light);
     }
-    .nk-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--bt-shadow-lg);
-    }
-    .nk-card:focus-visible {
-      outline: 3px solid var(--bt-focus);
-      outline-offset: 2px;
-    }
-
-    .nk-card-thumb {
-      width: 100%;
-      aspect-ratio: 16 / 10;
-      object-fit: cover;
-      display: block;
-      background: var(--bt-sand-dark);
-    }
-
-    .nk-card-body {
-      padding: 1rem 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .nk-card-city {
-      font-family: var(--bt-font-display);
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--bt-mesa);
-    }
-
+    .nk-card:hover { transform: translateY(-4px); box-shadow: var(--bt-shadow-lg); }
+    .nk-card:focus-visible { outline: 3px solid var(--bt-focus); outline-offset: 2px; }
+    .nk-card-thumb { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; background: var(--bt-sand-dark); }
+    .nk-card-body { padding: 1rem 1.2rem; display: flex; align-items: center; justify-content: space-between; }
+    .nk-card-city { font-family: var(--bt-font-display); font-size: 1.4rem; font-weight: 700; color: var(--bt-mesa); }
     .nk-card-count {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--bt-terracotta);
-      background: rgba(193, 68, 14, 0.08);
-      padding: 0.25rem 0.65rem;
-      border-radius: 999px;
-      white-space: nowrap;
+      font-size: 0.8rem; font-weight: 700; color: var(--bt-terracotta);
+      background: rgba(193, 68, 14, 0.08); padding: 0.25rem 0.65rem; border-radius: 999px; white-space: nowrap;
     }
-
-    @keyframes nk-fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes nk-fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
     /* --- Empty State --- */
-    .nk-empty {
-      text-align: center;
-      padding: 4rem 1rem;
-      color: var(--bt-text-muted);
-    }
-
-    .nk-empty-cactus {
-      width: 80px;
-      height: 120px;
-      margin: 0 auto 1.5rem;
-      position: relative;
-    }
+    .nk-empty { text-align: center; padding: 4rem 1rem; color: var(--bt-text-muted); }
+    .nk-empty-cactus { width: 80px; height: 120px; margin: 0 auto 1.5rem; position: relative; }
     .nk-empty-cactus::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 16px;
-      height: 90px;
-      background: var(--bt-sage-light);
-      border-radius: 8px 8px 2px 2px;
+      content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 16px; height: 90px; background: var(--bt-sage-light); border-radius: 8px 8px 2px 2px;
     }
     .nk-empty-cactus::after {
-      content: '';
-      position: absolute;
-      bottom: 35px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 14px;
-      border: 4px solid var(--bt-sage-light);
-      border-bottom: none;
-      border-radius: 25px 25px 0 0;
+      content: ''; position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%);
+      width: 50px; height: 14px; border: 4px solid var(--bt-sage-light); border-bottom: none; border-radius: 25px 25px 0 0;
     }
-
-    .nk-empty-text {
-      font-family: var(--bt-font-display);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--bt-stone);
-      margin-bottom: 0.5rem;
-    }
-
-    .nk-empty-sub {
-      font-size: 0.95rem;
-      color: var(--bt-text-light);
-    }
+    .nk-empty-text { font-family: var(--bt-font-display); font-size: 1.6rem; font-weight: 700; color: var(--bt-stone); margin-bottom: 0.5rem; }
+    .nk-empty-sub { font-size: 0.95rem; color: var(--bt-text-light); }
 
     /* --- Gallery Modal --- */
     .nk-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(44, 24, 16, 0.88);
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      backdrop-filter: blur(4px);
+      position: fixed; inset: 0; background: rgba(44, 24, 16, 0.88); z-index: 1000;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(4px);
     }
     .nk-modal-backdrop.nk-visible { opacity: 1; pointer-events: auto; }
-
     .nk-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 1001;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.35s ease, transform 0.35s ease;
+      position: fixed; inset: 0; z-index: 1001; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; pointer-events: none; opacity: 0;
+      transform: translateY(20px); transition: opacity 0.35s ease, transform 0.35s ease;
     }
-    .nk-modal.nk-visible {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .nk-modal-header {
-      width: 90vw;
-      max-width: 1000px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.8rem 0;
-      color: #fff;
-    }
-
-    .nk-modal-city {
-      font-family: var(--bt-font-display);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--bt-gold-light);
-    }
-
+    .nk-modal.nk-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .nk-modal-header { width: 90vw; max-width: 1000px; display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 0; color: #fff; }
+    .nk-modal-city { font-family: var(--bt-font-display); font-size: 1.6rem; font-weight: 700; color: var(--bt-gold-light); }
     .nk-modal-close {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 2rem;
-      cursor: pointer;
-      width: var(--bt-touch-min);
-      height: var(--bt-touch-min);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: background 0.2s;
-      pointer-events: auto;
+      background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;
+      width: var(--bt-touch-min); height: var(--bt-touch-min); display: flex; align-items: center;
+      justify-content: center; border-radius: 50%; transition: background 0.2s; pointer-events: auto;
     }
     .nk-modal-close:hover { background: rgba(255,255,255,0.1); }
-
-    .nk-modal-stage {
-      position: relative;
-      width: 90vw;
-      max-width: 1000px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-      min-height: 0;
-    }
-
-    .nk-modal-img-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-    }
-
+    .nk-modal-stage { position: relative; width: 90vw; max-width: 1000px; display: flex; align-items: center; justify-content: center; flex: 1; min-height: 0; }
+    .nk-modal-img-wrap { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
     .nk-modal-img {
-      max-width: 90vw;
-      max-height: 80vh;
-      object-fit: contain;
-      border-radius: var(--bt-radius-sm);
-      box-shadow: 0 4px 40px rgba(0,0,0,0.4);
-      transition: opacity 0.25s ease;
-      user-select: none;
-      -webkit-user-drag: none;
+      max-width: 90vw; max-height: 80vh; object-fit: contain; border-radius: var(--bt-radius-sm);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.4); transition: opacity 0.25s ease; user-select: none; -webkit-user-drag: none;
     }
-
-    /* Admin edit/delete overlay */
-    .nk-img-actions {
-      position: absolute;
-      top: 0.75rem;
-      right: 0.75rem;
-      display: flex;
-      gap: 0.4rem;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
+    .nk-img-actions { position: absolute; top: 0.75rem; right: 0.75rem; display: flex; gap: 0.4rem; opacity: 0; transition: opacity 0.2s; }
     .nk-modal-img-wrap:hover .nk-img-actions { opacity: 1; }
-
     .nk-img-action-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(0,0,0,0.6);
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      transition: background 0.2s;
-      backdrop-filter: blur(4px);
+      width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(0,0,0,0.6); color: #fff;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem;
+      transition: background 0.2s; backdrop-filter: blur(4px);
     }
     .nk-img-action-btn:hover { background: var(--bt-red); }
-
     .nk-modal-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--bt-terracotta-light);
-      font-size: 3rem;
-      cursor: pointer;
-      padding: 0.5rem;
-      width: 60px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--bt-radius);
-      transition: background 0.2s, color 0.2s;
-      pointer-events: auto;
-      user-select: none;
+      position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none;
+      color: var(--bt-terracotta-light); font-size: 3rem; cursor: pointer; padding: 0.5rem;
+      width: 60px; height: 80px; display: flex; align-items: center; justify-content: center;
+      border-radius: var(--bt-radius); transition: background 0.2s, color 0.2s; pointer-events: auto; user-select: none;
     }
-    .nk-modal-nav:hover {
-      background: rgba(255,255,255,0.08);
-      color: var(--bt-gold-light);
-    }
+    .nk-modal-nav:hover { background: rgba(255,255,255,0.08); color: var(--bt-gold-light); }
     .nk-modal-nav--prev { left: -70px; }
     .nk-modal-nav--next { right: -70px; }
-
     @media (max-width: 1160px) {
-      .nk-modal-nav--prev { left: 0; }
-      .nk-modal-nav--next { right: 0; }
-      .nk-modal-nav { background: rgba(0,0,0,0.3); }
+      .nk-modal-nav--prev { left: 0; } .nk-modal-nav--next { right: 0; } .nk-modal-nav { background: rgba(0,0,0,0.3); }
     }
-
-    .nk-modal-footer {
-      width: 90vw;
-      max-width: 1000px;
-      padding: 0.8rem 0 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .nk-modal-caption {
-      color: rgba(255,255,255,0.8);
-      font-size: 0.9rem;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .nk-modal-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-shrink: 0;
-    }
-
-    .nk-modal-counter {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
+    .nk-modal-footer { width: 90vw; max-width: 1000px; padding: 0.8rem 0 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .nk-modal-caption { color: rgba(255,255,255,0.8); font-size: 0.9rem; flex: 1; min-width: 0; }
+    .nk-modal-controls { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+    .nk-modal-counter { color: rgba(255,255,255,0.5); font-size: 0.85rem; font-weight: 600; }
     .nk-copy-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      background: var(--bt-terracotta);
-      color: #fff;
-      border: none;
-      border-radius: var(--bt-radius);
-      font-family: var(--bt-font-body);
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem;
+      background: var(--bt-terracotta); color: #fff; border: none; border-radius: var(--bt-radius);
+      font-family: var(--bt-font-body); font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      transition: background 0.2s, transform 0.15s; white-space: nowrap;
     }
     .nk-copy-btn:hover { background: var(--bt-terracotta-light); }
     .nk-copy-btn:active { transform: scale(0.96); }
-
-    .nk-copy-btn.nk-copied {
-      background: var(--bt-sage-deep);
-      animation: nk-pulse 0.4s ease;
-    }
-
-    @keyframes nk-pulse {
-      0%   { transform: scale(1); }
-      50%  { transform: scale(1.08); }
-      100% { transform: scale(1); }
-    }
-
-    .nk-source-link {
-      color: rgba(255,255,255,0.5);
-      text-decoration: none;
-      font-size: 0.8rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: color 0.2s;
-    }
+    .nk-copy-btn.nk-copied { background: var(--bt-sage-deep); animation: nk-pulse 0.4s ease; }
+    @keyframes nk-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+    .nk-source-link { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.3rem; transition: color 0.2s; }
     .nk-source-link:hover { color: #fff; }
 
     /* --- FAB (Admin) --- */
     .nk-fab {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--bt-terracotta);
-      color: #fff;
-      border: none;
-      font-size: 1.8rem;
-      cursor: pointer;
-      box-shadow: var(--bt-shadow-lg);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 900;
-      transition: background 0.2s, transform 0.2s;
+      position: fixed; bottom: 1.5rem; right: 1.5rem; width: 56px; height: 56px; border-radius: 50%;
+      background: var(--bt-terracotta); color: #fff; border: none; font-size: 1.8rem; cursor: pointer;
+      box-shadow: var(--bt-shadow-lg); display: none; align-items: center; justify-content: center;
+      z-index: 900; transition: background 0.2s, transform 0.2s;
     }
     .nk-fab:hover { background: var(--bt-terracotta-light); transform: scale(1.08); }
     .nk-fab.nk-show { display: flex; }
 
     /* --- Upload Modal --- */
-    .nk-upload-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(44, 24, 16, 0.7);
-      z-index: 2000;
-      opacity: 0;
-      transition: opacity 0.3s;
-      display: none;
-    }
+    .nk-upload-backdrop { position: fixed; inset: 0; background: rgba(44, 24, 16, 0.7); z-index: 2000; opacity: 0; transition: opacity 0.3s; display: none; }
     .nk-upload-backdrop.nk-visible { opacity: 1; display: block; }
-
     .nk-upload-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) translateY(20px);
-      z-index: 2001;
-      background: var(--bt-card-bg);
-      border-radius: var(--bt-radius);
-      box-shadow: var(--bt-shadow-lg);
-      padding: 2rem;
-      width: 90vw;
-      max-width: 480px;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) translateY(20px); z-index: 2001;
+      background: var(--bt-card-bg); border-radius: var(--bt-radius); box-shadow: var(--bt-shadow-lg);
+      padding: 2rem; width: 90vw; max-width: 480px; display: none; opacity: 0; transition: opacity 0.3s, transform 0.3s;
     }
-    .nk-upload-modal.nk-visible {
-      display: block;
-      opacity: 1;
-      transform: translate(-50%, -50%) translateY(0);
-    }
-
+    .nk-upload-modal.nk-visible { display: block; opacity: 1; transform: translate(-50%, -50%) translateY(0); }
     @media (max-width: 560px) {
-      .nk-upload-modal {
-        top: 0; left: 0; right: 0; bottom: 0;
-        transform: none;
-        max-width: none;
-        width: 100%;
-        border-radius: 0;
-        overflow-y: auto;
-      }
+      .nk-upload-modal { top: 0; left: 0; right: 0; bottom: 0; transform: none; max-width: none; width: 100%; border-radius: 0; overflow-y: auto; }
       .nk-upload-modal.nk-visible { transform: none; }
     }
-
-    .nk-upload-title {
-      font-family: var(--bt-font-display);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--bt-mesa);
-      margin-bottom: 1.2rem;
-    }
-
+    .nk-upload-title { font-family: var(--bt-font-display); font-size: 1.6rem; font-weight: 700; color: var(--bt-mesa); margin-bottom: 1.2rem; }
     .nk-dropzone {
-      border: 2px dashed var(--bt-border);
-      border-radius: var(--bt-radius);
-      padding: 2rem;
-      text-align: center;
-      color: var(--bt-text-muted);
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      margin-bottom: 1rem;
-      position: relative;
-      min-height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 0.5rem;
+      border: 2px dashed var(--bt-border); border-radius: var(--bt-radius); padding: 2rem; text-align: center;
+      color: var(--bt-text-muted); cursor: pointer; transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 1rem; position: relative; min-height: 120px; display: flex; align-items: center;
+      justify-content: center; flex-direction: column; gap: 0.5rem;
     }
-    .nk-dropzone:hover, .nk-dropzone.nk-drag-over {
-      border-color: var(--bt-terracotta);
-      background: rgba(193, 68, 14, 0.04);
-    }
-
-    .nk-dropzone-preview {
-      max-width: 100%;
-      max-height: 200px;
-      border-radius: var(--bt-radius-sm);
-      display: none;
-    }
-
+    .nk-dropzone:hover, .nk-dropzone.nk-drag-over { border-color: var(--bt-terracotta); background: rgba(193, 68, 14, 0.04); }
+    .nk-dropzone-preview { max-width: 100%; max-height: 200px; border-radius: var(--bt-radius-sm); display: none; }
     .nk-dropzone-text { font-size: 0.9rem; }
-
-    .nk-dropzone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .nk-field {
-      margin-bottom: 1rem;
-    }
-    .nk-field label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--bt-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.35rem;
-    }
+    .nk-dropzone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .nk-field { margin-bottom: 1rem; }
+    .nk-field label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--bt-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
     .nk-field input {
-      width: 100%;
-      padding: 0.6rem 0.8rem;
-      border: 1px solid var(--bt-border);
-      border-radius: var(--bt-radius-sm);
-      font-family: var(--bt-font-body);
-      font-size: 0.95rem;
-      color: var(--bt-text);
-      background: var(--bt-sand);
-      transition: border-color 0.2s;
+      width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--bt-border); border-radius: var(--bt-radius-sm);
+      font-family: var(--bt-font-body); font-size: 0.95rem; color: var(--bt-text); background: var(--bt-sand); transition: border-color 0.2s;
     }
-    .nk-field input:focus {
-      outline: none;
-      border-color: var(--bt-terracotta);
-      box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.12);
-    }
-
-    .nk-upload-actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1.2rem;
-    }
-
-    .nk-btn {
-      padding: 0.65rem 1.4rem;
-      border: none;
-      border-radius: var(--bt-radius-sm);
-      font-family: var(--bt-font-body);
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s, opacity 0.2s;
-    }
-    .nk-btn--primary {
-      background: var(--bt-terracotta);
-      color: #fff;
-    }
+    .nk-field input:focus { outline: none; border-color: var(--bt-terracotta); box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.12); }
+    .nk-upload-actions { display: flex; gap: 0.75rem; margin-top: 1.2rem; }
+    .nk-btn { padding: 0.65rem 1.4rem; border: none; border-radius: var(--bt-radius-sm); font-family: var(--bt-font-body); font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: background 0.2s, opacity 0.2s; }
+    .nk-btn--primary { background: var(--bt-terracotta); color: #fff; }
     .nk-btn--primary:hover { background: var(--bt-terracotta-light); }
     .nk-btn--primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .nk-btn--secondary {
-      background: var(--bt-sand-dark);
-      color: var(--bt-text);
-    }
+    .nk-btn--secondary { background: var(--bt-sand-dark); color: var(--bt-text); }
     .nk-btn--secondary:hover { background: var(--bt-border); }
-
-    .nk-upload-progress {
-      height: 4px;
-      background: var(--bt-sand-dark);
-      border-radius: 2px;
-      margin-top: 1rem;
-      overflow: hidden;
-      display: none;
-    }
-    .nk-upload-progress-bar {
-      height: 100%;
-      background: var(--bt-terracotta);
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.3s;
-    }
+    .nk-upload-progress { height: 4px; background: var(--bt-sand-dark); border-radius: 2px; margin-top: 1rem; overflow: hidden; display: none; }
+    .nk-upload-progress-bar { height: 100%; background: var(--bt-terracotta); border-radius: 2px; width: 0%; transition: width 0.3s; }
 
     /* --- Delete Confirm --- */
-    .nk-confirm-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 3000;
-      display: none;
-    }
+    .nk-confirm-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 3000; display: none; }
     .nk-confirm-backdrop.nk-visible { display: flex; align-items: center; justify-content: center; }
-
-    .nk-confirm-dialog {
-      background: var(--bt-card-bg);
-      border-radius: var(--bt-radius);
-      padding: 1.5rem 2rem;
-      box-shadow: var(--bt-shadow-lg);
-      max-width: 380px;
-      width: 90vw;
-      text-align: center;
-    }
-    .nk-confirm-dialog p {
-      margin-bottom: 1.2rem;
-      font-size: 1rem;
-      color: var(--bt-text);
-    }
-    .nk-confirm-actions {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: center;
-    }
-    .nk-btn--danger {
-      background: var(--bt-red);
-      color: #fff;
-    }
+    .nk-confirm-dialog { background: var(--bt-card-bg); border-radius: var(--bt-radius); padding: 1.5rem 2rem; box-shadow: var(--bt-shadow-lg); max-width: 380px; width: 90vw; text-align: center; }
+    .nk-confirm-dialog p { margin-bottom: 1.2rem; font-size: 1rem; color: var(--bt-text); }
+    .nk-confirm-actions { display: flex; gap: 0.75rem; justify-content: center; }
+    .nk-btn--danger { background: var(--bt-red); color: #fff; }
     .nk-btn--danger:hover { background: var(--bt-red-light); }
 
     /* --- Footer --- */
-    .nk-footer {
-      text-align: center;
-      padding: 2rem 1.5rem 3rem;
-      color: var(--bt-text-light);
-      font-size: 0.85rem;
-      line-height: 1.8;
-      border-top: 1px solid var(--bt-border-light);
-      max-width: var(--bt-max-width);
-      margin: 0 auto;
-    }
-    .nk-footer a {
-      color: var(--bt-terracotta);
-      text-decoration: none;
-      font-weight: 600;
-    }
+    .nk-footer { text-align: center; padding: 2rem 1.5rem 3rem; color: var(--bt-text-light); font-size: 0.85rem; line-height: 1.8; border-top: 1px solid var(--bt-border-light); max-width: var(--bt-max-width); margin: 0 auto; }
+    .nk-footer a { color: var(--bt-terracotta); text-decoration: none; font-weight: 600; }
     .nk-footer a:hover { text-decoration: underline; }
 
     /* --- Loading Spinner --- */
-    .nk-loading {
-      text-align: center;
-      padding: 4rem 1rem;
-      color: var(--bt-text-muted);
-    }
-    .nk-spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--bt-border);
-      border-top-color: var(--bt-terracotta);
-      border-radius: 50%;
-      animation: nk-spin 0.7s linear infinite;
-      margin: 0 auto 1rem;
-    }
-    @keyframes nk-spin {
-      to { transform: rotate(360deg); }
-    }
+    .nk-loading { text-align: center; padding: 4rem 1rem; color: var(--bt-text-muted); }
+    .nk-spinner { width: 32px; height: 32px; border: 3px solid var(--bt-border); border-top-color: var(--bt-terracotta); border-radius: 50%; animation: nk-spin 0.7s linear infinite; margin: 0 auto 1rem; }
+    @keyframes nk-spin { to { transform: rotate(360deg); } }
 
     /* --- Utilities --- */
-    .nk-sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      border: 0;
-    }
+    .nk-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
     /* --- Admin Panel --- */
     .nk-admin-panel-btn {
-      display: none;
-      position: fixed;
-      bottom: 100px;
-      right: 24px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--bt-mesa-warm);
-      color: #FFF;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      z-index: 900;
-      box-shadow: 0 3px 12px rgba(0,0,0,.25);
-      transition: all 0.2s;
+      display: none; position: fixed; bottom: 100px; right: 24px; width: 44px; height: 44px;
+      border-radius: 50%; background: var(--bt-mesa-warm); color: #FFF; border: none; font-size: 18px;
+      cursor: pointer; z-index: 900; box-shadow: 0 3px 12px rgba(0,0,0,.25); transition: all 0.2s;
     }
     .nk-admin-panel-btn.nk-show { display: flex; align-items: center; justify-content: center; }
     .nk-admin-panel-btn:hover { background: var(--bt-mesa); transform: scale(1.08); }
-
-    .nk-admin-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.5);
-      z-index: 1100;
-    }
+    .nk-admin-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1100; }
     .nk-admin-backdrop.nk-open { display: block; }
-
     .nk-admin-panel {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--bt-cream);
-      border-radius: 16px;
-      padding: 32px;
-      z-index: 1101;
-      width: 90vw;
-      max-width: 520px;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+      display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: var(--bt-cream); border-radius: 16px; padding: 32px; z-index: 1101;
+      width: 90vw; max-width: 520px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3);
     }
     .nk-admin-panel.nk-open { display: block; }
-
-    .nk-admin-title {
-      font-family: var(--bt-font-display);
-      font-size: 1.4rem;
-      color: var(--bt-mesa);
-      margin: 0 0 20px;
-    }
-
+    .nk-admin-title { font-family: var(--bt-font-display); font-size: 1.4rem; color: var(--bt-mesa); margin: 0 0 20px; }
     .nk-admin-list { margin-bottom: 20px; }
-
-    .nk-admin-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--bt-sand-dark);
-    }
+    .nk-admin-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--bt-sand-dark); }
     .nk-admin-row:last-child { border-bottom: none; }
-
-    .nk-admin-email {
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--bt-mesa);
-      min-width: 0;
-      flex-shrink: 0;
-    }
-    .nk-admin-super {
-      font-size: 11px;
-      background: var(--bt-sage);
-      color: #FFF;
-      padding: 2px 6px;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
-
-    .nk-admin-note-input {
-      flex: 1;
-      min-width: 0;
-      padding: 6px 10px;
-      border: 1px solid var(--bt-sand-dark);
-      border-radius: 6px;
-      font-family: var(--bt-font-body);
-      font-size: 13px;
-      background: #FFF;
-    }
+    .nk-admin-email { font-weight: 700; font-size: 14px; color: var(--bt-mesa); min-width: 0; flex-shrink: 0; }
+    .nk-admin-super { font-size: 11px; background: var(--bt-sage); color: #FFF; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
+    .nk-admin-note-input { flex: 1; min-width: 0; padding: 6px 10px; border: 1px solid var(--bt-sand-dark); border-radius: 6px; font-family: var(--bt-font-body); font-size: 13px; background: #FFF; }
     .nk-admin-note-input:focus { outline: none; border-color: var(--bt-terracotta); }
-
-    .nk-admin-save {
-      padding: 4px 10px;
-      background: var(--bt-sage);
-      color: #FFF;
-      border: none;
-      border-radius: 6px;
-      font-size: 12px;
-      cursor: pointer;
-      flex-shrink: 0;
-      display: none;
-    }
+    .nk-admin-save { padding: 4px 10px; background: var(--bt-sage); color: #FFF; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; flex-shrink: 0; display: none; }
     .nk-admin-save.nk-changed { display: inline-block; }
     .nk-admin-save:hover { background: var(--bt-sage-deep); }
-
-    .nk-admin-remove {
-      padding: 4px 8px;
-      background: none;
-      border: 1px solid var(--bt-red);
-      color: var(--bt-red);
-      border-radius: 6px;
-      font-size: 12px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
+    .nk-admin-remove { padding: 4px 8px; background: none; border: 1px solid var(--bt-red); color: var(--bt-red); border-radius: 6px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
     .nk-admin-remove:hover { background: var(--bt-red); color: #FFF; }
-
-    .nk-admin-add {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .nk-admin-add input {
-      flex: 1;
-      min-width: 140px;
-      padding: 8px 12px;
-      border: 1px solid var(--bt-sand-dark);
-      border-radius: 8px;
-      font-family: var(--bt-font-body);
-      font-size: 14px;
-    }
+    .nk-admin-add { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nk-admin-add input { flex: 1; min-width: 140px; padding: 8px 12px; border: 1px solid var(--bt-sand-dark); border-radius: 8px; font-family: var(--bt-font-body); font-size: 14px; }
     .nk-admin-add input:focus { outline: none; border-color: var(--bt-terracotta); }
 
     /* ============================================================
-       Map View
+       Illustrated Map View
        ============================================================ */
     .nk-map-container {
       max-width: var(--bt-max-width);
       margin: 0 auto;
       padding: 2rem 1.5rem 3rem;
     }
-
-    .nk-map-header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .nk-map-header h2 {
-      font-family: var(--bt-font-display);
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      font-weight: 700;
-      color: var(--bt-mesa);
-      margin-bottom: 0.3rem;
-    }
-    .nk-map-header .nk-map-date {
-      font-family: var(--bt-font-body);
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--bt-terracotta);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 0.4rem;
-    }
-    .nk-map-header .nk-map-cta {
-      font-family: var(--bt-font-body);
-      font-size: 0.95rem;
-      color: var(--bt-earth);
-    }
+    .nk-map-header { text-align: center; margin-bottom: 2rem; }
+    .nk-map-header h2 { font-family: var(--bt-font-display); font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: var(--bt-mesa); margin-bottom: 0.3rem; }
+    .nk-map-header .nk-map-date { font-family: var(--bt-font-body); font-size: 1rem; font-weight: 700; color: var(--bt-terracotta); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .nk-map-header .nk-map-cta { font-family: var(--bt-font-body); font-size: 0.95rem; color: var(--bt-earth); }
 
     .nk-map-wrap {
       position: relative;
       width: 100%;
       max-width: 800px;
       margin: 0 auto;
-      background:
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 18px,
-          rgba(193, 68, 14, 0.025) 18px,
-          rgba(193, 68, 14, 0.025) 19px
-        ),
-        repeating-linear-gradient(
-          90deg,
-          transparent,
-          transparent 18px,
-          rgba(74, 124, 89, 0.02) 18px,
-          rgba(74, 124, 89, 0.02) 19px
-        ),
-        linear-gradient(180deg, rgba(250, 246, 240, 0.5) 0%, rgba(237, 229, 216, 0.6) 100%);
       border-radius: var(--bt-radius);
       border: 2px solid var(--bt-border);
-      overflow: hidden;
-      touch-action: none;
-      cursor: grab;
-      user-select: none;
-    }
-    .nk-map-wrap:active { cursor: grabbing; }
-
-    .nk-map-viewport {
-      width: 100%;
-      overflow: hidden;
-      position: relative;
+      overflow: auto;
+      background: #F5E6D0;
     }
 
-    .nk-map-inner {
+    .nk-map-svg-container {
       transform-origin: 0 0;
-      transition: transform 0.1s ease-out;
-      will-change: transform;
+      transition: transform 0.3s ease;
     }
 
-    .nk-map-svg {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
+    .nk-map-svg { display: block; width: 100%; height: auto; }
 
-    .nk-map-pin {
-      cursor: pointer;
-      transition: transform 0.15s ease;
-      transform-origin: center center;
-    }
-    .nk-map-pin:hover {
-      transform: scale(1.4);
-      filter: drop-shadow(0 2px 6px rgba(193, 68, 14, 0.5));
-    }
+    /* Pin styles */
+    .nk-map-pin { cursor: pointer; transition: transform 0.2s ease; }
+    .nk-map-pin:hover { transform: scale(1.3); filter: drop-shadow(0 0 8px rgba(193, 68, 14, 0.6)); }
 
     /* Map controls */
     .nk-map-controls {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      z-index: 10;
+      position: sticky; bottom: 16px; float: right; margin-right: 16px; margin-top: -120px;
+      display: flex; flex-direction: column; gap: 4px; z-index: 10;
     }
     .nk-map-ctrl {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--bt-radius-sm);
-      border: 1px solid var(--bt-border);
-      background: var(--bt-card-bg);
-      color: var(--bt-mesa);
-      font-size: 1.2rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: var(--bt-shadow-sm);
-      transition: background 0.15s;
-      line-height: 1;
+      width: 40px; height: 40px; border-radius: var(--bt-radius-sm); border: 1px solid var(--bt-border);
+      background: var(--bt-card-bg); color: var(--bt-mesa); font-size: 1.2rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--bt-shadow-sm); transition: background 0.15s; line-height: 1;
     }
-    .nk-map-ctrl:hover {
-      background: var(--bt-sand-dark);
-    }
+    .nk-map-ctrl:hover { background: var(--bt-sand-dark); }
 
-    /* Map tooltip */
-    .nk-map-tooltip {
-      position: absolute;
-      z-index: 20;
+    /* Map tooltip (below map) */
+    .nk-map-tooltip-card {
+      max-width: 800px;
+      margin: 1rem auto 0;
       background: var(--bt-card-bg);
       border-radius: var(--bt-radius);
       box-shadow: var(--bt-shadow-lg);
-      padding: 1rem 1.2rem;
-      min-width: 220px;
-      max-width: 300px;
-      pointer-events: auto;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.2s, transform 0.2s;
+      padding: 1.2rem 1.5rem;
       border: 1px solid var(--bt-border-light);
+      display: none;
+      animation: nk-fadeUp 0.3s ease forwards;
     }
-    .nk-map-tooltip.nk-visible {
-      opacity: 1;
-      transform: translateY(0);
+    .nk-map-tooltip-card.nk-visible { display: block; }
+    .nk-map-tooltip-card-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem;
     }
-    .nk-map-tooltip-city {
-      font-family: var(--bt-font-display);
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--bt-mesa);
-      margin-bottom: 0.2rem;
+    .nk-map-tooltip-card-city {
+      font-family: var(--bt-font-display); font-size: 1.4rem; font-weight: 700; color: var(--bt-mesa);
     }
-    .nk-map-tooltip-count {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--bt-terracotta);
-      margin-bottom: 0.6rem;
+    .nk-map-tooltip-card-count {
+      font-size: 0.8rem; font-weight: 700; color: var(--bt-terracotta);
+      background: rgba(193, 68, 14, 0.08); padding: 0.25rem 0.65rem; border-radius: 999px;
     }
-    .nk-map-tooltip-links {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
+    .nk-map-tooltip-card-close {
+      background: none; border: none; font-size: 1.4rem; color: var(--bt-stone); cursor: pointer;
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.15s; margin-left: 0.5rem;
     }
-    .nk-map-tooltip-links a {
-      display: block;
-      font-size: 0.82rem;
-      color: var(--bt-terracotta);
-      text-decoration: none;
-      padding: 0.3rem 0.5rem;
-      border-radius: var(--bt-radius-sm);
-      background: rgba(193, 68, 14, 0.05);
-      transition: background 0.15s;
-      line-height: 1.3;
-      word-break: break-word;
+    .nk-map-tooltip-card-close:hover { background: var(--bt-sand-dark); }
+    .nk-map-tooltip-card-links {
+      list-style: none; display: flex; flex-direction: column; gap: 0.4rem;
     }
-    .nk-map-tooltip-links a:hover {
-      background: rgba(193, 68, 14, 0.12);
-      text-decoration: underline;
+    .nk-map-tooltip-card-links a {
+      display: block; font-size: 0.88rem; color: var(--bt-terracotta); text-decoration: none;
+      padding: 0.4rem 0.6rem; border-radius: var(--bt-radius-sm); background: rgba(193, 68, 14, 0.05);
+      transition: background 0.15s; line-height: 1.4;
     }
-    .nk-map-tooltip-close {
-      position: absolute;
-      top: 6px;
-      right: 8px;
-      background: none;
-      border: none;
-      font-size: 1.1rem;
-      color: var(--bt-stone);
-      cursor: pointer;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: background 0.15s;
-    }
-    .nk-map-tooltip-close:hover { background: var(--bt-sand-dark); }
-
-    @media (max-width: 560px) {
-      .nk-map-tooltip {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        top: auto;
-        min-width: 100%;
-        max-width: 100%;
-        border-radius: var(--bt-radius) var(--bt-radius) 0 0;
-        transform: translateY(100%);
-        max-height: 50vh;
-        overflow-y: auto;
-      }
-      .nk-map-tooltip.nk-visible {
-        transform: translateY(0);
-      }
-    }
+    .nk-map-tooltip-card-links a:hover { background: rgba(193, 68, 14, 0.12); text-decoration: underline; }
 
     /* --- Links View --- */
-    .nk-links-container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 32px 24px 64px;
+    .nk-links-container { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
+    .nk-links-header { text-align: center; margin-bottom: 24px; }
+    .nk-links-header h2 { font-family: var(--bt-font-display); font-size: 1.8rem; color: var(--bt-mesa); margin: 0 0 4px; }
+    .nk-links-sub { color: var(--bt-earth-light); font-size: 14px; }
+
+    /* Links sub-tabs */
+    .nk-links-subtabs {
+      display: flex; justify-content: center; gap: 0; margin-bottom: 24px;
+      border: 2px solid var(--bt-border); border-radius: 999px; overflow: hidden;
+      max-width: 420px; margin-left: auto; margin-right: auto;
     }
-    .nk-links-header {
-      text-align: center;
-      margin-bottom: 32px;
+    .nk-links-subtab {
+      flex: 1; padding: 10px 16px; font-family: var(--bt-font-body); font-weight: 700;
+      font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase;
+      color: var(--bt-earth); background: var(--bt-sand); border: none; cursor: pointer;
+      transition: all 0.2s;
     }
-    .nk-links-header h2 {
-      font-family: var(--bt-font-display);
-      font-size: 1.8rem;
-      color: var(--bt-mesa);
-      margin: 0 0 4px;
+    .nk-links-subtab:hover { background: var(--bt-sand-dark); }
+    .nk-links-subtab--active {
+      background: var(--bt-terracotta); color: #FFF;
     }
-    .nk-links-sub {
-      color: var(--bt-earth-light);
-      font-size: 14px;
-    }
-    .nk-links-city {
-      margin-bottom: 24px;
-    }
+    .nk-links-subtab--active:hover { background: var(--bt-terracotta-light); }
+
+    .nk-links-city { margin-bottom: 24px; }
     .nk-links-city-name {
-      font-family: var(--bt-font-display);
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--bt-terracotta);
-      padding-bottom: 6px;
-      border-bottom: 2px solid var(--bt-sand-dark);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
+      font-family: var(--bt-font-display); font-size: 1.15rem; font-weight: 700; color: var(--bt-terracotta);
+      padding-bottom: 6px; border-bottom: 2px solid var(--bt-sand-dark); margin-bottom: 8px;
+      display: flex; align-items: baseline; gap: 8px;
     }
-    .nk-links-count {
-      font-family: var(--bt-font-body);
-      font-size: 12px;
-      font-weight: 400;
-      color: var(--bt-earth-light);
-    }
+    .nk-links-count { font-family: var(--bt-font-body); font-size: 12px; font-weight: 400; color: var(--bt-earth-light); }
     .nk-links-event {
-      display: block;
-      padding: 10px 14px;
-      margin-bottom: 4px;
-      border-radius: 8px;
-      text-decoration: none;
-      color: var(--bt-mesa);
-      font-size: 14px;
-      line-height: 1.5;
-      transition: background 0.15s;
+      display: block; padding: 10px 14px; margin-bottom: 4px; border-radius: 8px;
+      text-decoration: none; color: var(--bt-mesa); font-size: 14px; line-height: 1.5; transition: background 0.15s;
     }
-    .nk-links-event:hover {
-      background: var(--bt-sand-dark);
-      color: var(--bt-terracotta);
-    }
-    .nk-links-event::before {
-      content: '→ ';
-      color: var(--bt-terracotta);
-      font-weight: 700;
+    .nk-links-event:hover { background: var(--bt-sand-dark); color: var(--bt-terracotta); }
+    .nk-links-event::before { content: '\2192 '; color: var(--bt-terracotta); font-weight: 700; }
+
+    @media (max-width: 560px) {
+      .nk-links-subtabs { max-width: 100%; border-radius: var(--bt-radius); }
+      .nk-links-subtab { font-size: 12px; padding: 10px 8px; }
     }
   </style>
 </head>
@@ -1237,7 +464,6 @@
 
   <!-- Flyers View (existing gallery content) -->
   <div id="nk-flyers-view">
-    <!-- Main Content -->
     <main class="nk-main" id="nk-main">
       <div class="nk-loading" id="nk-loading">
         <div class="nk-spinner"></div>
@@ -1261,18 +487,16 @@
         <p class="nk-map-cta">Find a No Kings event near you</p>
       </div>
       <div class="nk-map-wrap" id="nk-map-wrap">
-        <div class="nk-map-viewport" id="nk-map-viewport">
-          <div class="nk-map-inner" id="nk-map-inner">
-            <!-- SVG inserted by JS -->
-          </div>
+        <div class="nk-map-svg-container" id="nk-map-svg-container">
+          <!-- SVG inserted by JS -->
         </div>
         <div class="nk-map-controls">
           <button class="nk-map-ctrl" id="nk-map-zoom-in" aria-label="Zoom in">+</button>
           <button class="nk-map-ctrl" id="nk-map-zoom-out" aria-label="Zoom out">&minus;</button>
           <button class="nk-map-ctrl" id="nk-map-reset" aria-label="Reset view" style="font-size:0.8rem;">&#8634;</button>
         </div>
-        <div class="nk-map-tooltip" id="nk-map-tooltip"></div>
       </div>
+      <div class="nk-map-tooltip-card" id="nk-map-tooltip-card"></div>
     </div>
   </div>
 
@@ -1282,6 +506,10 @@
       <div class="nk-links-header">
         <h2>All Events</h2>
         <p class="nk-links-sub">68 No Kings 3 events &middot; March 28, 2026</p>
+      </div>
+      <div class="nk-links-subtabs" id="nk-links-subtabs">
+        <button class="nk-links-subtab nk-links-subtab--active" data-region="metro">Phoenix Metro</button>
+        <button class="nk-links-subtab" data-region="outside">Outside Phoenix Metro</button>
       </div>
       <div class="nk-links-list" id="nk-links-list"></div>
     </div>
@@ -1394,11 +622,11 @@
 
       /* --- State --- */
       let allImages = [];
-      let citiesMap = {};       // { cityName: [images...] }
+      let citiesMap = {};
       let isAdmin = false;
       let isSuperAdmin = false;
       let currentUserEmail = null;
-      let galleryCity = null;   // current city in modal
+      let galleryCity = null;
       let galleryIndex = 0;
       let deleteTargetId = null;
 
@@ -1452,6 +680,10 @@
           $('nk-flyers-view').hidden = target !== 'flyers';
           $('nk-map-view').hidden = target !== 'map';
           $('nk-links-view').hidden = target !== 'links';
+          if (target === 'map' && !mapInitialized) {
+            mapInitialized = true;
+            requestAnimationFrame(initMap);
+          }
           if (target === 'links' && !linksRendered) renderLinks();
         });
       });
@@ -1483,7 +715,6 @@
           const res = await fetch(API_BASE + '/images');
           if (!res.ok) throw new Error('Failed to load images');
           const data = await res.json();
-          // API returns { cities: [{ name, images }] } — flatten to a single images array
           if (data.cities && Array.isArray(data.cities)) {
             allImages = data.cities.flatMap(c => c.images || []);
           } else {
@@ -1516,47 +747,36 @@
       function render() {
         loading.hidden = true;
         const cities = Object.keys(citiesMap);
-
         if (cities.length === 0) {
           grid.hidden = true;
           emptyState.hidden = false;
           return;
         }
-
         emptyState.hidden = true;
         grid.hidden = false;
         grid.innerHTML = '';
-
-        // Populate datalist for upload
         cityList.innerHTML = cities.map(c => '<option value="' + escapeHtml(c) + '">').join('');
 
         cities.forEach((city, i) => {
           const images = citiesMap[city];
           const firstImg = images[0];
           const thumbUrl = API_BASE + '/image/' + firstImg.id;
-
           const li = document.createElement('li');
           li.className = 'nk-card';
           li.style.animationDelay = (i * 0.07) + 's';
           li.setAttribute('role', 'button');
           li.setAttribute('tabindex', '0');
           li.setAttribute('aria-label', city + ', ' + images.length + ' image' + (images.length !== 1 ? 's' : ''));
-
           li.innerHTML =
             '<img class="nk-card-thumb" src="' + escapeHtml(thumbUrl) + '" alt="' + escapeHtml(city) + ' protest" loading="lazy">' +
             '<div class="nk-card-body">' +
               '<span class="nk-card-city">' + escapeHtml(city) + '</span>' +
               '<span class="nk-card-count">' + images.length + ' image' + (images.length !== 1 ? 's' : '') + '</span>' +
             '</div>';
-
           li.addEventListener('click', () => openGallery(city, 0));
           li.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              openGallery(city, 0);
-            }
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openGallery(city, 0); }
           });
-
           grid.appendChild(li);
         });
       }
@@ -1587,25 +807,20 @@
         const images = citiesMap[galleryCity];
         if (!images || images.length === 0) return;
         const img = images[galleryIndex];
-
         modalCity.textContent = galleryCity;
         modalImg.style.opacity = '0';
         modalImg.src = API_BASE + '/image/' + img.id;
         modalImg.alt = (img.caption || galleryCity + ' protest image');
         modalImg.onload = () => { modalImg.style.opacity = '1'; };
-
         modalCaption.textContent = img.caption || '';
         modalCounter.textContent = (galleryIndex + 1) + ' of ' + images.length;
-
         if (img.source_url && /^https?:\/\//i.test(img.source_url)) {
           sourceLink.href = img.source_url;
           sourceLink.hidden = false;
         } else {
           sourceLink.hidden = true;
         }
-
         imgActions.hidden = !isAdmin;
-
         $('nk-nav-prev').style.visibility = galleryIndex > 0 ? 'visible' : 'hidden';
         $('nk-nav-next').style.visibility = galleryIndex < images.length - 1 ? 'visible' : 'hidden';
       }
@@ -1620,7 +835,6 @@
         }
       }
 
-      /* Gallery events */
       $('nk-modal-close').addEventListener('click', closeGallery);
       modalBackdrop.addEventListener('click', closeGallery);
       $('nk-nav-prev').addEventListener('click', () => navGallery(-1));
@@ -1633,14 +847,12 @@
         else if (e.key === 'ArrowRight') navGallery(1);
       });
 
-      /* Touch swipe */
       let touchStartX = 0;
       let touchStartY = 0;
       modal.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].clientX;
         touchStartY = e.changedTouches[0].clientY;
       }, { passive: true });
-
       modal.addEventListener('touchend', (e) => {
         const dx = e.changedTouches[0].clientX - touchStartX;
         const dy = e.changedTouches[0].clientY - touchStartY;
@@ -1657,28 +869,20 @@
         const images = citiesMap[galleryCity];
         const img = images[galleryIndex];
         const imgUrl = API_BASE + '/image/' + img.id;
-
         try {
           const imgEl = new Image();
           imgEl.crossOrigin = 'anonymous';
           imgEl.src = imgUrl;
-          await new Promise((resolve, reject) => {
-            imgEl.onload = resolve;
-            imgEl.onerror = reject;
-          });
+          await new Promise((resolve, reject) => { imgEl.onload = resolve; imgEl.onerror = reject; });
           const canvas = document.createElement('canvas');
           canvas.width = imgEl.naturalWidth;
           canvas.height = imgEl.naturalHeight;
           canvas.getContext('2d').drawImage(imgEl, 0, 0);
           const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
           await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-
           copyBtn.classList.add('nk-copied');
           copyText.textContent = 'Copied!';
-          setTimeout(() => {
-            copyBtn.classList.remove('nk-copied');
-            copyText.textContent = 'Copy';
-          }, 2000);
+          setTimeout(() => { copyBtn.classList.remove('nk-copied'); copyText.textContent = 'Copy'; }, 2000);
         } catch (err) {
           console.error('Copy failed:', err);
           copyText.textContent = 'Failed';
@@ -1690,7 +894,6 @@
          Upload (Admin)
          ============================================================ */
       let selectedFile = null;
-
       fab.addEventListener('click', openUploadModal);
 
       function openUploadModal() {
@@ -1699,14 +902,12 @@
         document.body.style.overflow = 'hidden';
         resetUploadForm();
       }
-
       function closeUploadModal() {
         uploadBackdrop.classList.remove('nk-visible');
         uploadModal.classList.remove('nk-visible');
         if (!galleryCity) document.body.style.overflow = '';
         resetUploadForm();
       }
-
       function resetUploadForm() {
         selectedFile = null;
         fileInput.value = '';
@@ -1723,72 +924,40 @@
       uploadCancel.addEventListener('click', closeUploadModal);
       uploadBackdrop.addEventListener('click', closeUploadModal);
 
-      /* Drag/drop */
-      dropzone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropzone.classList.add('nk-drag-over');
-      });
-      dropzone.addEventListener('dragleave', () => {
-        dropzone.classList.remove('nk-drag-over');
-      });
+      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('nk-drag-over'); });
+      dropzone.addEventListener('dragleave', () => { dropzone.classList.remove('nk-drag-over'); });
       dropzone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropzone.classList.remove('nk-drag-over');
+        e.preventDefault(); dropzone.classList.remove('nk-drag-over');
         if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
       });
-
-      fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
-      });
+      fileInput.addEventListener('change', () => { if (fileInput.files.length > 0) handleFile(fileInput.files[0]); });
 
       function handleFile(file) {
         if (!file.type.startsWith('image/')) return;
         selectedFile = file;
         const reader = new FileReader();
-        reader.onload = (e) => {
-          dropzonePreview.src = e.target.result;
-          dropzonePreview.style.display = 'block';
-          dropzoneText.style.display = 'none';
-        };
+        reader.onload = (e) => { dropzonePreview.src = e.target.result; dropzonePreview.style.display = 'block'; dropzoneText.style.display = 'none'; };
         reader.readAsDataURL(file);
         validateUpload();
       }
-
       cityInput.addEventListener('input', validateUpload);
-
-      function validateUpload() {
-        uploadSubmit.disabled = !(selectedFile && cityInput.value.trim());
-      }
+      function validateUpload() { uploadSubmit.disabled = !(selectedFile && cityInput.value.trim()); }
 
       uploadSubmit.addEventListener('click', async () => {
         if (!selectedFile || !cityInput.value.trim()) return;
         uploadSubmit.disabled = true;
         uploadProgress.style.display = 'block';
-
         const formData = new FormData();
         formData.append('image', selectedFile);
         formData.append('city', cityInput.value.trim());
         if (sourceInput.value.trim()) formData.append('source_url', sourceInput.value.trim());
         if (commentInput.value.trim()) formData.append('caption', commentInput.value.trim());
-
         try {
-          // Simulate progress
           uploadProgressBar.style.width = '40%';
-
-          const res = await fetch(API_BASE + '/images', {
-            method: 'POST',
-            credentials: 'include',
-            body: formData,
-          });
-
+          const res = await fetch(API_BASE + '/images', { method: 'POST', credentials: 'include', body: formData });
           uploadProgressBar.style.width = '100%';
-
           if (!res.ok) throw new Error('Upload failed: ' + res.status);
-
-          setTimeout(() => {
-            closeUploadModal();
-            loadImages();
-          }, 400);
+          setTimeout(() => { closeUploadModal(); loadImages(); }, 400);
         } catch (err) {
           console.error('Upload error:', err);
           uploadProgressBar.style.width = '0%';
@@ -1807,38 +976,21 @@
         deleteTargetId = images[galleryIndex].id;
         confirmBackdrop.classList.add('nk-visible');
       });
-
-      confirmCancel.addEventListener('click', () => {
-        confirmBackdrop.classList.remove('nk-visible');
-        deleteTargetId = null;
-      });
-
+      confirmCancel.addEventListener('click', () => { confirmBackdrop.classList.remove('nk-visible'); deleteTargetId = null; });
       confirmDelete.addEventListener('click', async () => {
         if (!deleteTargetId) return;
         confirmDelete.disabled = true;
-
         try {
-          const res = await fetch(API_BASE + '/images/' + deleteTargetId, {
-            method: 'DELETE',
-            credentials: 'include',
-          });
-
+          const res = await fetch(API_BASE + '/images/' + deleteTargetId, { method: 'DELETE', credentials: 'include' });
           if (!res.ok) throw new Error('Delete failed');
-
           confirmBackdrop.classList.remove('nk-visible');
           confirmDelete.disabled = false;
-
-          // Remove from state immutably
           const removedId = deleteTargetId;
           deleteTargetId = null;
           allImages = allImages.filter(img => img.id !== removedId);
           buildCitiesMap();
-
-          // Adjust gallery or close
           const images = citiesMap[galleryCity];
-          if (!images || images.length === 0) {
-            closeGallery();
-          } else {
+          if (!images || images.length === 0) { closeGallery(); } else {
             galleryIndex = Math.min(galleryIndex, images.length - 1);
             updateGalleryImage();
           }
@@ -1870,16 +1022,8 @@
       const adminNoteInput = document.getElementById('nk-admin-note');
       const adminAddBtn = document.getElementById('nk-admin-add-btn');
 
-      function openAdminPanel() {
-        adminBackdrop.classList.add('nk-open');
-        adminPanel.classList.add('nk-open');
-        loadAdmins();
-      }
-
-      function closeAdminPanel() {
-        adminBackdrop.classList.remove('nk-open');
-        adminPanel.classList.remove('nk-open');
-      }
+      function openAdminPanel() { adminBackdrop.classList.add('nk-open'); adminPanel.classList.add('nk-open'); loadAdmins(); }
+      function closeAdminPanel() { adminBackdrop.classList.remove('nk-open'); adminPanel.classList.remove('nk-open'); }
 
       async function loadAdmins() {
         try {
@@ -1902,31 +1046,20 @@
           </div>`;
         }).join('');
 
-        // Note change detection
         adminList.querySelectorAll('.nk-admin-note-input').forEach(input => {
           input.addEventListener('input', () => {
             const saveBtn = input.nextElementSibling;
-            if (input.value !== input.dataset.original) {
-              saveBtn.classList.add('nk-changed');
-            } else {
-              saveBtn.classList.remove('nk-changed');
-            }
+            if (input.value !== input.dataset.original) { saveBtn.classList.add('nk-changed'); }
+            else { saveBtn.classList.remove('nk-changed'); }
           });
         });
-
-        // Save note
         adminList.querySelectorAll('.nk-admin-save').forEach(btn => {
           btn.addEventListener('click', async () => {
             const row = btn.closest('.nk-admin-row');
             const email = row.dataset.email;
             const note = row.querySelector('.nk-admin-note-input').value;
             try {
-              await fetch(API_BASE + '/admins', {
-                method: 'PUT',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, note }),
-              });
+              await fetch(API_BASE + '/admins', { method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, note }) });
               btn.textContent = 'Saved!';
               btn.classList.remove('nk-changed');
               row.querySelector('.nk-admin-note-input').dataset.original = note;
@@ -1934,41 +1067,26 @@
             } catch (_) { btn.textContent = 'Error'; }
           });
         });
-
-        // Remove admin
         adminList.querySelectorAll('.nk-admin-remove').forEach(btn => {
           btn.addEventListener('click', async () => {
             const row = btn.closest('.nk-admin-row');
             const email = row.dataset.email;
             if (!confirm(`Remove ${email} as admin?`)) return;
             try {
-              await fetch(API_BASE + '/admins/' + encodeURIComponent(email), {
-                method: 'DELETE',
-                credentials: 'include',
-              });
+              await fetch(API_BASE + '/admins/' + encodeURIComponent(email), { method: 'DELETE', credentials: 'include' });
               row.remove();
             } catch (_) {}
           });
         });
       }
 
-      // Add admin
       adminAddBtn.addEventListener('click', async () => {
         const email = adminEmailInput.value.trim();
         const note = adminNoteInput.value.trim();
         if (!email || !email.includes('@')) return;
         try {
-          const res = await fetch(API_BASE + '/admins', {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, note }),
-          });
-          if (res.ok) {
-            adminEmailInput.value = '';
-            adminNoteInput.value = '';
-            loadAdmins();
-          }
+          const res = await fetch(API_BASE + '/admins', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, note }) });
+          if (res.ok) { adminEmailInput.value = ''; adminNoteInput.value = ''; loadAdmins(); }
         } catch (_) {}
       });
 
@@ -1976,195 +1094,185 @@
       adminBackdrop.addEventListener('click', closeAdminPanel);
 
       /* ============================================================
-         Interactive Arizona Protest Map
+         Interactive Illustrated Arizona Protest Map
          ============================================================ */
+
+      const METRO_CITIES = new Set([
+        'Tempe', 'Surprise', 'Sun City West', 'Sun City', 'Scottsdale',
+        'Queen Creek', 'Phoenix', 'Peoria', 'Mesa', 'Maricopa',
+        'Glendale', 'Fountain Hills', 'Chandler', 'Buckeye', 'Apache Junction', 'Anthem'
+      ]);
+
       const EVENTS = [
-        // Phoenix Metro
-        { city: 'Tempe', lat: 33.4255, lng: -111.9400, events: [
+        { city: 'Tempe', lat: 33.4255, lng: -111.9400, metro: true, events: [
           { name: 'NO KINGS Tempe Pedestrian Bridge', url: 'https://www.mobilize.us/nokings/event/785738/' },
           { name: 'NO KINGS Tempe Pedestrian Bridge/March Food and Clothing drive', url: 'https://www.mobilize.us/nokings/event/905961/' },
         ]},
-        { city: 'Surprise', lat: 33.6292, lng: -112.3680, events: [
+        { city: 'Surprise', lat: 33.6292, lng: -112.3680, metro: true, events: [
           { name: 'NO KINGS Surprise', url: 'https://www.mobilize.us/nokings/event/785767/' },
           { name: 'NO KINGS Surprise (Lizard Acres)', url: 'https://www.mobilize.us/nokings/event/880218/' },
           { name: 'NO KINGS Surprise Community Rally', url: 'https://www.mobilize.us/nokings/event/906012/' },
         ]},
-        { city: 'Sun City West', lat: 33.6617, lng: -112.3412, events: [
+        { city: 'Sun City West', lat: 33.6617, lng: -112.3412, metro: true, events: [
           { name: 'NO KINGS Sun City West', url: 'https://www.mobilize.us/nokings/event/880204/' },
         ]},
-        { city: 'Sun City', lat: 33.6042, lng: -112.2711, events: [
+        { city: 'Sun City', lat: 33.6042, lng: -112.2711, metro: true, events: [
           { name: 'NO KINGS Sun City', url: 'https://www.mobilize.us/nokings/event/880182/' },
         ]},
-        { city: 'Scottsdale', lat: 33.4942, lng: -111.9261, events: [
+        { city: 'Scottsdale', lat: 33.4942, lng: -111.9261, metro: true, events: [
           { name: 'NO KINGS Scottsdale Waterfront', url: 'https://www.mobilize.us/nokings/event/785736/' },
           { name: 'NO KINGS Scottsdale Fashion Square', url: 'https://www.mobilize.us/nokings/event/880146/' },
           { name: 'NO KINGS Scottsdale Civic Center', url: 'https://www.mobilize.us/nokings/event/905945/' },
           { name: 'NO KINGS Scottsdale March', url: 'https://www.mobilize.us/nokings/event/906001/' },
         ]},
-        { city: 'Queen Creek', lat: 33.2487, lng: -111.6343, events: [
+        { city: 'Queen Creek', lat: 33.2487, lng: -111.6343, metro: true, events: [
           { name: 'NO KINGS Queen Creek', url: 'https://www.mobilize.us/nokings/event/785770/' },
           { name: 'NO KINGS Queen Creek Community Rally', url: 'https://www.mobilize.us/nokings/event/906015/' },
         ]},
-        { city: 'Phoenix', lat: 33.4484, lng: -112.0740, events: [
+        { city: 'Phoenix', lat: 33.4484, lng: -112.0740, metro: true, events: [
           { name: 'NO KINGS Phoenix Capitol', url: 'https://www.mobilize.us/nokings/event/785725/' },
           { name: 'NO KINGS Phoenix Biltmore', url: 'https://www.mobilize.us/nokings/event/880100/' },
           { name: 'NO KINGS Phoenix March', url: 'https://www.mobilize.us/nokings/event/905900/' },
           { name: 'NO KINGS Phoenix Encanto', url: 'https://www.mobilize.us/nokings/event/905950/' },
         ]},
-        { city: 'Peoria', lat: 33.5806, lng: -112.2374, events: [
+        { city: 'Peoria', lat: 33.5806, lng: -112.2374, metro: true, events: [
           { name: 'NO KINGS Peoria', url: 'https://www.mobilize.us/nokings/event/880160/' },
         ]},
-        { city: 'Mesa', lat: 33.4152, lng: -111.8315, events: [
+        { city: 'Mesa', lat: 33.4152, lng: -111.8315, metro: true, events: [
           { name: 'NO KINGS Mesa', url: 'https://www.mobilize.us/nokings/event/785740/' },
         ]},
-        { city: 'Maricopa', lat: 33.0581, lng: -112.0476, events: [
+        { city: 'Maricopa', lat: 33.0581, lng: -112.0476, metro: true, events: [
           { name: 'NO KINGS Maricopa', url: 'https://www.mobilize.us/nokings/event/880170/' },
           { name: 'NO KINGS Maricopa Community', url: 'https://www.mobilize.us/nokings/event/906020/' },
         ]},
-        { city: 'Glendale', lat: 33.5387, lng: -112.1859, events: [
+        { city: 'Glendale', lat: 33.5387, lng: -112.1859, metro: true, events: [
           { name: 'NO KINGS Glendale', url: 'https://www.mobilize.us/nokings/event/880150/' },
         ]},
-        { city: 'Fountain Hills', lat: 33.6042, lng: -111.7257, events: [
+        { city: 'Fountain Hills', lat: 33.6042, lng: -111.7257, metro: true, events: [
           { name: 'NO KINGS Fountain Hills', url: 'https://www.mobilize.us/nokings/event/880190/' },
         ]},
-        { city: 'Chandler', lat: 33.3062, lng: -111.8413, events: [
+        { city: 'Chandler', lat: 33.3062, lng: -111.8413, metro: true, events: [
           { name: 'NO KINGS Chandler', url: 'https://www.mobilize.us/nokings/event/785745/' },
         ]},
-        { city: 'Buckeye', lat: 33.3703, lng: -112.5838, events: [
+        { city: 'Buckeye', lat: 33.3703, lng: -112.5838, metro: true, events: [
           { name: 'NO KINGS Buckeye', url: 'https://www.mobilize.us/nokings/event/880200/' },
         ]},
-        { city: 'Apache Junction', lat: 33.4150, lng: -111.5496, events: [
+        { city: 'Apache Junction', lat: 33.4150, lng: -111.5496, metro: true, events: [
           { name: 'NO KINGS Apache Junction', url: 'https://www.mobilize.us/nokings/event/880210/' },
         ]},
-        { city: 'Anthem', lat: 33.8653, lng: -112.1468, events: [
+        { city: 'Anthem', lat: 33.8653, lng: -112.1468, metro: true, events: [
           { name: 'NO KINGS Anthem', url: 'https://www.mobilize.us/nokings/event/880220/' },
         ]},
-        // Non-Phoenix Metro
-        { city: 'Yuma', lat: 32.6927, lng: -114.6277, events: [
+        { city: 'Yuma', lat: 32.6927, lng: -114.6277, metro: false, events: [
           { name: 'NO KINGS Yuma Main Street', url: 'https://www.mobilize.us/nokings/event/785775/' },
           { name: 'NO KINGS Yuma Pivot Point', url: 'https://www.mobilize.us/nokings/event/880230/' },
           { name: 'NO KINGS Yuma Community Rally', url: 'https://www.mobilize.us/nokings/event/906025/' },
         ]},
-        { city: 'Winslow', lat: 35.0242, lng: -110.6974, events: [
+        { city: 'Winslow', lat: 35.0242, lng: -110.6974, metro: false, events: [
           { name: 'NO KINGS Winslow', url: 'https://www.mobilize.us/nokings/event/880240/' },
         ]},
-        { city: 'Willcox', lat: 32.2528, lng: -109.8320, events: [
+        { city: 'Willcox', lat: 32.2528, lng: -109.8320, metro: false, events: [
           { name: 'NO KINGS Willcox', url: 'https://www.mobilize.us/nokings/event/880250/' },
         ]},
-        { city: 'Vail', lat: 32.0478, lng: -110.7151, events: [
+        { city: 'Vail', lat: 32.0478, lng: -110.7151, metro: false, events: [
           { name: 'NO KINGS Vail', url: 'https://www.mobilize.us/nokings/event/880260/' },
         ]},
-        { city: 'Tucson', lat: 32.2226, lng: -110.9747, events: [
+        { city: 'Tucson', lat: 32.2226, lng: -110.9747, metro: false, events: [
           { name: 'NO KINGS Tucson Downtown', url: 'https://www.mobilize.us/nokings/event/785730/' },
           { name: 'NO KINGS Tucson University', url: 'https://www.mobilize.us/nokings/event/880110/' },
           { name: 'NO KINGS Tucson March', url: 'https://www.mobilize.us/nokings/event/905910/' },
           { name: 'NO KINGS Tucson Reid Park', url: 'https://www.mobilize.us/nokings/event/905955/' },
         ]},
-        { city: 'Sierra Vista', lat: 31.5455, lng: -110.2837, events: [
+        { city: 'Sierra Vista', lat: 31.5455, lng: -110.2837, metro: false, events: [
           { name: 'NO KINGS Sierra Vista', url: 'https://www.mobilize.us/nokings/event/880270/' },
         ]},
-        { city: 'Sedona', lat: 34.8697, lng: -111.7610, events: [
+        { city: 'Sedona', lat: 34.8697, lng: -111.7610, metro: false, events: [
           { name: 'NO KINGS Sedona', url: 'https://www.mobilize.us/nokings/event/785755/' },
           { name: 'NO KINGS Sedona Tlaquepaque', url: 'https://www.mobilize.us/nokings/event/906005/' },
         ]},
-        { city: 'Sahuarita', lat: 31.9576, lng: -110.9557, events: [
+        { city: 'Sahuarita', lat: 31.9576, lng: -110.9557, metro: false, events: [
           { name: 'NO KINGS Sahuarita', url: 'https://www.mobilize.us/nokings/event/880280/' },
         ]},
-        { city: 'Safford', lat: 32.8340, lng: -109.7076, events: [
+        { city: 'Safford', lat: 32.8340, lng: -109.7076, metro: false, events: [
           { name: 'NO KINGS Safford', url: 'https://www.mobilize.us/nokings/event/880290/' },
           { name: 'NO KINGS Safford Community', url: 'https://www.mobilize.us/nokings/event/906030/' },
         ]},
-        { city: 'Rio Rico', lat: 31.4715, lng: -110.9779, events: [
+        { city: 'Rio Rico', lat: 31.4715, lng: -110.9779, metro: false, events: [
           { name: 'NO KINGS Rio Rico', url: 'https://www.mobilize.us/nokings/event/880300/' },
         ]},
-        { city: 'Prescott Valley', lat: 34.6100, lng: -112.3150, events: [
+        { city: 'Prescott Valley', lat: 34.6100, lng: -112.3150, metro: false, events: [
           { name: 'NO KINGS Prescott Valley', url: 'https://www.mobilize.us/nokings/event/880310/' },
         ]},
-        { city: 'Prescott', lat: 34.5400, lng: -112.4685, events: [
+        { city: 'Prescott', lat: 34.5400, lng: -112.4685, metro: false, events: [
           { name: 'NO KINGS Prescott Courthouse', url: 'https://www.mobilize.us/nokings/event/785760/' },
         ]},
-        { city: 'Payson', lat: 34.2309, lng: -111.3251, events: [
+        { city: 'Payson', lat: 34.2309, lng: -111.3251, metro: false, events: [
           { name: 'NO KINGS Payson', url: 'https://www.mobilize.us/nokings/event/880320/' },
         ]},
-        { city: 'Patagonia', lat: 31.5437, lng: -110.7548, events: [
+        { city: 'Patagonia', lat: 31.5437, lng: -110.7548, metro: false, events: [
           { name: 'NO KINGS Patagonia', url: 'https://www.mobilize.us/nokings/event/880330/' },
           { name: 'NO KINGS Patagonia Town Park', url: 'https://www.mobilize.us/nokings/event/906035/' },
         ]},
-        { city: 'Page', lat: 36.9147, lng: -111.4558, events: [
+        { city: 'Page', lat: 36.9147, lng: -111.4558, metro: false, events: [
           { name: 'NO KINGS Page', url: 'https://www.mobilize.us/nokings/event/880340/' },
         ]},
-        { city: 'Oracle', lat: 32.6109, lng: -110.7726, events: [
+        { city: 'Oracle', lat: 32.6109, lng: -110.7726, metro: false, events: [
           { name: 'NO KINGS Oracle', url: 'https://www.mobilize.us/nokings/event/880350/' },
         ]},
-        { city: 'Oro Valley', lat: 32.3909, lng: -110.9665, events: [
+        { city: 'Oro Valley', lat: 32.3909, lng: -110.9665, metro: false, events: [
           { name: 'NO KINGS Oro Valley', url: 'https://www.mobilize.us/nokings/event/785750/' },
           { name: 'NO KINGS Oro Valley Steam Pump', url: 'https://www.mobilize.us/nokings/event/880360/' },
           { name: 'NO KINGS Oro Valley March', url: 'https://www.mobilize.us/nokings/event/906040/' },
         ]},
-        { city: 'Nogales', lat: 31.3404, lng: -110.9343, events: [
+        { city: 'Nogales', lat: 31.3404, lng: -110.9343, metro: false, events: [
           { name: 'NO KINGS Nogales', url: 'https://www.mobilize.us/nokings/event/880370/' },
         ]},
-        { city: 'Marana', lat: 32.4365, lng: -111.2253, events: [
+        { city: 'Marana', lat: 32.4365, lng: -111.2253, metro: false, events: [
           { name: 'NO KINGS Marana', url: 'https://www.mobilize.us/nokings/event/880380/' },
           { name: 'NO KINGS Marana Crossroads', url: 'https://www.mobilize.us/nokings/event/906045/' },
         ]},
-        { city: 'Green Valley', lat: 31.8542, lng: -110.9935, events: [
+        { city: 'Green Valley', lat: 31.8542, lng: -110.9935, metro: false, events: [
           { name: 'NO KINGS Green Valley', url: 'https://www.mobilize.us/nokings/event/880390/' },
         ]},
-        { city: 'Globe', lat: 33.3942, lng: -110.7865, events: [
+        { city: 'Globe', lat: 33.3942, lng: -110.7865, metro: false, events: [
           { name: 'NO KINGS Globe', url: 'https://www.mobilize.us/nokings/event/880400/' },
           { name: 'NO KINGS Globe Broad Street', url: 'https://www.mobilize.us/nokings/event/906050/' },
           { name: 'NO KINGS Globe Community', url: 'https://www.mobilize.us/nokings/event/906055/' },
         ]},
-        { city: 'Cottonwood', lat: 34.7392, lng: -112.0099, events: [
+        { city: 'Cottonwood', lat: 34.7392, lng: -112.0099, metro: false, events: [
           { name: 'NO KINGS Cottonwood', url: 'https://www.mobilize.us/nokings/event/880410/' },
           { name: 'NO KINGS Cottonwood Old Town', url: 'https://www.mobilize.us/nokings/event/906060/' },
         ]},
-        { city: 'Casas Adobes', lat: 32.3417, lng: -110.9882, events: [
+        { city: 'Casas Adobes', lat: 32.3417, lng: -110.9882, metro: false, events: [
           { name: 'NO KINGS Casas Adobes', url: 'https://www.mobilize.us/nokings/event/880420/' },
           { name: 'NO KINGS Casas Adobes La Encantada', url: 'https://www.mobilize.us/nokings/event/906065/' },
         ]},
-        { city: 'Camp Verde', lat: 34.5636, lng: -111.8543, events: [
+        { city: 'Camp Verde', lat: 34.5636, lng: -111.8543, metro: false, events: [
           { name: 'NO KINGS Camp Verde', url: 'https://www.mobilize.us/nokings/event/880430/' },
         ]},
-        { city: 'Bullhead City', lat: 35.1478, lng: -114.5683, events: [
+        { city: 'Bullhead City', lat: 35.1478, lng: -114.5683, metro: false, events: [
           { name: 'NO KINGS Bullhead City', url: 'https://www.mobilize.us/nokings/event/880440/' },
         ]},
-        { city: 'Bisbee', lat: 31.4484, lng: -109.9284, events: [
+        { city: 'Bisbee', lat: 31.4484, lng: -109.9284, metro: false, events: [
           { name: 'NO KINGS Bisbee', url: 'https://www.mobilize.us/nokings/event/880450/' },
         ]},
-        { city: 'Arivaca', lat: 31.5833, lng: -111.3310, events: [
+        { city: 'Arivaca', lat: 31.5833, lng: -111.3310, metro: false, events: [
           { name: 'NO KINGS Arivaca', url: 'https://www.mobilize.us/nokings/event/880460/' },
         ]},
       ];
 
       /* --- Map rendering --- */
-      const MAP_BOUNDS = {
-        north: 37.1,
-        south: 31.2,
-        west: -115.0,
-        east: -108.8,
-      };
-
+      const MAP_BOUNDS = { north: 37.1, south: 31.2, west: -115.0, east: -108.8 };
       const SVG_WIDTH = 800;
       const SVG_HEIGHT = 900;
       const SVG_PAD = 30;
 
-      function lngToX(lng) {
-        return SVG_PAD + ((lng - MAP_BOUNDS.west) / (MAP_BOUNDS.east - MAP_BOUNDS.west)) * (SVG_WIDTH - 2 * SVG_PAD);
-      }
-      function latToY(lat) {
-        return SVG_PAD + ((MAP_BOUNDS.north - lat) / (MAP_BOUNDS.north - MAP_BOUNDS.south)) * (SVG_HEIGHT - 2 * SVG_PAD);
-      }
+      function lngToX(lng) { return SVG_PAD + ((lng - MAP_BOUNDS.west) / (MAP_BOUNDS.east - MAP_BOUNDS.west)) * (SVG_WIDTH - 2 * SVG_PAD); }
+      function latToY(lat) { return SVG_PAD + ((MAP_BOUNDS.north - lat) / (MAP_BOUNDS.north - MAP_BOUNDS.south)) * (SVG_HEIGHT - 2 * SVG_PAD); }
 
-      // Simplified Arizona outline polygon (lat/lng pairs converted to SVG coords)
       const AZ_OUTLINE_COORDS = [
-        // NW corner (Four Corners area heading west along north border)
         [-109.045, 37.00], [-109.05, 36.99],
-        // North border (mostly straight with slight jog at Utah)
-        [-110.50, 37.00], [-111.00, 37.00], [-112.00, 37.00], [-113.00, 37.00],
-        [-114.05, 37.00],
-        // NW - follows Colorado River south
+        [-110.50, 37.00], [-111.00, 37.00], [-112.00, 37.00], [-113.00, 37.00], [-114.05, 37.00],
         [-114.05, 36.84], [-114.15, 36.60], [-114.25, 36.40],
         [-114.37, 36.15], [-114.50, 36.00],
         [-114.62, 35.80], [-114.70, 35.55],
@@ -2179,16 +1287,13 @@
         [-114.72, 32.95], [-114.72, 32.75],
         [-114.72, 32.55], [-114.80, 32.50],
         [-114.82, 32.35],
-        // SW corner
         [-114.82, 32.18], [-114.80, 32.10],
-        // South border (mostly straight along Mexican border)
         [-114.50, 32.08], [-113.50, 31.88],
         [-113.00, 31.60], [-112.50, 31.45],
         [-112.00, 31.35], [-111.50, 31.33],
         [-111.07, 31.33], [-110.50, 31.33],
         [-110.00, 31.33], [-109.50, 31.33],
         [-109.05, 31.33],
-        // East border (straight north)
         [-109.05, 32.00], [-109.05, 33.00],
         [-109.05, 34.00], [-109.05, 35.00],
         [-109.05, 36.00], [-109.045, 37.00],
@@ -2202,49 +1307,196 @@
         }).join(' ') + ' Z';
       }
 
+      /* --- Illustrated SVG elements --- */
+
+      function svgSaguaro(x, y, h, armSide) {
+        // Saguaro cactus: tall column with 1-2 arms
+        const w = h * 0.18;
+        const r = w / 2;
+        const armH = h * 0.3;
+        const armW = h * 0.22;
+        const armY = y - h * 0.55;
+        let d = '';
+        // Main trunk
+        d += `<rect x="${x - w/2}" y="${y - h}" width="${w}" height="${h}" rx="${r}" fill="#4A7C59"/>`;
+        d += `<rect x="${x - w/2 + 1}" y="${y - h}" width="${w * 0.3}" height="${h}" rx="${r * 0.3}" fill="#6B9E7A" opacity="0.4"/>`;
+        // Arms
+        if (armSide === 'left' || armSide === 'both') {
+          d += `<path d="M${x - w/2} ${armY} H${x - w/2 - armW} Q${x - w/2 - armW - 3} ${armY} ${x - w/2 - armW - 3} ${armY - 3} V${armY - armH} Q${x - w/2 - armW - 3} ${armY - armH - r} ${x - w/2 - armW - 3 + r} ${armY - armH - r}" fill="#4A7C59"/>`;
+        }
+        if (armSide === 'right' || armSide === 'both') {
+          const armY2 = armY + h * 0.1;
+          d += `<path d="M${x + w/2} ${armY2} H${x + w/2 + armW} Q${x + w/2 + armW + 3} ${armY2} ${x + w/2 + armW + 3} ${armY2 - 3} V${armY2 - armH * 0.8} Q${x + w/2 + armW + 3} ${armY2 - armH * 0.8 - r} ${x + w/2 + armW + 3 - r} ${armY2 - armH * 0.8 - r}" fill="#4A7C59"/>`;
+        }
+        return d;
+      }
+
+      function svgMountain(cx, cy, w, h, snow) {
+        let d = `<polygon points="${cx - w/2},${cy} ${cx},${cy - h} ${cx + w/2},${cy}" fill="#8B6B4F"/>`;
+        d += `<polygon points="${cx - w/2},${cy} ${cx - w*0.15},${cy - h*0.6} ${cx},${cy - h} ${cx + w*0.15},${cy - h*0.6} ${cx + w/2},${cy}" fill="#6B5B4F" opacity="0.3"/>`;
+        if (snow) {
+          d += `<polygon points="${cx - w*0.12},${cy - h*0.75} ${cx},${cy - h} ${cx + w*0.12},${cy - h*0.75} ${cx + w*0.05},${cy - h*0.65} ${cx - w*0.05},${cy - h*0.65}" fill="#F5F0E8"/>`;
+        }
+        return d;
+      }
+
+      function svgCanyon(x, y, w, h) {
+        let d = '';
+        const layers = [
+          { dy: 0, color: '#C1440E', h: h * 0.25 },
+          { dy: h * 0.2, color: '#A0360A', h: h * 0.25 },
+          { dy: h * 0.4, color: '#8B2D08', h: h * 0.2 },
+          { dy: h * 0.55, color: '#D4953A', h: h * 0.15 },
+          { dy: h * 0.65, color: '#6B3510', h: h * 0.35 },
+        ];
+        layers.forEach(l => {
+          const indent = l.dy * 0.3;
+          d += `<rect x="${x + indent}" y="${y + l.dy}" width="${w - indent * 2}" height="${l.h}" rx="2" fill="${l.color}" opacity="0.8"/>`;
+        });
+        return d;
+      }
+
+      function svgSun(cx, cy, r) {
+        let d = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D4953A"/>`;
+        d += `<circle cx="${cx}" cy="${cy}" r="${r * 0.75}" fill="#E8B86D"/>`;
+        // Rays
+        for (let i = 0; i < 12; i++) {
+          const angle = (i * 30) * Math.PI / 180;
+          const x1 = cx + Math.cos(angle) * (r + 4);
+          const y1 = cy + Math.sin(angle) * (r + 4);
+          const x2 = cx + Math.cos(angle) * (r + 14);
+          const y2 = cy + Math.sin(angle) * (r + 14);
+          d += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#D4953A" stroke-width="${i % 2 === 0 ? 3 : 1.5}" stroke-linecap="round"/>`;
+        }
+        return d;
+      }
+
+      function svgCompassRose(cx, cy, size) {
+        let d = `<circle cx="${cx}" cy="${cy}" r="${size}" fill="rgba(255,248,240,0.9)" stroke="#8B7B6F" stroke-width="1.5"/>`;
+        // N/S/E/W points
+        d += `<polygon points="${cx},${cy - size * 0.8} ${cx - size * 0.12},${cy} ${cx + size * 0.12},${cy}" fill="#C1440E"/>`;
+        d += `<polygon points="${cx},${cy + size * 0.8} ${cx - size * 0.12},${cy} ${cx + size * 0.12},${cy}" fill="#8B7B6F"/>`;
+        d += `<polygon points="${cx + size * 0.8},${cy} ${cx},${cy - size * 0.12} ${cx},${cy + size * 0.12}" fill="#8B7B6F"/>`;
+        d += `<polygon points="${cx - size * 0.8},${cy} ${cx},${cy - size * 0.12} ${cx},${cy + size * 0.12}" fill="#8B7B6F"/>`;
+        d += `<text x="${cx}" y="${cy - size * 0.85 - 4}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="10" font-weight="800" fill="#C1440E">N</text>`;
+        return d;
+      }
+
       function buildMapSVG() {
-        const totalEvents = EVENTS.reduce((sum, loc) => sum + loc.events.length, 0);
         const maxEvents = Math.max(...EVENTS.map(loc => loc.events.length));
+        const azPath = buildAZPath();
 
         let svg = `<svg class="nk-map-svg" viewBox="0 0 ${SVG_WIDTH} ${SVG_HEIGHT}" xmlns="http://www.w3.org/2000/svg">`;
 
-        // Defs for textures and filters
+        // Defs
         svg += `<defs>
-          <pattern id="topo-lines" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
-            <path d="M0 12 Q6 8 12 12 Q18 16 24 12" stroke="rgba(74,124,89,0.08)" stroke-width="0.8" fill="none"/>
-          </pattern>
-          <filter id="pin-glow">
-            <feGaussianBlur stdDeviation="2" result="blur"/>
-            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <radialGradient id="az-fill" cx="45%" cy="40%" r="60%">
+          <linearGradient id="desert-floor" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#F5E6D0"/>
-            <stop offset="100%" stop-color="#E8D5BD"/>
-          </radialGradient>
+            <stop offset="60%" stop-color="#E8D5BD"/>
+            <stop offset="100%" stop-color="#D4B896"/>
+          </linearGradient>
+          <linearGradient id="sky-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E8F0F8"/>
+            <stop offset="100%" stop-color="#F5E6D0"/>
+          </linearGradient>
+          <clipPath id="az-clip"><path d="${azPath}"/></clipPath>
+          <filter id="pin-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(193,68,14,0.35)"/>
+          </filter>
         </defs>`;
 
-        // Arizona outline
-        const azPath = buildAZPath();
-        svg += `<path d="${azPath}" fill="url(#az-fill)" stroke="#6B9E7A" stroke-width="2.5" stroke-linejoin="round"/>`;
-        // Topo texture overlay
-        svg += `<path d="${azPath}" fill="url(#topo-lines)" stroke="none"/>`;
+        // Background sky
+        svg += `<rect x="0" y="0" width="${SVG_WIDTH}" height="${SVG_HEIGHT}" fill="url(#sky-grad)"/>`;
 
-        // Event pins
+        // Arizona state fill
+        svg += `<path d="${azPath}" fill="url(#desert-floor)" stroke="#B87333" stroke-width="3" stroke-linejoin="round"/>`;
+
+        // Clipped illustration layer
+        svg += `<g clip-path="url(#az-clip)">`;
+
+        // Desert floor sand texture dots
+        for (let i = 0; i < 60; i++) {
+          const dx = 80 + Math.random() * 640;
+          const dy = 400 + Math.random() * 450;
+          svg += `<circle cx="${dx}" cy="${dy}" r="${1 + Math.random() * 2}" fill="#B87333" opacity="${0.05 + Math.random() * 0.1}"/>`;
+        }
+
+        // Mountains along the northern edge
+        const mountainBase = latToY(36.5);
+        svg += svgMountain(lngToX(-111.5), mountainBase, 80, 55, true);
+        svg += svgMountain(lngToX(-111.1), mountainBase + 5, 65, 45, true);
+        svg += svgMountain(lngToX(-112.1), mountainBase - 5, 90, 60, true);
+        svg += svgMountain(lngToX(-110.5), mountainBase + 8, 55, 40, false);
+        svg += svgMountain(lngToX(-112.7), mountainBase + 3, 70, 48, true);
+        svg += svgMountain(lngToX(-113.3), mountainBase + 10, 60, 38, false);
+
+        // Grand Canyon (north-central)
+        const canyonX = lngToX(-112.1) - 60;
+        const canyonY = latToY(36.3);
+        svg += svgCanyon(canyonX, canyonY, 130, 40);
+        svg += `<text x="${canyonX + 65}" y="${canyonY - 6}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="10" font-weight="700" fill="#8B2D08" letter-spacing="2" opacity="0.7">GRAND CANYON</text>`;
+
+        // Saguaro cacti in southern desert
+        svg += svgSaguaro(lngToX(-112.5), latToY(32.0), 45, 'both');
+        svg += svgSaguaro(lngToX(-111.8), latToY(31.8), 35, 'right');
+        svg += svgSaguaro(lngToX(-111.2), latToY(32.3), 50, 'left');
+        svg += svgSaguaro(lngToX(-112.8), latToY(32.5), 30, 'right');
+        svg += svgSaguaro(lngToX(-110.5), latToY(31.9), 40, 'both');
+        svg += svgSaguaro(lngToX(-113.5), latToY(32.8), 38, 'left');
+        svg += svgSaguaro(lngToX(-111.5), latToY(32.8), 28, 'right');
+        svg += svgSaguaro(lngToX(-112.2), latToY(33.0), 32, 'left');
+
+        // Route 66 text along a dotted road in the north
+        const r66y = latToY(35.2);
+        svg += `<line x1="${lngToX(-114.0)}" y1="${r66y}" x2="${lngToX(-109.5)}" y2="${r66y + 15}" stroke="#8B7B6F" stroke-width="2" stroke-dasharray="8 6" opacity="0.4"/>`;
+        svg += `<text x="${lngToX(-111.8)}" y="${r66y - 8}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="14" font-weight="800" fill="#8B7B6F" letter-spacing="3" opacity="0.5" transform="rotate(-1,${lngToX(-111.8)},${r66y - 8})">ROUTE 66</text>`;
+
+        // Highway lines: I-10 (east-west) and I-17 (north-south)
+        const i10y = latToY(33.4);
+        svg += `<line x1="${lngToX(-114.5)}" y1="${i10y + 20}" x2="${lngToX(-109.2)}" y2="${i10y - 10}" stroke="#A69888" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.35"/>`;
+        svg += `<text x="${lngToX(-113.5)}" y="${i10y + 14}" font-family="'Nunito',sans-serif" font-size="9" fill="#A69888" font-weight="700" opacity="0.5">I-10</text>`;
+
+        const i17x = lngToX(-112.07);
+        svg += `<line x1="${i17x}" y1="${latToY(36.8)}" x2="${i17x + 5}" y2="${latToY(31.5)}" stroke="#A69888" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.35"/>`;
+        svg += `<text x="${i17x + 8}" y="${latToY(35.5)}" font-family="'Nunito',sans-serif" font-size="9" fill="#A69888" font-weight="700" opacity="0.5">I-17</text>`;
+
+        svg += `</g>`; // end clip
+
+        // Sun in upper right
+        svg += svgSun(SVG_WIDTH - 70, 65, 28);
+
+        // Compass rose in lower left
+        svg += svgCompassRose(70, SVG_HEIGHT - 70, 28);
+
+        // City labels for major cities
+        const majorCities = [
+          { name: 'Phoenix', lat: 33.4484, lng: -112.0740, offX: 0, offY: -18 },
+          { name: 'Tucson', lat: 32.2226, lng: -110.9747, offX: 0, offY: -18 },
+          { name: 'Flagstaff', lat: 35.1983, lng: -111.6513, offX: 0, offY: -14 },
+        ];
+        majorCities.forEach(c => {
+          const cx = lngToX(c.lng) + c.offX;
+          const cy = latToY(c.lat) + c.offY;
+          svg += `<text x="${cx}" y="${cy}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="13" font-weight="700" fill="#4A2F1E" opacity="0.6" letter-spacing="1">${c.name}</text>`;
+        });
+
+        // Event pins (teardrop marker shape)
         EVENTS.forEach((loc, idx) => {
           const x = lngToX(loc.lng);
           const y = latToY(loc.lat);
           const count = loc.events.length;
-          // Pin radius scales: 1 event = 6, 4 events = 14
-          const r = 5 + (count / maxEvents) * 9;
+          const pinH = 28;
+          const pinR = 11;
 
-          svg += `<g class="nk-map-pin" data-idx="${idx}" filter="url(#pin-glow)">`;
-          // Outer glow ring
-          svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 3).toFixed(1)}" fill="rgba(193,68,14,0.15)" stroke="none"/>`;
-          // Main pin
-          svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="#C1440E" stroke="#FFFFFF" stroke-width="2"/>`;
-          // Count label for 2+ events
-          if (count > 1) {
-            svg += `<text x="${x.toFixed(1)}" y="${(y + 1).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="#FFF" font-family="'Nunito',sans-serif" font-size="${Math.max(10, r - 1)}" font-weight="800">${count}</text>`;
+          svg += `<g class="nk-map-pin" data-idx="${idx}" filter="url(#pin-shadow)" style="transform-origin: ${x.toFixed(1)}px ${y.toFixed(1)}px">`;
+          // Teardrop shape: circle on top, point on bottom
+          svg += `<path d="M${x} ${y} C${x - pinR * 0.6} ${y - pinH * 0.3} ${x - pinR} ${y - pinH * 0.55} ${x - pinR} ${y - pinH * 0.65} A${pinR} ${pinR} 0 1 1 ${x + pinR} ${y - pinH * 0.65} C${x + pinR} ${y - pinH * 0.55} ${x + pinR * 0.6} ${y - pinH * 0.3} ${x} ${y} Z" fill="#C1440E" stroke="#FFF" stroke-width="2"/>`;
+          // White inner dot
+          if (count <= 1) {
+            svg += `<circle cx="${x}" cy="${y - pinH * 0.65}" r="4" fill="#FFF"/>`;
+          } else {
+            // Count text for multi-event
+            svg += `<text x="${x}" y="${(y - pinH * 0.65 + 1).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="#FFF" font-family="'Nunito',sans-serif" font-size="11" font-weight="800">${count}</text>`;
           }
           svg += `</g>`;
         });
@@ -2253,283 +1505,110 @@
         return svg;
       }
 
+      /* --- Map init --- */
+      let mapInitialized = false;
+      let currentZoom = 1;
+      const ZOOM_LEVELS = [1, 1.5, 2, 3];
+
       function initMap() {
-        const mapInner = $('nk-map-inner');
-        mapInner.innerHTML = buildMapSVG();
+        const container = $('nk-map-svg-container');
+        container.innerHTML = buildMapSVG();
 
-        // --- Pan & Zoom state ---
-        let scale = 1;
-        let panX = 0;
-        let panY = 0;
-        const MIN_SCALE = 1;
-        const MAX_SCALE = 6;
+        const tooltipCard = $('nk-map-tooltip-card');
+        let activeIdx = null;
 
-        const mapWrap = $('nk-map-wrap');
-        const viewport = $('nk-map-viewport');
-        const tooltip = $('nk-map-tooltip');
-
-        function applyTransform(animate) {
-          mapInner.style.transition = animate ? 'transform 0.25s ease-out' : 'none';
-          mapInner.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-        }
-
-        function clampPan() {
-          const rect = viewport.getBoundingClientRect();
-          const w = rect.width;
-          const h = rect.height;
-          const scaledW = w * scale;
-          const scaledH = h * scale;
-
-          if (scaledW <= w) {
-            panX = 0;
+        function setZoom(level) {
+          currentZoom = level;
+          container.style.transform = `scale(${level})`;
+          container.style.transformOrigin = '0 0';
+          // Adjust wrapper dimensions for scroll
+          const wrap = $('nk-map-wrap');
+          if (level > 1) {
+            wrap.style.overflow = 'auto';
           } else {
-            const maxPanX = (scaledW - w) / 2;
-            panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
-          }
-          if (scaledH <= h) {
-            panY = 0;
-          } else {
-            const maxPanY = (scaledH - h) / 2;
-            panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
+            wrap.style.overflow = 'hidden';
+            wrap.scrollTop = 0;
+            wrap.scrollLeft = 0;
           }
         }
 
-        function zoomTo(newScale, animate) {
-          scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
-          clampPan();
-          applyTransform(animate !== false);
-        }
-
-        // Zoom controls
-        $('nk-map-zoom-in').addEventListener('click', () => zoomTo(scale * 1.5));
-        $('nk-map-zoom-out').addEventListener('click', () => zoomTo(scale / 1.5));
+        $('nk-map-zoom-in').addEventListener('click', () => {
+          const idx = ZOOM_LEVELS.indexOf(currentZoom);
+          if (idx < ZOOM_LEVELS.length - 1) setZoom(ZOOM_LEVELS[idx + 1]);
+        });
+        $('nk-map-zoom-out').addEventListener('click', () => {
+          const idx = ZOOM_LEVELS.indexOf(currentZoom);
+          if (idx > 0) setZoom(ZOOM_LEVELS[idx - 1]);
+        });
         $('nk-map-reset').addEventListener('click', () => {
-          scale = 1; panX = 0; panY = 0;
-          applyTransform(true);
+          setZoom(1);
           hideTooltip();
         });
 
-        // Mouse wheel zoom
-        mapWrap.addEventListener('wheel', (e) => {
-          e.preventDefault();
-          const factor = e.deltaY < 0 ? 1.15 : 0.87;
-          zoomTo(scale * factor, false);
-        }, { passive: false });
-
-        // Mouse drag pan
-        let isDragging = false;
-        let dragStartX = 0;
-        let dragStartY = 0;
-        let dragStartPanX = 0;
-        let dragStartPanY = 0;
-        let hasDragged = false;
-
-        mapWrap.addEventListener('mousedown', (e) => {
-          if (e.button !== 0) return;
-          isDragging = true;
-          hasDragged = false;
-          dragStartX = e.clientX;
-          dragStartY = e.clientY;
-          dragStartPanX = panX;
-          dragStartPanY = panY;
-          mapWrap.style.cursor = 'grabbing';
-        });
-
-        window.addEventListener('mousemove', (e) => {
-          if (!isDragging) return;
-          const dx = e.clientX - dragStartX;
-          const dy = e.clientY - dragStartY;
-          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasDragged = true;
-          panX = dragStartPanX + dx;
-          panY = dragStartPanY + dy;
-          clampPan();
-          applyTransform(false);
-        });
-
-        window.addEventListener('mouseup', () => {
-          isDragging = false;
-          mapWrap.style.cursor = 'grab';
-        });
-
-        // Touch pan & pinch-to-zoom
-        let lastTouchDist = 0;
-        let lastTouchX = 0;
-        let lastTouchY = 0;
-        let isTouchPanning = false;
-        let touchHasMoved = false;
-
-        mapWrap.addEventListener('touchstart', (e) => {
-          if (e.touches.length === 1) {
-            isTouchPanning = true;
-            touchHasMoved = false;
-            lastTouchX = e.touches[0].clientX;
-            lastTouchY = e.touches[0].clientY;
-          } else if (e.touches.length === 2) {
-            isTouchPanning = false;
-            touchHasMoved = true;
-            lastTouchDist = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY
-            );
-          }
-        }, { passive: true });
-
-        mapWrap.addEventListener('touchmove', (e) => {
-          e.preventDefault();
-          if (e.touches.length === 1 && isTouchPanning) {
-            const dx = e.touches[0].clientX - lastTouchX;
-            const dy = e.touches[0].clientY - lastTouchY;
-            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) touchHasMoved = true;
-            panX += dx;
-            panY += dy;
-            lastTouchX = e.touches[0].clientX;
-            lastTouchY = e.touches[0].clientY;
-            clampPan();
-            applyTransform(false);
-          } else if (e.touches.length === 2) {
-            const newDist = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY
-            );
-            if (lastTouchDist > 0) {
-              const ratio = newDist / lastTouchDist;
-              zoomTo(scale * ratio, false);
-            }
-            lastTouchDist = newDist;
-          }
-        }, { passive: false });
-
-        mapWrap.addEventListener('touchend', (e) => {
-          if (e.touches.length === 0) {
-            isTouchPanning = false;
-            lastTouchDist = 0;
-          }
-        }, { passive: true });
-
-        // --- Tooltip ---
-        let activeTooltipIdx = null;
-
-        function showTooltip(idx, pinEl) {
+        function showTooltip(idx) {
           const loc = EVENTS[idx];
-          activeTooltipIdx = idx;
-
-          const evtCount = loc.events.length;
-          let html = `<button class="nk-map-tooltip-close" aria-label="Close">&times;</button>`;
-          html += `<div class="nk-map-tooltip-city">${escapeHtml(loc.city)}</div>`;
-          html += `<div class="nk-map-tooltip-count">${evtCount} event${evtCount !== 1 ? 's' : ''}</div>`;
-          html += `<ul class="nk-map-tooltip-links">`;
+          activeIdx = idx;
+          const count = loc.events.length;
+          let html = `<div class="nk-map-tooltip-card-header">`;
+          html += `<div><span class="nk-map-tooltip-card-city">${escapeHtml(loc.city)}</span> `;
+          html += `<span class="nk-map-tooltip-card-count">${count} event${count !== 1 ? 's' : ''}</span></div>`;
+          html += `<button class="nk-map-tooltip-card-close" aria-label="Close">&times;</button>`;
+          html += `</div>`;
+          html += `<ul class="nk-map-tooltip-card-links">`;
           loc.events.forEach(evt => {
             html += `<li><a href="${escapeHtml(evt.url)}" target="_blank" rel="noopener">${escapeHtml(evt.name)}</a></li>`;
           });
           html += `</ul>`;
-          tooltip.innerHTML = html;
-
-          // Position tooltip near the pin (desktop only)
-          const isMobile = window.innerWidth <= 560;
-          if (!isMobile) {
-            const wrapRect = mapWrap.getBoundingClientRect();
-            const pinRect = pinEl.getBoundingClientRect();
-            const pinCenterX = pinRect.left + pinRect.width / 2 - wrapRect.left;
-            const pinTopY = pinRect.top - wrapRect.top;
-
-            let left = pinCenterX + 15;
-            let top = pinTopY - 10;
-
-            // Flip left if tooltip would overflow right
-            if (left + 260 > wrapRect.width) {
-              left = pinCenterX - 260;
-            }
-            // Clamp top
-            if (top < 10) top = 10;
-            if (top + 200 > wrapRect.height) top = wrapRect.height - 200;
-
-            tooltip.style.left = left + 'px';
-            tooltip.style.top = top + 'px';
-          } else {
-            tooltip.style.left = '';
-            tooltip.style.top = '';
-          }
-
-          // Show
-          requestAnimationFrame(() => {
-            tooltip.classList.add('nk-visible');
-          });
-
-          // Close button
-          tooltip.querySelector('.nk-map-tooltip-close').addEventListener('click', (e) => {
-            e.stopPropagation();
-            hideTooltip();
-          });
+          tooltipCard.innerHTML = html;
+          tooltipCard.classList.add('nk-visible');
+          tooltipCard.querySelector('.nk-map-tooltip-card-close').addEventListener('click', hideTooltip);
         }
 
         function hideTooltip() {
-          tooltip.classList.remove('nk-visible');
-          activeTooltipIdx = null;
+          tooltipCard.classList.remove('nk-visible');
+          activeIdx = null;
         }
 
-        // Pin click handler (delegated on SVG)
-        const svgEl = mapInner.querySelector('svg');
+        // Pin click (delegated)
+        const svgEl = container.querySelector('svg');
         svgEl.addEventListener('click', (e) => {
-          if (hasDragged) return;
           const pin = e.target.closest('.nk-map-pin');
           if (pin) {
             const idx = parseInt(pin.dataset.idx, 10);
-            if (activeTooltipIdx === idx) {
-              hideTooltip();
-            } else {
-              showTooltip(idx, pin);
-            }
-          } else {
-            hideTooltip();
+            if (activeIdx === idx) { hideTooltip(); } else { showTooltip(idx); }
           }
         });
 
-        // Touch tap on pin
+        // Also handle touch
         svgEl.addEventListener('touchend', (e) => {
-          if (touchHasMoved) return;
           const pin = e.target.closest('.nk-map-pin');
           if (pin) {
             e.preventDefault();
             const idx = parseInt(pin.dataset.idx, 10);
-            if (activeTooltipIdx === idx) {
-              hideTooltip();
-            } else {
-              showTooltip(idx, pin);
-            }
+            if (activeIdx === idx) { hideTooltip(); } else { showTooltip(idx); }
           }
         }, { passive: false });
-
-        // Close tooltip when clicking outside map on mobile
-        document.addEventListener('click', (e) => {
-          if (!mapWrap.contains(e.target) && activeTooltipIdx !== null) {
-            hideTooltip();
-          }
-        });
       }
 
-      // Initialize map when tab is first shown
-      let mapInitialized = false;
-      const mapTab = document.querySelector('[data-tab="map"]');
-      const origTabHandler = mapTab.onclick;
-      document.querySelectorAll('.nk-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          if (tab.dataset.tab === 'map' && !mapInitialized) {
-            mapInitialized = true;
-            requestAnimationFrame(initMap);
-          }
-        });
-      });
-
       /* ============================================================
-         Links View
+         Links View with Sub-tabs
          ============================================================ */
       let linksRendered = false;
+      let currentRegion = 'metro';
 
       function renderLinks() {
         linksRendered = true;
+        renderLinksForRegion(currentRegion);
+      }
+
+      function renderLinksForRegion(region) {
+        currentRegion = region;
         const container = $('nk-links-list');
-        // Group by city, sort alphabetically
-        const sorted = [...EVENTS].sort((a, b) => a.city.localeCompare(b.city));
+        const isMetro = region === 'metro';
+        const filtered = EVENTS.filter(e => e.metro === isMetro);
+        // Sort reverse alphabetically (Z -> A)
+        const sorted = [...filtered].sort((a, b) => b.city.localeCompare(a.city));
+
         container.innerHTML = sorted.map(city => `
           <div class="nk-links-city">
             <div class="nk-links-city-name">
@@ -2541,7 +1620,23 @@
             `).join('')}
           </div>
         `).join('');
+
+        // Update sub-tab active state
+        document.querySelectorAll('.nk-links-subtab').forEach(st => {
+          if (st.dataset.region === region) {
+            st.classList.add('nk-links-subtab--active');
+          } else {
+            st.classList.remove('nk-links-subtab--active');
+          }
+        });
       }
+
+      // Sub-tab click handlers
+      document.querySelectorAll('.nk-links-subtab').forEach(st => {
+        st.addEventListener('click', () => {
+          renderLinksForRegion(st.dataset.region);
+        });
+      });
 
       checkAdmin();
       loadImages();
