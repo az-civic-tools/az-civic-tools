@@ -19,7 +19,7 @@
      Configuration & Constants
      ============================================================ */
 
-  const LIVE_API = 'https://cactus.watch';
+  const LIVE_API = 'https://api.cactus.watch';
   const DEMO_DATA_PATH = 'demo-data';
   const PAGE_SIZE = 25;
   const STORAGE_KEY = 'cactus-watch-tracking';
@@ -88,7 +88,10 @@
     activeTab: 'browse',
     filters: { search: '', chamber: '', status: '', type: '', sort: 'updated_at', order: 'desc' },
     billCache: {},  // number → bill data from list/API
+    user: null,     // null = logged out, object = logged in
   };
+
+  function isLoggedIn() { return state.user !== null; }
 
   /* ============================================================
      Tracking Data Layer (localStorage)
@@ -283,7 +286,10 @@
     detectMode();
     if (state.mode === 'demo') document.getElementById('bt-demo-banner').hidden = false;
 
-    tracking.load();
+    // TODO: check auth state and set state.user if logged in
+    if (isLoggedIn()) {
+      tracking.load();
+    }
     renderUserBadge();
     bindEvents();
     await loadMeta();
@@ -317,7 +323,7 @@
 
       // Cache bills for status change checks
       for (const b of result.bills) state.billCache[b.number] = b;
-      tracking.checkStatusChanges(state.billCache);
+      if (isLoggedIn()) tracking.checkStatusChanges(state.billCache);
 
       renderBillList(result.bills);
       renderPagination(result.pagination);
@@ -417,10 +423,13 @@
      ============================================================ */
 
   function renderUserBadge() {
-    const user = tracking.getUser();
     const el = document.getElementById('bt-user-badge');
-    const initial = user.name.charAt(0).toUpperCase();
-    el.innerHTML = `<span class="bt-user-avatar">${initial}</span><span>${esc(user.name)}</span>`;
+    if (!isLoggedIn()) {
+      el.innerHTML = `<button class="bt-btn bt-btn--login" id="bt-login-btn">Sign In</button>`;
+      return;
+    }
+    const initial = state.user.name.charAt(0).toUpperCase();
+    el.innerHTML = `<span class="bt-user-avatar">${initial}</span><span>${esc(state.user.name)}</span>`;
   }
 
   function renderMeta() {
@@ -439,6 +448,12 @@
   }
 
   function updateListsBadge() {
+    const listsTab = document.querySelector('[data-tab="lists"]');
+    if (!isLoggedIn()) {
+      listsTab.hidden = true;
+      return;
+    }
+    listsTab.hidden = false;
     const badge = document.getElementById('bt-lists-badge');
     const attention = tracking.getAttentionCount();
     const total = tracking.getTotalTracked();
@@ -459,7 +474,7 @@
       return;
     }
     el.innerHTML = bills.map((bill, i) => {
-      const isTracked = tracking.isTracked(bill.number);
+      const isTracked = isLoggedIn() && tracking.isTracked(bill.number);
       return `
       <article class="bt-bill-card" style="animation-delay: ${Math.min(i * 30, 400)}ms" tabindex="0" role="button" aria-label="View ${esc(bill.number)}">
         <div class="bt-card-number">${esc(bill.number)}</div>
@@ -471,9 +486,9 @@
         </div>
         <div class="bt-card-actions">
           <span class="bt-status bt-status--${esc(bill.status)}">${statusLabel(bill.status)}</span>
-          <button class="bt-card-add ${isTracked ? 'bt-card-add--tracked' : ''}" data-number="${esc(bill.number)}" aria-label="Add ${esc(bill.number)} to list" title="${isTracked ? 'On a list' : 'Add to list'}">
+          ${isLoggedIn() ? `<button class="bt-card-add ${isTracked ? 'bt-card-add--tracked' : ''}" data-number="${esc(bill.number)}" aria-label="Add ${esc(bill.number)} to list" title="${isTracked ? 'On a list' : 'Add to list'}">
             ${isTracked ? '&#10003;' : '+'}
-          </button>
+          </button>` : ''}
         </div>
       </article>`;
     }).join('');
@@ -523,7 +538,7 @@
     // Cache for tracking
     state.billCache[bill.number] = bill;
 
-    const listsForBill = tracking.getListsForBill(bill.number);
+    const listsForBill = isLoggedIn() ? tracking.getListsForBill(bill.number) : [];
     const isTracked = listsForBill.length > 0;
 
     let html = `
@@ -542,7 +557,7 @@
         </dl>
         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
           ${bill.azleg_url ? `<a href="${esc(bill.azleg_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-detail-azleg">&#127963; View on AZLeg.gov &rarr;</a>` : ''}
-          <button class="bt-btn bt-btn--small bt-detail-add-btn" data-number="${esc(bill.number)}">${isTracked ? '&#10003; On list' : '+ Add to list'}</button>
+          ${isLoggedIn() ? `<button class="bt-btn bt-btn--small bt-detail-add-btn" data-number="${esc(bill.number)}">${isTracked ? '&#10003; On list' : '+ Add to list'}</button>` : ''}
         </div>
       </div>
     `;
@@ -1117,8 +1132,16 @@
       </div>`;
 
     if (vote.records?.length) {
+      const voteOrder = { Y: 0, N: 1, NV: 2 };
+      const sorted = [...vote.records].sort((a, b) => {
+        const va = voteOrder[a.vote] ?? 3;
+        const vb = voteOrder[b.vote] ?? 3;
+        if (va !== vb) return va - vb;
+        if ((a.party || '') !== (b.party || '')) return (a.party || '').localeCompare(b.party || '');
+        return (a.legislator || '').localeCompare(b.legislator || '');
+      });
       html += `<button class="bt-vote-toggle" aria-controls="${recordsId}">Show individual votes</button>
-        <div class="bt-vote-records" id="${recordsId}"><div class="bt-vote-grid">${vote.records.map(r => `
+        <div class="bt-vote-records" id="${recordsId}"><div class="bt-vote-grid">${sorted.map(r => `
           <div class="bt-vote-record"><span class="bt-vote-record-vote bt-vote-record-vote--${esc(r.vote)}">${esc(r.vote)}</span><span class="bt-vote-record-name"><span class="bt-party bt-party--${esc(r.party)}"></span>${esc(r.legislator)}</span></div>
         `).join('')}</div></div>`;
     }
