@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
       --bt-mesa:              #2C1810;
@@ -327,79 +329,22 @@
     .nk-map-header .nk-map-date { font-family: var(--bt-font-body); font-size: 1rem; font-weight: 700; color: var(--bt-terracotta); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
     .nk-map-header .nk-map-cta { font-family: var(--bt-font-body); font-size: 0.95rem; color: var(--bt-earth); }
 
-    .nk-map-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-      border-radius: var(--bt-radius);
-      border: 2px solid var(--bt-border);
-      overflow: auto;
-      background: #F5E6D0;
+    /* Leaflet popup styling */
+    .nk-leaflet-popup .leaflet-popup-content-wrapper {
+      border-radius: 10px; font-family: var(--bt-font-body); box-shadow: 0 6px 24px rgba(0,0,0,0.15);
     }
-
-    .nk-map-svg-container {
-      transform-origin: 0 0;
-      transition: transform 0.3s ease;
+    .nk-leaflet-popup .leaflet-popup-content { margin: 14px 16px; min-width: 180px; }
+    .nk-popup-city { font-family: var(--bt-font-display); font-size: 1.2rem; font-weight: 700; color: var(--bt-mesa); margin-bottom: 2px; }
+    .nk-popup-count { font-size: 0.75rem; font-weight: 700; color: var(--bt-terracotta); margin-bottom: 8px; }
+    .nk-popup-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+    .nk-popup-links a {
+      display: block; font-size: 0.82rem; color: var(--bt-terracotta); text-decoration: none;
+      padding: 5px 8px; border-radius: 6px; background: rgba(193,68,14,0.05); transition: background 0.15s;
     }
-
-    .nk-map-svg { display: block; width: 100%; height: auto; }
-
-    /* Pin styles */
-    .nk-map-pin { cursor: pointer; transition: transform 0.2s ease; }
-    .nk-map-pin:hover { transform: scale(1.3); filter: drop-shadow(0 0 8px rgba(193, 68, 14, 0.6)); }
-
-    /* Map controls */
-    .nk-map-controls {
-      position: sticky; bottom: 16px; float: right; margin-right: 16px; margin-top: -120px;
-      display: flex; flex-direction: column; gap: 4px; z-index: 10;
+    .nk-popup-links a:hover { background: rgba(193,68,14,0.12); text-decoration: underline; }
+    @media (max-width: 640px) {
+      #nk-leaflet-map { height: 400px !important; }
     }
-    .nk-map-ctrl {
-      width: 40px; height: 40px; border-radius: var(--bt-radius-sm); border: 1px solid var(--bt-border);
-      background: var(--bt-card-bg); color: var(--bt-mesa); font-size: 1.2rem; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      box-shadow: var(--bt-shadow-sm); transition: background 0.15s; line-height: 1;
-    }
-    .nk-map-ctrl:hover { background: var(--bt-sand-dark); }
-
-    /* Map tooltip (below map) */
-    .nk-map-tooltip-card {
-      max-width: 800px;
-      margin: 1rem auto 0;
-      background: var(--bt-card-bg);
-      border-radius: var(--bt-radius);
-      box-shadow: var(--bt-shadow-lg);
-      padding: 1.2rem 1.5rem;
-      border: 1px solid var(--bt-border-light);
-      display: none;
-      animation: nk-fadeUp 0.3s ease forwards;
-    }
-    .nk-map-tooltip-card.nk-visible { display: block; }
-    .nk-map-tooltip-card-header {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem;
-    }
-    .nk-map-tooltip-card-city {
-      font-family: var(--bt-font-display); font-size: 1.4rem; font-weight: 700; color: var(--bt-mesa);
-    }
-    .nk-map-tooltip-card-count {
-      font-size: 0.8rem; font-weight: 700; color: var(--bt-terracotta);
-      background: rgba(193, 68, 14, 0.08); padding: 0.25rem 0.65rem; border-radius: 999px;
-    }
-    .nk-map-tooltip-card-close {
-      background: none; border: none; font-size: 1.4rem; color: var(--bt-stone); cursor: pointer;
-      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-      border-radius: 50%; transition: background 0.15s; margin-left: 0.5rem;
-    }
-    .nk-map-tooltip-card-close:hover { background: var(--bt-sand-dark); }
-    .nk-map-tooltip-card-links {
-      list-style: none; display: flex; flex-direction: column; gap: 0.4rem;
-    }
-    .nk-map-tooltip-card-links a {
-      display: block; font-size: 0.88rem; color: var(--bt-terracotta); text-decoration: none;
-      padding: 0.4rem 0.6rem; border-radius: var(--bt-radius-sm); background: rgba(193, 68, 14, 0.05);
-      transition: background 0.15s; line-height: 1.4;
-    }
-    .nk-map-tooltip-card-links a:hover { background: rgba(193, 68, 14, 0.12); text-decoration: underline; }
 
     /* --- Links View --- */
     .nk-links-container { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
@@ -484,19 +429,9 @@
       <div class="nk-map-header">
         <h2>68 events across Arizona</h2>
         <p class="nk-map-date">March 28, 2026</p>
-        <p class="nk-map-cta">Find a No Kings event near you</p>
+        <p class="nk-map-cta">Tap a pin to see event details</p>
       </div>
-      <div class="nk-map-wrap" id="nk-map-wrap">
-        <div class="nk-map-svg-container" id="nk-map-svg-container">
-          <!-- SVG inserted by JS -->
-        </div>
-        <div class="nk-map-controls">
-          <button class="nk-map-ctrl" id="nk-map-zoom-in" aria-label="Zoom in">+</button>
-          <button class="nk-map-ctrl" id="nk-map-zoom-out" aria-label="Zoom out">&minus;</button>
-          <button class="nk-map-ctrl" id="nk-map-reset" aria-label="Reset view" style="font-size:0.8rem;">&#8634;</button>
-        </div>
-      </div>
-      <div class="nk-map-tooltip-card" id="nk-map-tooltip-card"></div>
+      <div id="nk-leaflet-map" style="height: 500px; width: 100%; max-width: 800px; margin: 0 auto; border-radius: 12px; border: 2px solid var(--bt-border); z-index: 1;"></div>
     </div>
   </div>
 
@@ -1261,333 +1196,59 @@
         ]},
       ];
 
-      /* --- Map rendering --- */
-      const MAP_BOUNDS = { north: 37.1, south: 31.2, west: -115.0, east: -108.8 };
-      const SVG_WIDTH = 800;
-      const SVG_HEIGHT = 900;
-      const SVG_PAD = 30;
-
-      function lngToX(lng) { return SVG_PAD + ((lng - MAP_BOUNDS.west) / (MAP_BOUNDS.east - MAP_BOUNDS.west)) * (SVG_WIDTH - 2 * SVG_PAD); }
-      function latToY(lat) { return SVG_PAD + ((MAP_BOUNDS.north - lat) / (MAP_BOUNDS.north - MAP_BOUNDS.south)) * (SVG_HEIGHT - 2 * SVG_PAD); }
-
-      const AZ_OUTLINE_COORDS = [
-        [-109.045, 37.00], [-109.05, 36.99],
-        [-110.50, 37.00], [-111.00, 37.00], [-112.00, 37.00], [-113.00, 37.00], [-114.05, 37.00],
-        [-114.05, 36.84], [-114.15, 36.60], [-114.25, 36.40],
-        [-114.37, 36.15], [-114.50, 36.00],
-        [-114.62, 35.80], [-114.70, 35.55],
-        [-114.70, 35.30], [-114.68, 35.10],
-        [-114.60, 34.90], [-114.55, 34.75],
-        [-114.48, 34.60], [-114.42, 34.45],
-        [-114.38, 34.30], [-114.32, 34.15],
-        [-114.18, 34.00],
-        [-114.14, 33.85], [-114.30, 33.70],
-        [-114.45, 33.55], [-114.52, 33.40],
-        [-114.55, 33.25], [-114.62, 33.10],
-        [-114.72, 32.95], [-114.72, 32.75],
-        [-114.72, 32.55], [-114.80, 32.50],
-        [-114.82, 32.35],
-        [-114.82, 32.18], [-114.80, 32.10],
-        [-114.50, 32.08], [-113.50, 31.88],
-        [-113.00, 31.60], [-112.50, 31.45],
-        [-112.00, 31.35], [-111.50, 31.33],
-        [-111.07, 31.33], [-110.50, 31.33],
-        [-110.00, 31.33], [-109.50, 31.33],
-        [-109.05, 31.33],
-        [-109.05, 32.00], [-109.05, 33.00],
-        [-109.05, 34.00], [-109.05, 35.00],
-        [-109.05, 36.00], [-109.045, 37.00],
-      ];
-
-      function buildAZPath() {
-        return AZ_OUTLINE_COORDS.map((coord, i) => {
-          const x = lngToX(coord[0]);
-          const y = latToY(coord[1]);
-          return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
-        }).join(' ') + ' Z';
-      }
-
-      /* --- Illustrated SVG elements --- */
-
-      function svgSaguaro(x, y, h, armSide) {
-        // Saguaro cactus: tall column with 1-2 arms
-        const w = h * 0.18;
-        const r = w / 2;
-        const armH = h * 0.3;
-        const armW = h * 0.22;
-        const armY = y - h * 0.55;
-        let d = '';
-        // Main trunk
-        d += `<rect x="${x - w/2}" y="${y - h}" width="${w}" height="${h}" rx="${r}" fill="#4A7C59"/>`;
-        d += `<rect x="${x - w/2 + 1}" y="${y - h}" width="${w * 0.3}" height="${h}" rx="${r * 0.3}" fill="#6B9E7A" opacity="0.4"/>`;
-        // Arms
-        if (armSide === 'left' || armSide === 'both') {
-          d += `<path d="M${x - w/2} ${armY} H${x - w/2 - armW} Q${x - w/2 - armW - 3} ${armY} ${x - w/2 - armW - 3} ${armY - 3} V${armY - armH} Q${x - w/2 - armW - 3} ${armY - armH - r} ${x - w/2 - armW - 3 + r} ${armY - armH - r}" fill="#4A7C59"/>`;
-        }
-        if (armSide === 'right' || armSide === 'both') {
-          const armY2 = armY + h * 0.1;
-          d += `<path d="M${x + w/2} ${armY2} H${x + w/2 + armW} Q${x + w/2 + armW + 3} ${armY2} ${x + w/2 + armW + 3} ${armY2 - 3} V${armY2 - armH * 0.8} Q${x + w/2 + armW + 3} ${armY2 - armH * 0.8 - r} ${x + w/2 + armW + 3 - r} ${armY2 - armH * 0.8 - r}" fill="#4A7C59"/>`;
-        }
-        return d;
-      }
-
-      function svgMountain(cx, cy, w, h, snow) {
-        let d = `<polygon points="${cx - w/2},${cy} ${cx},${cy - h} ${cx + w/2},${cy}" fill="#8B6B4F"/>`;
-        d += `<polygon points="${cx - w/2},${cy} ${cx - w*0.15},${cy - h*0.6} ${cx},${cy - h} ${cx + w*0.15},${cy - h*0.6} ${cx + w/2},${cy}" fill="#6B5B4F" opacity="0.3"/>`;
-        if (snow) {
-          d += `<polygon points="${cx - w*0.12},${cy - h*0.75} ${cx},${cy - h} ${cx + w*0.12},${cy - h*0.75} ${cx + w*0.05},${cy - h*0.65} ${cx - w*0.05},${cy - h*0.65}" fill="#F5F0E8"/>`;
-        }
-        return d;
-      }
-
-      function svgCanyon(x, y, w, h) {
-        let d = '';
-        const layers = [
-          { dy: 0, color: '#C1440E', h: h * 0.25 },
-          { dy: h * 0.2, color: '#A0360A', h: h * 0.25 },
-          { dy: h * 0.4, color: '#8B2D08', h: h * 0.2 },
-          { dy: h * 0.55, color: '#D4953A', h: h * 0.15 },
-          { dy: h * 0.65, color: '#6B3510', h: h * 0.35 },
-        ];
-        layers.forEach(l => {
-          const indent = l.dy * 0.3;
-          d += `<rect x="${x + indent}" y="${y + l.dy}" width="${w - indent * 2}" height="${l.h}" rx="2" fill="${l.color}" opacity="0.8"/>`;
-        });
-        return d;
-      }
-
-      function svgSun(cx, cy, r) {
-        let d = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#D4953A"/>`;
-        d += `<circle cx="${cx}" cy="${cy}" r="${r * 0.75}" fill="#E8B86D"/>`;
-        // Rays
-        for (let i = 0; i < 12; i++) {
-          const angle = (i * 30) * Math.PI / 180;
-          const x1 = cx + Math.cos(angle) * (r + 4);
-          const y1 = cy + Math.sin(angle) * (r + 4);
-          const x2 = cx + Math.cos(angle) * (r + 14);
-          const y2 = cy + Math.sin(angle) * (r + 14);
-          d += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#D4953A" stroke-width="${i % 2 === 0 ? 3 : 1.5}" stroke-linecap="round"/>`;
-        }
-        return d;
-      }
-
-      function svgCompassRose(cx, cy, size) {
-        let d = `<circle cx="${cx}" cy="${cy}" r="${size}" fill="rgba(255,248,240,0.9)" stroke="#8B7B6F" stroke-width="1.5"/>`;
-        // N/S/E/W points
-        d += `<polygon points="${cx},${cy - size * 0.8} ${cx - size * 0.12},${cy} ${cx + size * 0.12},${cy}" fill="#C1440E"/>`;
-        d += `<polygon points="${cx},${cy + size * 0.8} ${cx - size * 0.12},${cy} ${cx + size * 0.12},${cy}" fill="#8B7B6F"/>`;
-        d += `<polygon points="${cx + size * 0.8},${cy} ${cx},${cy - size * 0.12} ${cx},${cy + size * 0.12}" fill="#8B7B6F"/>`;
-        d += `<polygon points="${cx - size * 0.8},${cy} ${cx},${cy - size * 0.12} ${cx},${cy + size * 0.12}" fill="#8B7B6F"/>`;
-        d += `<text x="${cx}" y="${cy - size * 0.85 - 4}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="10" font-weight="800" fill="#C1440E">N</text>`;
-        return d;
-      }
-
-      function buildMapSVG() {
-        const maxEvents = Math.max(...EVENTS.map(loc => loc.events.length));
-        const azPath = buildAZPath();
-
-        let svg = `<svg class="nk-map-svg" viewBox="0 0 ${SVG_WIDTH} ${SVG_HEIGHT}" xmlns="http://www.w3.org/2000/svg">`;
-
-        // Defs
-        svg += `<defs>
-          <linearGradient id="desert-floor" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#F5E6D0"/>
-            <stop offset="60%" stop-color="#E8D5BD"/>
-            <stop offset="100%" stop-color="#D4B896"/>
-          </linearGradient>
-          <linearGradient id="sky-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#E8F0F8"/>
-            <stop offset="100%" stop-color="#F5E6D0"/>
-          </linearGradient>
-          <clipPath id="az-clip"><path d="${azPath}"/></clipPath>
-          <filter id="pin-shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(193,68,14,0.35)"/>
-          </filter>
-        </defs>`;
-
-        // Background sky
-        svg += `<rect x="0" y="0" width="${SVG_WIDTH}" height="${SVG_HEIGHT}" fill="url(#sky-grad)"/>`;
-
-        // Arizona state fill
-        svg += `<path d="${azPath}" fill="url(#desert-floor)" stroke="#B87333" stroke-width="3" stroke-linejoin="round"/>`;
-
-        // Clipped illustration layer
-        svg += `<g clip-path="url(#az-clip)">`;
-
-        // Desert floor sand texture dots
-        for (let i = 0; i < 60; i++) {
-          const dx = 80 + Math.random() * 640;
-          const dy = 400 + Math.random() * 450;
-          svg += `<circle cx="${dx}" cy="${dy}" r="${1 + Math.random() * 2}" fill="#B87333" opacity="${0.05 + Math.random() * 0.1}"/>`;
-        }
-
-        // Mountains along the northern edge
-        const mountainBase = latToY(36.5);
-        svg += svgMountain(lngToX(-111.5), mountainBase, 80, 55, true);
-        svg += svgMountain(lngToX(-111.1), mountainBase + 5, 65, 45, true);
-        svg += svgMountain(lngToX(-112.1), mountainBase - 5, 90, 60, true);
-        svg += svgMountain(lngToX(-110.5), mountainBase + 8, 55, 40, false);
-        svg += svgMountain(lngToX(-112.7), mountainBase + 3, 70, 48, true);
-        svg += svgMountain(lngToX(-113.3), mountainBase + 10, 60, 38, false);
-
-        // Grand Canyon (north-central)
-        const canyonX = lngToX(-112.1) - 60;
-        const canyonY = latToY(36.3);
-        svg += svgCanyon(canyonX, canyonY, 130, 40);
-        svg += `<text x="${canyonX + 65}" y="${canyonY - 6}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="10" font-weight="700" fill="#8B2D08" letter-spacing="2" opacity="0.7">GRAND CANYON</text>`;
-
-        // Saguaro cacti in southern desert
-        svg += svgSaguaro(lngToX(-112.5), latToY(32.0), 45, 'both');
-        svg += svgSaguaro(lngToX(-111.8), latToY(31.8), 35, 'right');
-        svg += svgSaguaro(lngToX(-111.2), latToY(32.3), 50, 'left');
-        svg += svgSaguaro(lngToX(-112.8), latToY(32.5), 30, 'right');
-        svg += svgSaguaro(lngToX(-110.5), latToY(31.9), 40, 'both');
-        svg += svgSaguaro(lngToX(-113.5), latToY(32.8), 38, 'left');
-        svg += svgSaguaro(lngToX(-111.5), latToY(32.8), 28, 'right');
-        svg += svgSaguaro(lngToX(-112.2), latToY(33.0), 32, 'left');
-
-        // Route 66 text along a dotted road in the north
-        const r66y = latToY(35.2);
-        svg += `<line x1="${lngToX(-114.0)}" y1="${r66y}" x2="${lngToX(-109.5)}" y2="${r66y + 15}" stroke="#8B7B6F" stroke-width="2" stroke-dasharray="8 6" opacity="0.4"/>`;
-        svg += `<text x="${lngToX(-111.8)}" y="${r66y - 8}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="14" font-weight="800" fill="#8B7B6F" letter-spacing="3" opacity="0.5" transform="rotate(-1,${lngToX(-111.8)},${r66y - 8})">ROUTE 66</text>`;
-
-        // Highway lines: I-10 (east-west) and I-17 (north-south)
-        const i10y = latToY(33.4);
-        svg += `<line x1="${lngToX(-114.5)}" y1="${i10y + 20}" x2="${lngToX(-109.2)}" y2="${i10y - 10}" stroke="#A69888" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.35"/>`;
-        svg += `<text x="${lngToX(-113.5)}" y="${i10y + 14}" font-family="'Nunito',sans-serif" font-size="9" fill="#A69888" font-weight="700" opacity="0.5">I-10</text>`;
-
-        const i17x = lngToX(-112.07);
-        svg += `<line x1="${i17x}" y1="${latToY(36.8)}" x2="${i17x + 5}" y2="${latToY(31.5)}" stroke="#A69888" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.35"/>`;
-        svg += `<text x="${i17x + 8}" y="${latToY(35.5)}" font-family="'Nunito',sans-serif" font-size="9" fill="#A69888" font-weight="700" opacity="0.5">I-17</text>`;
-
-        svg += `</g>`; // end clip
-
-        // Sun in upper right
-        svg += svgSun(SVG_WIDTH - 70, 65, 28);
-
-        // Compass rose in lower left
-        svg += svgCompassRose(70, SVG_HEIGHT - 70, 28);
-
-        // City labels for major cities
-        const majorCities = [
-          { name: 'Phoenix', lat: 33.4484, lng: -112.0740, offX: 0, offY: -18 },
-          { name: 'Tucson', lat: 32.2226, lng: -110.9747, offX: 0, offY: -18 },
-          { name: 'Flagstaff', lat: 35.1983, lng: -111.6513, offX: 0, offY: -14 },
-        ];
-        majorCities.forEach(c => {
-          const cx = lngToX(c.lng) + c.offX;
-          const cy = latToY(c.lat) + c.offY;
-          svg += `<text x="${cx}" y="${cy}" text-anchor="middle" font-family="'Nunito',sans-serif" font-size="13" font-weight="700" fill="#4A2F1E" opacity="0.6" letter-spacing="1">${c.name}</text>`;
-        });
-
-        // Event pins (teardrop marker shape)
-        EVENTS.forEach((loc, idx) => {
-          const x = lngToX(loc.lng);
-          const y = latToY(loc.lat);
-          const count = loc.events.length;
-          const pinH = 28;
-          const pinR = 11;
-
-          svg += `<g class="nk-map-pin" data-idx="${idx}" filter="url(#pin-shadow)" style="transform-origin: ${x.toFixed(1)}px ${y.toFixed(1)}px">`;
-          // Teardrop shape: circle on top, point on bottom
-          svg += `<path d="M${x} ${y} C${x - pinR * 0.6} ${y - pinH * 0.3} ${x - pinR} ${y - pinH * 0.55} ${x - pinR} ${y - pinH * 0.65} A${pinR} ${pinR} 0 1 1 ${x + pinR} ${y - pinH * 0.65} C${x + pinR} ${y - pinH * 0.55} ${x + pinR * 0.6} ${y - pinH * 0.3} ${x} ${y} Z" fill="#C1440E" stroke="#FFF" stroke-width="2"/>`;
-          // White inner dot
-          if (count <= 1) {
-            svg += `<circle cx="${x}" cy="${y - pinH * 0.65}" r="4" fill="#FFF"/>`;
-          } else {
-            // Count text for multi-event
-            svg += `<text x="${x}" y="${(y - pinH * 0.65 + 1).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="#FFF" font-family="'Nunito',sans-serif" font-size="11" font-weight="800">${count}</text>`;
-          }
-          svg += `</g>`;
-        });
-
-        svg += `</svg>`;
-        return svg;
-      }
-
-      /* --- Map init --- */
+      /* --- Leaflet Map --- */
       let mapInitialized = false;
-      let currentZoom = 1;
-      const ZOOM_LEVELS = [1, 1.5, 2, 3];
 
       function initMap() {
-        const container = $('nk-map-svg-container');
-        container.innerHTML = buildMapSVG();
-
-        const tooltipCard = $('nk-map-tooltip-card');
-        let activeIdx = null;
-
-        function setZoom(level) {
-          currentZoom = level;
-          container.style.transform = `scale(${level})`;
-          container.style.transformOrigin = '0 0';
-          // Adjust wrapper dimensions for scroll
-          const wrap = $('nk-map-wrap');
-          if (level > 1) {
-            wrap.style.overflow = 'auto';
-          } else {
-            wrap.style.overflow = 'hidden';
-            wrap.scrollTop = 0;
-            wrap.scrollLeft = 0;
-          }
-        }
-
-        $('nk-map-zoom-in').addEventListener('click', () => {
-          const idx = ZOOM_LEVELS.indexOf(currentZoom);
-          if (idx < ZOOM_LEVELS.length - 1) setZoom(ZOOM_LEVELS[idx + 1]);
-        });
-        $('nk-map-zoom-out').addEventListener('click', () => {
-          const idx = ZOOM_LEVELS.indexOf(currentZoom);
-          if (idx > 0) setZoom(ZOOM_LEVELS[idx - 1]);
-        });
-        $('nk-map-reset').addEventListener('click', () => {
-          setZoom(1);
-          hideTooltip();
+        const map = L.map('nk-leaflet-map', {
+          center: [34.0, -111.7],
+          zoom: 7,
+          minZoom: 6,
+          maxZoom: 14,
+          zoomControl: true,
+          maxBounds: [[30.5, -115.5], [37.5, -108.0]],
+          maxBoundsViscosity: 1.0,
         });
 
-        function showTooltip(idx) {
-          const loc = EVENTS[idx];
-          activeIdx = idx;
+        // Warm-toned tile layer
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 19,
+        }).addTo(map);
+
+        // Custom terracotta pin icon
+        const pinIcon = (count) => L.divIcon({
+          className: 'nk-leaflet-pin',
+          html: `<div style="
+            width: 32px; height: 32px; border-radius: 50% 50% 50% 0;
+            background: #C1440E; border: 3px solid #FFF;
+            transform: rotate(-45deg); display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3); position: relative;
+          "><span style="
+            transform: rotate(45deg); color: #FFF; font-weight: 800;
+            font-family: Nunito,sans-serif; font-size: ${count > 1 ? '13px' : '0'};
+          ">${count > 1 ? count : ''}</span></div>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -28],
+        });
+
+        // Add markers for all events
+        EVENTS.forEach(loc => {
           const count = loc.events.length;
-          let html = `<div class="nk-map-tooltip-card-header">`;
-          html += `<div><span class="nk-map-tooltip-card-city">${escapeHtml(loc.city)}</span> `;
-          html += `<span class="nk-map-tooltip-card-count">${count} event${count !== 1 ? 's' : ''}</span></div>`;
-          html += `<button class="nk-map-tooltip-card-close" aria-label="Close">&times;</button>`;
-          html += `</div>`;
-          html += `<ul class="nk-map-tooltip-card-links">`;
-          loc.events.forEach(evt => {
-            html += `<li><a href="${escapeHtml(evt.url)}" target="_blank" rel="noopener">${escapeHtml(evt.name)}</a></li>`;
+          const marker = L.marker([loc.lat, loc.lng], { icon: pinIcon(count) }).addTo(map);
+
+          let popupHtml = `<div class="nk-popup-city">${escapeHtml(loc.city)}</div>`;
+          popupHtml += `<div class="nk-popup-count">${count} event${count !== 1 ? 's' : ''}</div>`;
+          popupHtml += `<ul class="nk-popup-links">`;
+          loc.events.forEach(ev => {
+            popupHtml += `<li><a href="${escapeHtml(ev.url)}" target="_blank" rel="noopener">${escapeHtml(ev.name)}</a></li>`;
           });
-          html += `</ul>`;
-          tooltipCard.innerHTML = html;
-          tooltipCard.classList.add('nk-visible');
-          tooltipCard.querySelector('.nk-map-tooltip-card-close').addEventListener('click', hideTooltip);
-        }
+          popupHtml += `</ul>`;
 
-        function hideTooltip() {
-          tooltipCard.classList.remove('nk-visible');
-          activeIdx = null;
-        }
-
-        // Pin click (delegated)
-        const svgEl = container.querySelector('svg');
-        svgEl.addEventListener('click', (e) => {
-          const pin = e.target.closest('.nk-map-pin');
-          if (pin) {
-            const idx = parseInt(pin.dataset.idx, 10);
-            if (activeIdx === idx) { hideTooltip(); } else { showTooltip(idx); }
-          }
+          marker.bindPopup(popupHtml, { className: 'nk-leaflet-popup', maxWidth: 280 });
         });
-
-        // Also handle touch
-        svgEl.addEventListener('touchend', (e) => {
-          const pin = e.target.closest('.nk-map-pin');
-          if (pin) {
-            e.preventDefault();
-            const idx = parseInt(pin.dataset.idx, 10);
-            if (activeIdx === idx) { hideTooltip(); } else { showTooltip(idx); }
-          }
-        }, { passive: false });
       }
 
       /* ============================================================
