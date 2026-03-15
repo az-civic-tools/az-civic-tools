@@ -19,7 +19,7 @@
      Configuration & Constants
      ============================================================ */
 
-  const LIVE_API = 'https://cactus.watch';
+  const LIVE_API = 'https://api.cactus.watch';
   const DEMO_DATA_PATH = 'demo-data';
   const PAGE_SIZE = 25;
   const STORAGE_KEY = 'cactus-watch-tracking';

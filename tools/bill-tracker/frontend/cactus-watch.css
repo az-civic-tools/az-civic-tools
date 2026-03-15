@@ -903,6 +903,7 @@ a:hover { color: var(--bt-mesa-warm); }
   gap: 4px;
   margin-bottom: 12px;
 }
+.bt-nav-tab[hidden] { display: none; }
 .bt-nav-tab {
   padding: 10px 20px;
   font-family: var(--bt-font-body);
@@ -1091,6 +1092,16 @@ a:hover { color: var(--bt-mesa-warm); }
 .bt-btn--small { min-height: 36px; padding: 6px 14px; font-size: 14px; }
 .bt-btn--danger { color: var(--bt-red); border-color: var(--bt-red); }
 .bt-btn--danger:hover { background: var(--bt-red); color: #FFF; }
+.bt-btn--login {
+  background: var(--bt-sage);
+  border-color: var(--bt-sage);
+  color: #FFF;
+  font-weight: 700;
+  min-height: 36px;
+  padding: 6px 18px;
+  font-size: 14px;
+}
+.bt-btn--login:hover { background: var(--bt-sage-deep); border-color: var(--bt-sage-deep); color: #FFF; }
 
 /* --- My Lists View --- */
 .bt-lists-view[hidden] { display: none; }
