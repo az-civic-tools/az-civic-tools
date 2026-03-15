@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Cactus Watch</title>
+  <meta name="description" content="Privacy policy for Cactus Watch, the Arizona Legislature bill tracker.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cactus-watch.css">
+</head>
+<body>
+  <div class="bt-prose">
+    <a href="/" class="bt-back-link">&larr; Back to Cactus Watch</a>
+    <h1>Privacy Policy</h1>
+    <p class="bt-prose-date">Last updated: March 2026</p>
+
+    <p>Cactus Watch is a free, open-source civic tool built to help Arizonans follow legislation. It is not a commercial product. We have no interest in monetizing your data, and this policy reflects that.</p>
+
+    <h2>What we collect</h2>
+    <ul>
+      <li><strong>Account information:</strong> When you sign in, we receive your name and email address from your authentication provider (Google) or from the email you use for magic-link login. We use this solely to identify your account.</li>
+      <li><strong>Bill tracking lists:</strong> The lists you create and the bills you add to them are stored so you can access them across devices.</li>
+      <li><strong>IP address:</strong> We log IP addresses temporarily for rate limiting and abuse prevention. These are not stored long-term or tied to your account.</li>
+    </ul>
+
+    <h2>Why we collect it</h2>
+    <ul>
+      <li><strong>Authentication:</strong> Your email and name let us create and manage your account.</li>
+      <li><strong>Personalized tracking:</strong> Your bill lists are stored server-side so they persist across sessions and devices.</li>
+      <li><strong>Rate limiting:</strong> IP-based rate limiting prevents abuse of the service.</li>
+    </ul>
+
+    <h2>How we store it</h2>
+    <ul>
+      <li>All data is stored in Cloudflare D1, a serverless SQL database with encryption at rest.</li>
+      <li>The application runs on Cloudflare Workers at the edge, so your data never touches a traditional server.</li>
+      <li>Session tokens are stored as HttpOnly cookies and cannot be accessed by JavaScript.</li>
+    </ul>
+
+    <h2>Cookies</h2>
+    <ul>
+      <li><strong>Session cookie</strong> (<code>cactus_session</code>): An HttpOnly, Secure cookie set on <code>.cactus.watch</code> with a 30-day expiry. This identifies your session. It cannot be read by client-side JavaScript.</li>
+      <li><strong>Local storage:</strong> We use browser localStorage to cache your display name and UI preferences (like list view state). This data never leaves your browser.</li>
+    </ul>
+
+    <h2>Third-party services</h2>
+    <ul>
+      <li><strong>Google OAuth:</strong> If you sign in with Google, Google processes the authentication. We only receive your name and email. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>.</li>
+      <li><strong>Resend:</strong> We use Resend to deliver magic-link login emails. See <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener">Resend's privacy policy</a>.</li>
+      <li><strong>Cloudflare:</strong> Our infrastructure runs on Cloudflare. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's privacy policy</a>.</li>
+    </ul>
+
+    <h2>What we do NOT do</h2>
+    <ul>
+      <li>We do not run analytics or tracking scripts.</li>
+      <li>We do not use ad networks or advertising pixels.</li>
+      <li>We do not sell, share, or trade your data with anyone.</li>
+      <li>We do not profile you or build behavioral models.</li>
+      <li>We do not send marketing emails. The only emails you receive are magic-link login codes.</li>
+    </ul>
+
+    <h2>Deleting your account</h2>
+    <p>To delete your account and all associated data, email <a href="mailto:privacy@cactus.watch">privacy@cactus.watch</a> from the email address on your account. We will delete your data within 7 days.</p>
+
+    <h2>Open source</h2>
+    <p>Cactus Watch is open source under the MIT License. You can inspect exactly what the code does at <a href="https://github.com/az-civic-tools/az-civic-tools" target="_blank" rel="noopener">github.com/az-civic-tools/az-civic-tools</a>.</p>
+
+    <h2>Changes</h2>
+    <p>If we make meaningful changes to this policy, we will update the date at the top. Since this is a civic tool with a small user base, we are not going to clutter your inbox with policy update emails.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about this policy? Email <a href="mailto:privacy@cactus.watch">privacy@cactus.watch</a>.</p>
+
+    <div class="bt-prose-footer">
+      <p><a href="/">Cactus Watch</a> &middot; <a href="/accessibility">Accessibility</a></p>
+    </div>
+  </div>
+</body>
+</html>

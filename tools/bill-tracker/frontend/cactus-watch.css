@@ -2074,3 +2074,48 @@ a:hover { color: var(--bt-mesa-warm); }
 
   .bt-timeline { display: none; }
 }
+
+/* ============================================================
+   Logout link in user badge
+   ============================================================ */
+.bt-logout-link {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0 0 0 4px;
+  font-family: var(--bt-font-body);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+.bt-logout-link:hover { color: #FFF; }
+
+.bt-user-name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Prose pages (privacy, accessibility)
+   ============================================================ */
+.bt-prose {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  line-height: 1.8;
+  color: var(--bt-text);
+}
+.bt-prose h1 { font-family: var(--bt-font-display); font-size: 2rem; margin-bottom: 8px; }
+.bt-prose h2 { font-family: var(--bt-font-display); font-size: 1.4rem; margin-top: 32px; margin-bottom: 12px; color: var(--bt-mesa); }
+.bt-prose p { margin-bottom: 16px; }
+.bt-prose ul { margin-bottom: 16px; padding-left: 24px; }
+.bt-prose li { margin-bottom: 8px; }
+.bt-prose a { color: var(--bt-terracotta); }
+.bt-prose .bt-prose-date { font-size: 14px; color: var(--bt-text-muted); margin-bottom: 24px; }
+.bt-back-link { display: inline-block; margin-bottom: 24px; color: var(--bt-terracotta); text-decoration: none; font-weight: 600; }
+.bt-back-link:hover { color: var(--bt-terracotta-light); }
+.bt-prose-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--bt-border); font-size: 14px; color: var(--bt-text-muted); }

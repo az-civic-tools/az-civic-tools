@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessibility — Cactus Watch</title>
+  <meta name="description" content="Accessibility statement for Cactus Watch, the Arizona Legislature bill tracker.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cactus-watch.css">
+</head>
+<body>
+  <div class="bt-prose">
+    <a href="/" class="bt-back-link">&larr; Back to Cactus Watch</a>
+    <h1>Accessibility</h1>
+    <p class="bt-prose-date">Last updated: March 2026</p>
+
+    <p>Cactus Watch is a civic tool, and civic tools should be usable by everyone. We are committed to making this site accessible to all people, including those who use assistive technologies.</p>
+
+    <h2>Our goal</h2>
+    <p>We aim to meet <a href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="noopener">WCAG 2.1 Level AA</a> standards across the entire site. This is an ongoing effort, and we continue to improve.</p>
+
+    <h2>What we have done</h2>
+    <ul>
+      <li><strong>Semantic HTML:</strong> The site uses proper heading hierarchy, landmark regions (<code>header</code>, <code>main</code>, <code>nav</code>, <code>footer</code>), and semantic elements like <code>article</code> for bill cards.</li>
+      <li><strong>Keyboard navigation:</strong> All interactive elements (buttons, links, form controls, bill cards) are reachable and operable via keyboard. The Escape key closes overlays and popovers.</li>
+      <li><strong>Screen reader support:</strong> Interactive elements include ARIA labels and roles. Tab navigation uses <code>role="tablist"</code> and <code>aria-selected</code>. The bill detail panel uses <code>role="dialog"</code>.</li>
+      <li><strong>Color contrast:</strong> Text and interactive elements meet WCAG AA contrast ratios against their backgrounds. Status badges and party indicators use both color and text labels.</li>
+      <li><strong>Responsive design:</strong> The layout adapts to all screen sizes, from mobile phones to wide desktop monitors. Touch targets are sized appropriately for mobile use.</li>
+      <li><strong>Focus management:</strong> Focus indicators are visible on all interactive elements. When overlays open, focus is managed appropriately.</li>
+      <li><strong>Text resizing:</strong> The layout accommodates browser text zoom up to 200% without loss of content or functionality.</li>
+    </ul>
+
+    <h2>Known limitations</h2>
+    <ul>
+      <li>The bill timeline visualization in the detail view is primarily visual. The same information is available in the text content of the detail panel.</li>
+      <li>Some dynamically loaded content (bill lists, search results) may not immediately announce updates to screen readers in all cases. We are working to improve live region announcements.</li>
+    </ul>
+
+    <h2>Reporting issues</h2>
+    <p>If you encounter an accessibility barrier on Cactus Watch, we want to hear about it. Please email <a href="mailto:accessibility@cactus.watch">accessibility@cactus.watch</a> with:</p>
+    <ul>
+      <li>A description of the issue</li>
+      <li>The page or feature where it occurred</li>
+      <li>Your browser and assistive technology (if applicable)</li>
+    </ul>
+    <p>We take accessibility reports seriously and will work to resolve issues promptly.</p>
+
+    <h2>Open source</h2>
+    <p>Cactus Watch is open source. If you spot an accessibility issue in the code, you are welcome to <a href="https://github.com/az-civic-tools/az-civic-tools/issues" target="_blank" rel="noopener">open an issue</a> or submit a pull request.</p>
+
+    <div class="bt-prose-footer">
+      <p><a href="/">Cactus Watch</a> &middot; <a href="/privacy">Privacy Policy</a></p>
+    </div>
+  </div>
+</body>
+</html>

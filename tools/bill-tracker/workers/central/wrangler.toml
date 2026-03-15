@@ -15,8 +15,13 @@ database_id = "b4e43bc9-fd98-437e-b216-30df9afb4f0e"
 binding = "RATE_LIMIT"
 id = "cbbdc642de8749a7b3a1a44c6890c8c6"
 
+[[r2_buckets]]
+binding = "NOKINGS_IMAGES"
+bucket_name = "nokings-images"
+
 [limits]
 subrequests = 50000
 
 [vars]
 ENVIRONMENT = "production"
+ADMIN_EMAIL = "alex.logvin@gmail.com"

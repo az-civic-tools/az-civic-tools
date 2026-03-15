@@ -1,0 +1,11 @@
+{
+  "name": "cactus-auth",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cactus Watch authentication service — Cloudflare Worker",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute cactus-auth-db --file=schema.sql"
+  }
+}

@@ -20,9 +20,11 @@
      ============================================================ */
 
   const LIVE_API = 'https://api.cactus.watch';
+  const AUTH_API = 'https://auth.cactus.watch';
   const DEMO_DATA_PATH = 'demo-data';
   const PAGE_SIZE = 25;
   const STORAGE_KEY = 'cactus-watch-tracking';
+  const USER_STORAGE_KEY = 'cactus-watch-user';
 
   const STATUS_LABELS = {
     introduced: 'Introduced', in_committee: 'In Committee',
@@ -283,10 +285,16 @@
   }
 
   async function init() {
+    // Handle /auth/callback — session cookie is already set by auth service,
+    // just verify the session and redirect to clean URL
+    if (await handleAuthCallback()) return;
+
     detectMode();
     if (state.mode === 'demo') document.getElementById('bt-demo-banner').hidden = false;
 
-    // TODO: check auth state and set state.user if logged in
+    // Check auth state via session cookie
+    await checkAuthState();
+
     if (isLoggedIn()) {
       tracking.load();
     }
@@ -295,6 +303,121 @@
     await loadMeta();
     await loadBills();
     updateListsBadge();
+  }
+
+  /* ============================================================
+     Authentication
+     ============================================================ */
+
+  /**
+   * Handle the /auth/callback redirect. The auth service already set a
+   * session cookie on .cactus.watch during the OAuth/magic-link flow,
+   * so we just verify the session is valid and redirect to /.
+   *
+   * @returns {Promise<boolean>} true if we handled a callback (page will redirect)
+   */
+  async function handleAuthCallback() {
+    const params = new URLSearchParams(window.location.search);
+    const path = window.location.pathname;
+
+    // Check for auth error
+    if (params.has('error') && (path === '/auth/callback' || params.has('code'))) {
+      console.warn('Auth error:', params.get('error'));
+      window.location.replace('/');
+      return true;
+    }
+
+    // Only handle callback if we have a code parameter on the callback path
+    if (path !== '/auth/callback' && !params.has('code')) return false;
+    if (!params.has('code')) return false;
+
+    try {
+      const resp = await fetch(`${AUTH_API}/api/me`, { credentials: 'include' });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.authenticated && data.user) {
+          // Persist display info in localStorage (not the session token)
+          const userInfo = {
+            id: data.user.id,
+            name: data.user.name || data.user.email,
+            email: data.user.email,
+            avatar_url: data.user.avatar_url || null,
+          };
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userInfo));
+        }
+      }
+    } catch (err) {
+      console.warn('Auth verification during callback failed:', err);
+    }
+
+    // Redirect to clean URL regardless — if session is invalid, user just sees logged-out state
+    window.location.replace('/');
+    return true;
+  }
+
+  /**
+   * Check if the user has an active session by calling /api/me.
+   * Falls back gracefully — if the call fails, user is simply logged out.
+   */
+  async function checkAuthState() {
+    // First, try cached user info for instant UI render
+    try {
+      const cached = localStorage.getItem(USER_STORAGE_KEY);
+      if (cached) {
+        state.user = JSON.parse(cached);
+      }
+    } catch { /* ignore corrupted cache */ }
+
+    // Then verify with the auth server (non-blocking for UI if cached)
+    try {
+      const resp = await fetch(`${AUTH_API}/api/me`, { credentials: 'include' });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.authenticated && data.user) {
+          const userInfo = {
+            id: data.user.id,
+            name: data.user.name || data.user.email,
+            email: data.user.email,
+            avatar_url: data.user.avatar_url || null,
+          };
+          state.user = userInfo;
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userInfo));
+          return;
+        }
+      }
+      // Session invalid or expired — clear cached user
+      state.user = null;
+      localStorage.removeItem(USER_STORAGE_KEY);
+    } catch (err) {
+      // Network error — keep cached user if available (offline-friendly)
+      console.warn('Auth check failed:', err);
+    }
+  }
+
+  /**
+   * Log the user out — immediate UI update, then fire-and-forget API call.
+   */
+  function logout() {
+    // Immediate UI update — don't wait for the API call
+    state.user = null;
+    localStorage.removeItem(USER_STORAGE_KEY);
+    renderUserBadge();
+    updateListsBadge();
+
+    // Re-render bill list to hide add-to-list buttons
+    const cachedBills = Object.values(state.billCache);
+    if (cachedBills.length > 0) renderBillList(cachedBills.slice(0, PAGE_SIZE));
+
+    // If on My Lists tab, switch to browse
+    if (state.activeTab === 'lists') {
+      switchTab('browse');
+    }
+
+    // Fire-and-forget: destroy server session
+    fetch(`${AUTH_API}/api/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    }).catch((err) => console.warn('Logout API call failed:', err));
   }
 
   /* ============================================================
@@ -428,8 +551,13 @@
       el.innerHTML = `<button class="bt-btn bt-btn--login" id="bt-login-btn">Sign In</button>`;
       return;
     }
-    const initial = state.user.name.charAt(0).toUpperCase();
-    el.innerHTML = `<span class="bt-user-avatar">${initial}</span><span>${esc(state.user.name)}</span>`;
+    const displayName = state.user.name || state.user.email || 'User';
+    const initial = displayName.charAt(0).toUpperCase();
+    el.innerHTML = [
+      `<span class="bt-user-avatar">${initial}</span>`,
+      `<span class="bt-user-name">${esc(displayName)}</span>`,
+      `<button class="bt-logout-link" id="bt-logout-btn" aria-label="Sign out">Sign out</button>`,
+    ].join('');
   }
 
   function renderMeta() {
@@ -1628,6 +1756,19 @@
   }
 
   function bindEvents() {
+    // Login button (event delegation — button is dynamically rendered)
+    document.getElementById('bt-user-badge').addEventListener('click', (e) => {
+      if (e.target.id === 'bt-login-btn' || e.target.closest('#bt-login-btn')) {
+        const loginUrl = `${AUTH_API}/login?app_id=cactus-watch&redirect_uri=${encodeURIComponent('https://cactus.watch/auth/callback')}`;
+        window.location.href = loginUrl;
+        return;
+      }
+      if (e.target.id === 'bt-logout-btn' || e.target.closest('#bt-logout-btn')) {
+        logout();
+        return;
+      }
+    });
+
     // Tab navigation
     document.querySelectorAll('.bt-nav-tab').forEach(tab => {
       tab.addEventListener('click', () => switchTab(tab.dataset.tab));
