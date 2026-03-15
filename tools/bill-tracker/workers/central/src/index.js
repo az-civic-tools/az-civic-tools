@@ -10,20 +10,37 @@
  *   GET  /api/rts/:number    — RTS agenda items + deep links for a bill
  *   POST /api/scrape         — trigger single-prefix scrape (auth required)
  *   POST /api/scrape/all     — trigger full scrape, all prefixes (auth required)
+ *   GET  /api/nokings/images — list NoKings3 images grouped by city
+ *   POST /api/nokings/images — upload image (admin only)
+ *   GET  /api/nokings/image/:id    — serve image bytes
+ *   DELETE /api/nokings/images/:id — delete image (admin only)
  */
 
 import { handleListBills, handleGetBill, handleSyncBills } from './routes/bills.js';
 import { handleMeta } from './routes/meta.js';
 import { handleScrape, handleScrapeAll } from './routes/scrape.js';
 import { handleRts } from './routes/rts.js';
+import { handleListImages, handleUploadImage, handleGetImage, handleDeleteImage, handleListAdmins, handleAddAdmin, handleUpdateAdmin, handleDeleteAdmin, handleAdminCheck } from './routes/nokings.js';
 import { runScraper, BILL_PREFIXES } from './scraper.js';
 import { checkRateLimit } from './rate-limit.js';
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
+const ALLOWED_ORIGINS = new Set([
+  'https://cactus.watch',
+  'https://www.cactus.watch',
+  'https://nokings.cactus.watch',
+]);
+
+function getCorsHeaders(request) {
+  const origin = request.headers.get('Origin') || '';
+  const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : '';
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+    'Vary': 'Origin',
+  };
+}
 
 /** Cache durations (seconds) by route */
 const CACHE_TTL = {
@@ -36,13 +53,15 @@ const CACHE_TTL = {
 
 export default {
   async fetch(request, env) {
+    const corsHeaders = getCorsHeaders(request);
+
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: CORS_HEADERS });
+      return new Response(null, { status: 204, headers: corsHeaders });
     }
 
     // Rate limit all non-OPTIONS requests
     const rateLimited = await checkRateLimit(request, env);
-    if (rateLimited) return addCorsHeaders(rateLimited);
+    if (rateLimited) return addCorsHeaders(rateLimited, corsHeaders);
 
     const url = new URL(request.url);
     const path = url.pathname;
@@ -72,6 +91,28 @@ export default {
         response = await handleScrapeAll(request, env);
       } else if (path === '/api/scrape' && request.method === 'POST') {
         response = await handleScrape(request, env);
+      } else if (path === '/api/nokings/images' && request.method === 'GET') {
+        response = await handleListImages(request, env);
+        cacheTtl = 300;
+      } else if (path === '/api/nokings/images' && request.method === 'POST') {
+        response = await handleUploadImage(request, env);
+      } else if (path.match(/^\/api\/nokings\/image\/[a-zA-Z0-9-]+$/) && request.method === 'GET') {
+        const id = path.split('/').pop();
+        response = await handleGetImage(request, env, id);
+      } else if (path.match(/^\/api\/nokings\/images\/[a-zA-Z0-9-]+$/) && request.method === 'DELETE') {
+        const id = path.split('/').pop();
+        response = await handleDeleteImage(request, env, id);
+      } else if (path === '/api/nokings/me' && request.method === 'GET') {
+        response = await handleAdminCheck(request, env);
+      } else if (path === '/api/nokings/admins' && request.method === 'GET') {
+        response = await handleListAdmins(request, env);
+      } else if (path === '/api/nokings/admins' && request.method === 'POST') {
+        response = await handleAddAdmin(request, env);
+      } else if (path === '/api/nokings/admins' && request.method === 'PUT') {
+        response = await handleUpdateAdmin(request, env);
+      } else if (path.match(/^\/api\/nokings\/admins\/[^/]+$/) && request.method === 'DELETE') {
+        const email = path.split('/').pop();
+        response = await handleDeleteAdmin(request, env, email);
       } else {
         response = Response.json(
           { error: 'Not found' },
@@ -79,14 +120,15 @@ export default {
         );
       }
 
-      return addCorsHeaders(addCacheHeaders(response, cacheTtl));
+      return addCorsHeaders(addCacheHeaders(response, cacheTtl), corsHeaders);
     } catch (err) {
       console.error('Unhandled error:', err);
       return addCorsHeaders(
         Response.json(
           { error: 'Internal server error' },
           { status: 500 }
-        )
+        ),
+        corsHeaders,
       );
     }
   },
@@ -143,9 +185,9 @@ function addCacheHeaders(response, ttl) {
   return newResponse;
 }
 
-function addCorsHeaders(response) {
+function addCorsHeaders(response, corsHeaders) {
   const newResponse = new Response(response.body, response);
-  for (const [key, value] of Object.entries(CORS_HEADERS)) {
+  for (const [key, value] of Object.entries(corsHeaders)) {
     newResponse.headers.set(key, value);
   }
   return newResponse;
