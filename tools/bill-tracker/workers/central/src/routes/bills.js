@@ -39,6 +39,7 @@ export async function handleListBills(request, env) {
   const sponsor = params.get('sponsor');
   const search = params.get('search');
   const billType = params.get('type');
+  const hearing = params.get('hearing');
   const sort = params.get('sort') || 'updated_at';
   const order = params.get('order') === 'asc' ? 'ASC' : 'DESC';
 
@@ -81,6 +82,10 @@ export async function handleListBills(request, env) {
     bindings.push(searchTerm, searchTerm, searchTerm);
   }
 
+  if (hearing === '1') {
+    conditions.push('EXISTS (SELECT 1 FROM rts_agendas ra WHERE ra.bill_number = b.number AND ra.is_past = 0)');
+  }
+
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
   // Validate sort column
@@ -106,8 +111,9 @@ export async function handleListBills(request, env) {
       b.date_introduced, b.last_action, b.last_action_date,
       b.status, b.final_disposition,
       b.governor_action, b.governor_action_date,
-      b.azleg_url, b.keywords, b.updated_at,
-      s.session_id as azleg_session_id, s.name as session_name
+      b.azleg_url, b.keywords, b.overview, b.updated_at,
+      s.session_id as azleg_session_id, s.name as session_name,
+      (SELECT COUNT(*) FROM rts_agendas ra WHERE ra.bill_number = b.number AND ra.is_past = 0) as hearing_count
     FROM bills b
     JOIN sessions s ON b.session_id = s.id
     ${whereClause}
@@ -159,7 +165,7 @@ export async function handleGetBill(number, env) {
   }
 
   // Fetch related data in parallel
-  const [cosponsors, committeeActions, votes, floorActions] = await Promise.all([
+  const [cosponsors, committeeActions, votes, floorActions, rtsAgendas, orgRecs] = await Promise.all([
     env.DB.prepare('SELECT name, party, sponsor_type FROM cosponsors WHERE bill_id = ? ORDER BY sponsor_type, name')
       .bind(bill.id).all(),
     env.DB.prepare('SELECT committee_name, committee_short, chamber, action, ayes, nays, action_date FROM committee_actions WHERE bill_id = ? ORDER BY action_date')
@@ -168,6 +174,17 @@ export async function handleGetBill(number, env) {
       .bind(bill.id).all(),
     env.DB.prepare('SELECT chamber, action_type, action_date, total_votes FROM floor_actions WHERE bill_id = ? ORDER BY action_date')
       .bind(bill.id).all(),
+    env.DB.prepare(`
+      SELECT agenda_item_id, committee_name, committee_short, chamber,
+             agenda_date, agenda_time, location, can_rts, is_past,
+             positions_for, positions_against, positions_neutral, rts_url
+      FROM rts_agendas
+      WHERE bill_number = ? AND is_past = 0
+      ORDER BY agenda_date ASC
+    `).bind(normalized).all(),
+    env.DB.prepare(
+      'SELECT org_code, org_name, position, category, source_url FROM org_recommendations WHERE bill_number = ?'
+    ).bind(normalized).all(),
   ]);
 
   // For each vote, fetch individual records
@@ -199,6 +216,26 @@ export async function handleGetBill(number, env) {
       excused: v.excused,
       result: v.result,
       records: v.records,
+    })),
+    rts_agendas: (rtsAgendas.results || []).map(a => ({
+      agenda_item_id: a.agenda_item_id,
+      rts_url: a.rts_url,
+      committee: a.committee_name,
+      committee_short: a.committee_short,
+      chamber: a.chamber,
+      date: a.agenda_date,
+      time: a.agenda_time,
+      room: a.location,
+      can_rts: !!a.can_rts,
+      is_past: !!a.is_past,
+      positions: { for: a.positions_for, against: a.positions_against, neutral: a.positions_neutral },
+    })),
+    org_recommendations: (orgRecs.results || []).map(r => ({
+      org_code: r.org_code,
+      org_name: r.org_name,
+      position: r.position,
+      category: r.category,
+      source_url: r.source_url,
     })),
   };
 
@@ -273,6 +310,8 @@ function formatBillRow(row) {
     keywords: row.keywords ? row.keywords.split(', ') : [],
     session: row.azleg_session_id,
     session_name: row.session_name,
+    overview: row.overview || null,
     updated_at: row.updated_at,
+    has_hearing: row.hearing_count != null ? row.hearing_count > 0 : false,
   };
 }

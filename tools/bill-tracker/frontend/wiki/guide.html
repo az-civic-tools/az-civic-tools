@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cactus Watch User Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --terracotta: #C1440E;
+      --earth: #6B4E3D;
+      --sand: #FAF6F0;
+      --text: #2C1810;
+      --text-light: #8B7355;
+      --border: #E5DDD4;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--sand);
+      line-height: 1.7;
+    }
+    .guide-header {
+      background: linear-gradient(135deg, #2C1810 0%, #6B4E3D 50%, #C1440E 100%);
+      color: white;
+      padding: 60px 24px 48px;
+      text-align: center;
+    }
+    .guide-header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .guide-header p {
+      font-size: 18px;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .guide-body {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--terracotta);
+      margin: 48px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--terracotta);
+    }
+    h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--earth);
+      margin: 32px 0 12px;
+    }
+    p { margin-bottom: 16px; }
+    ul, ol { margin-bottom: 16px; padding-left: 24px; }
+    li { margin-bottom: 6px; }
+    a { color: var(--terracotta); }
+    code {
+      background: #EDE8E0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .screenshot {
+      margin: 24px 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .screenshot img {
+      width: 100%;
+      display: block;
+    }
+    .screenshot-caption {
+      padding: 12px 16px;
+      background: white;
+      font-size: 14px;
+      color: var(--text-light);
+      border-top: 1px solid var(--border);
+    }
+    .callout {
+      background: white;
+      border-left: 4px solid var(--terracotta);
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .callout-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .step-list { counter-reset: steps; list-style: none; padding-left: 0; }
+    .step-list li {
+      counter-increment: steps;
+      padding-left: 36px;
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .step-list li::before {
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      top: 2px;
+      width: 24px;
+      height: 24px;
+      background: var(--terracotta);
+      color: white;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .badge-green { background: #D1FAE5; color: #065F46; }
+    .badge-red { background: #FEE2E2; color: #991B1B; }
+    .badge-amber { background: #FEF3C7; color: #92400E; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: var(--terracotta);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .toc {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+    }
+    .toc-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    .toc ul { list-style: none; padding-left: 0; margin: 0; }
+    .toc li { margin-bottom: 4px; }
+    .toc a { text-decoration: none; font-size: 15px; }
+    .toc a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="guide-header">
+  <h1>Cactus Watch User Guide</h1>
+  <p>An easier way for Arizona voters to track bills and make their voices heard through the Request to Speak system</p>
+</div>
+
+<div class="guide-body">
+  <a href="/" class="back-link">&larr; Back to Cactus Watch</a>
+
+  <div class="toc">
+    <div class="toc-title">In this guide</div>
+    <ul>
+      <li><a href="#what-is-cactus-watch">What is Cactus Watch?</a></li>
+      <li><a href="#getting-started">Getting Started</a></li>
+      <li><a href="#rts-account">Setting Up Your RTS Account</a></li>
+      <li><a href="#browsing-bills">Browsing Bills</a></li>
+      <li><a href="#bill-details">Bill Details and Lifecycle</a></li>
+      <li><a href="#upcoming-hearings">Upcoming Hearings</a></li>
+      <li><a href="#tracking-bills">Tracking Bills on Your Lists</a></li>
+      <li><a href="#submitting-rts">Submitting Your RTS Comment</a></li>
+      <li><a href="#organization-lists">Following Organization Lists</a></li>
+      <li><a href="#feedback">Sending Feedback</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what-is-cactus-watch">What is Cactus Watch?</h2>
+
+  <p>Cactus Watch is a free tool that makes it easier for Arizona residents to participate in the legislative process. It tracks every bill moving through the Arizona Legislature, updates nightly, and gives you direct access to the state's Request to Speak (RTS) system so you can voice your opinion on bills that matter to you.</p>
+
+  <p>The Arizona Legislature's official website can be difficult to navigate. Finding the right bill, figuring out which committee it's in, and submitting your position through RTS takes time. Cactus Watch simplifies all of that into one place.</p>
+
+  <p>With Cactus Watch, you can:</p>
+  <ul>
+    <li>Browse and search all 1,900+ bills in the current session</li>
+    <li>See which bills have upcoming committee hearings</li>
+    <li>Submit your Request to Speak position with one click</li>
+    <li>Track bills you care about and get notified when they move</li>
+    <li>Follow organization recommendations (like CEBV) to stay informed</li>
+    <li>Save your RTS comments so you can reuse them when bills advance</li>
+  </ul>
+
+  <div class="callout">
+    <div class="callout-title">Important</div>
+    <p style="margin:0;">Cactus Watch is a companion tool, not a replacement for the official <a href="https://apps.azleg.gov" target="_blank">azleg.gov</a> site. You still need an RTS account on azleg.gov to submit your positions. Cactus Watch helps you organize your work and get to the right page faster.</p>
+  </div>
+
+  <h2 id="getting-started">Getting Started</h2>
+
+  <p>Visit <a href="https://cactus.watch">cactus.watch</a> to get started. No account is required to browse bills and view upcoming hearings. To track bills and save your positions, sign in with Google or a magic link sent to your email.</p>
+
+  <div class="screenshot">
+    <img src="01-browse-bills.png" alt="Cactus Watch home page showing the Browse Bills tab with search and filter options. The header displays session statistics: total bills, active bills, signed, and vetoed counts.">
+    <div class="screenshot-caption">The main Browse Bills page. Use the search bar to find bills by number, title, or keyword. Filter by chamber, status, or type. Bills with upcoming hearings show an amber "Hearing" badge.</div>
+  </div>
+
+  <h2 id="rts-account">Setting Up Your RTS Account</h2>
+
+  <p>Before you can submit positions on bills, you need a Request to Speak account on the Arizona Legislature's website.</p>
+
+  <div class="callout">
+    <div class="callout-title">CEBV can help</div>
+    <p style="margin:0;"><a href="https://www.cebv.us" target="_blank">Civic Engagement Beyond Voting (CEBV)</a> is a grassroots Arizona 501(c)(4) that trains and empowers residents to participate in state government. They run the most accessible RTS signup in the state, offer regular trainings on how the legislature works, and publish a weekly newsletter during session that breaks down what's happening at the Capitol in plain language. If you want to understand how to actually influence your government, CEBV is the place to start.</p>
+  </div>
+
+  <p>We highly recommend using CEBV to sign up. If you would prefer the manual process, here are the steps:</p>
+
+  <ol class="step-list">
+    <li><strong>Create your account online.</strong> Go to <a href="https://apps.azleg.gov" target="_blank">apps.azleg.gov</a> and click "Create an Account." Fill in your name, email, and create a password.</li>
+    <li><strong>Visit the Capitol once.</strong> After creating your account, you need to sign in at one of the kiosks at the Arizona State Capitol. This is a one-time requirement. After your first kiosk sign-in, you can do everything from home.</li>
+    <li><strong>You're set.</strong> Once verified at the kiosk, you can sign in to RTS from any browser and submit positions, leave comments, and request to speak at committee hearings.</li>
+  </ol>
+
+  <h2 id="browsing-bills">Browsing Bills</h2>
+
+  <p>The Browse Bills tab is your starting point. Every bill introduced in the current legislative session is here, updated nightly from azleg.gov.</p>
+
+  <h3>Search and Filter</h3>
+  <p>Type a bill number (like <code>SB1200</code>), a keyword, or a sponsor's name in the search bar. You can also filter by:</p>
+  <ul>
+    <li><strong>Chamber</strong> - House or Senate</li>
+    <li><strong>Status</strong> - Introduced, In Committee, Passed House, Signed, Vetoed, etc.</li>
+    <li><strong>Type</strong> - Bills, Memorials, Resolutions</li>
+    <li><strong>Has Hearing</strong> - Check this box to see only bills with upcoming committee hearings</li>
+  </ul>
+
+  <p>Each bill card shows the bill number, title, sponsor (with party affiliation dot), last action date, and current status. If the bill has an upcoming hearing, you'll see an amber <span class="badge badge-amber">Hearing</span> badge.</p>
+
+  <p>Click the <strong>+</strong> button on any bill card to add it to one of your tracking lists.</p>
+
+  <h2 id="bill-details">Bill Details and Lifecycle</h2>
+
+  <p>Click on any bill to see its full detail page. This shows everything about the bill in one place.</p>
+
+  <div class="screenshot">
+    <img src="03-bill-detail-top.png" alt="Bill detail page for SB1200 showing the bill lifecycle timeline on the left and tracking section on the right with position buttons, RTS comment area, and notes.">
+    <div class="screenshot-caption">The bill detail view. Left panel shows the bill's lifecycle through the legislature. Right panel shows tracking controls, your position, and RTS comment.</div>
+  </div>
+
+  <h3>Bill Lifecycle Timeline</h3>
+  <p>The left panel shows where the bill is in the legislative process. Click on each section (Senate, House, Governor) to expand or collapse it. You'll see committee actions, floor readings, and votes with full breakdowns.</p>
+
+  <h3>Tracking Section</h3>
+  <p>When you add a bill to a list, the tracking section appears with:</p>
+  <ul>
+    <li><strong>Custom label</strong> - Rename the bill in your own words (up to 80 characters). This label shows up on your My Lists page.</li>
+    <li><strong>My Position</strong> - Set your stance: For, Neutral, or Against. This only needs to be set once and persists for the bill's entire life.</li>
+    <li><strong>Submit Position on AZLeg.gov</strong> - Opens the RTS Bill Positions page and copies the bill number to your clipboard for easy pasting.</li>
+    <li><strong>My RTS Comment</strong> - Write and save your 250-character RTS comment. When you click "Submit Request to Speak" on a hearing card below, your comment is automatically copied to your clipboard.</li>
+    <li><strong>My Notes</strong> - Personal notes that are never cleared, even when the bill's status changes.</li>
+  </ul>
+
+  <h3>Upcoming Hearings on Bill Detail</h3>
+
+  <div class="screenshot">
+    <img src="04-bill-detail-hearings.png" alt="Bill detail page scrolled to show committee actions, floor votes with a visual bar chart, and upcoming hearings section with committee name, date, time, RTS position tallies, and Submit Request to Speak button.">
+    <div class="screenshot-caption">The bottom of the bill detail page shows committee actions, floor votes, and upcoming hearings. The "Submit Request to Speak" button links directly to the azleg.gov RTS form for that specific hearing.</div>
+  </div>
+
+  <p>If the bill has an upcoming hearing, you'll see the committee name, date, time, room, and how many people have registered For, Against, and Neutral. The <span class="badge badge-green">RTS Open</span> badge means you can still submit your position.</p>
+
+  <p>Click <strong>"Submit Request to Speak"</strong> and it will:</p>
+  <ol>
+    <li>Copy your saved RTS comment to the clipboard</li>
+    <li>Open the azleg.gov RTS form for that specific hearing in a new tab</li>
+  </ol>
+  <p>Once you're on azleg.gov, paste your comment and submit. Then come back and check the "I left my RTS comment for this hearing" box so you know it's done.</p>
+
+  <h2 id="upcoming-hearings">Upcoming Hearings</h2>
+
+  <p>The Upcoming Hearings tab shows every bill scheduled for a committee hearing, sorted by date (today first) and then by how many RTS positions have been submitted (most active first).</p>
+
+  <div class="screenshot">
+    <img src="02-upcoming-hearings.png" alt="Upcoming Hearings tab showing hearing cards grouped by date, with bill information, committee details, RTS position tallies, bill overview text, and action checkboxes.">
+    <div class="screenshot-caption">Each hearing card shows the bill info, committee details, position tallies, and a plain-language bill overview. Use the filters at the top to narrow by chamber, committee, or organization.</div>
+  </div>
+
+  <h3>Hearing Card Layout</h3>
+  <p>Each hearing card has two columns:</p>
+  <ul>
+    <li><strong>Left side</strong> - Committee name, date, time, room, RTS position tallies (how many people said For/Against/Neutral), and the "Submit Request to Speak" button</li>
+    <li><strong>Right side</strong> - A plain-language overview of what the bill does, pulled from the legislature's official summary documents</li>
+  </ul>
+
+  <h3>Filters</h3>
+  <ul>
+    <li><strong>Bill number search</strong> - Type a bill number to jump straight to it (bypasses other filters)</li>
+    <li><strong>Chamber</strong> - Filter by House or Senate</li>
+    <li><strong>Committee</strong> - Filter by specific committee (Rules, Judiciary, etc.)</li>
+    <li><strong>Organization</strong> - "All Bills" shows everything. "My Lists" shows only bills you're tracking. "CEBV" shows only bills that CEBV has commented on.</li>
+  </ul>
+
+  <p>Click <strong>Hide</strong> next to any date to collapse that day's hearings.</p>
+
+  <h3>Action Tracking</h3>
+  <p>Below each hearing card (when signed in), you'll see checkboxes and buttons:</p>
+  <ul>
+    <li><strong>"I submitted my position"</strong> - Check this after you've submitted your For/Against/Neutral on azleg.gov</li>
+    <li><strong>"I left my RTS comment"</strong> - Check this after leaving your comment on the RTS form</li>
+    <li><strong>My vote: For / Neutral / Against</strong> - Set your position here, and it syncs to the bill detail page</li>
+    <li><strong>"+ Add to List"</strong> or <strong>"On List"</strong> - Add the bill to one of your tracking lists</li>
+  </ul>
+
+  <p>Organization recommendation badges like <span class="badge badge-red">CEBV: Oppose</span> appear on bills where an organization has taken a position. Click the badge to read their reasoning.</p>
+
+  <h2 id="tracking-bills">Tracking Bills on Your Lists</h2>
+
+  <p>The My Lists tab is your personal dashboard. Create named lists to organize the bills you care about.</p>
+
+  <div class="screenshot">
+    <img src="05-my-lists.png" alt="My Lists page showing personal lists and organization-sourced lists like CEBV: Discrimination and CEBV: Affordability, with a collapsible Organization Lists section at the bottom.">
+    <div class="screenshot-caption">Your lists at a glance. Each list shows how many bills need action. Click any bill to open its detail page. The pencil icon lets you archive or remove bills.</div>
+  </div>
+
+  <h3>What You'll See</h3>
+  <p>Each bill on your list shows:</p>
+  <ul>
+    <li>Bill number and short description</li>
+    <li>Organization position badge (if applicable)</li>
+    <li>Action-needed indicators:
+      <ul>
+        <li><span class="badge badge-amber">Set Position</span> - You haven't set For/Neutral/Against yet</li>
+        <li><span class="badge badge-amber">Submit to AZLeg</span> - You have a position but haven't submitted it on azleg.gov</li>
+        <li><span class="badge badge-amber">RTS Comment Needed</span> - The bill has an upcoming hearing and you haven't left your RTS comment</li>
+        <li><span class="badge badge-amber">Bill Moved</span> - The bill moved to a new committee or chamber and you need to re-submit your RTS comment</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p>Bills needing action sort to the top so you can work through them quickly.</p>
+
+  <h3>Managing Bills</h3>
+  <p>Click the pencil icon on any bill to see Archive and Remove options. Archiving hides the bill but keeps your data. Removing it permanently deletes your position, notes, and RTS comments from Cactus Watch (but not from azleg.gov).</p>
+
+  <h2 id="submitting-rts">Submitting Your RTS Comment</h2>
+
+  <p>Here's the typical workflow for submitting your voice on a bill:</p>
+
+  <ol class="step-list">
+    <li><strong>Find the bill</strong> on the Upcoming Hearings tab or by searching in Browse Bills.</li>
+    <li><strong>Add it to a list</strong> by clicking the + button.</li>
+    <li><strong>Open the bill detail</strong> and set your position (For, Neutral, or Against).</li>
+    <li><strong>Write your RTS comment</strong> in the "My RTS Comment" text box (250 characters max). This saves automatically.</li>
+    <li><strong>Click "Submit Request to Speak"</strong> on the hearing card. Your comment is copied to your clipboard, and the azleg.gov RTS form opens in a new tab.</li>
+    <li><strong>Paste your comment</strong> on azleg.gov, set your position, and submit.</li>
+    <li><strong>Come back to Cactus Watch</strong> and check the boxes to mark it done.</li>
+  </ol>
+
+  <div class="callout">
+    <div class="callout-title">Your position persists, your comment doesn't</div>
+    <p style="margin:0;">On azleg.gov, your bill position (For/Against/Neutral) stays with the bill for its entire life. But your RTS comment gets cleared each time the bill moves to a new committee or chamber. That's why Cactus Watch saves your comment locally so you can copy and paste it again when needed. Cactus Watch will alert you when a bill moves and you need to re-submit.</p>
+  </div>
+
+  <h2 id="organization-lists">Following Organization Lists</h2>
+
+  <p>Scroll to the bottom of the My Lists page and expand "Organization Lists" to see recommendations from civic organizations.</p>
+
+  <p>Currently, <a href="https://cebv.us" target="_blank">Civic Engagement Beyond Voting (CEBV)</a> publishes bill positions organized by category (Affordability, Discrimination, Energy/Water/Climate, Public Safety, Voting Rights). Each category lists the bills they're tracking with their position (Oppose or Support).</p>
+
+  <p>Click <strong>"Follow This List"</strong> to add all bills from that category to your personal lists. The organization's position will be imported (Oppose becomes Against, Support becomes For), and the source URL is saved in your notes so you can read their full reasoning.</p>
+
+  <h2 id="feedback">Sending Feedback</h2>
+
+  <p>Click the <strong>Feedback</strong> button in the bottom-left corner of any page to report bugs, request features, or ask for help. If you're signed in, your email is auto-filled.</p>
+
+  <div class="screenshot">
+    <img src="06-feedback.png" alt="Feedback modal with email field, category dropdown, message text area, and a checkbox for requesting a response.">
+    <div class="screenshot-caption">The feedback form. Select a category, write your message, and optionally request a response (typically within 48 hours).</div>
+  </div>
+
+  <hr style="margin: 48px 0; border: none; border-top: 1px solid var(--border);">
+
+  <p style="text-align: center; color: var(--text-light); font-size: 14px;">
+    Cactus Watch is free, open source, and built by volunteers.<br>
+    Data sourced from <a href="https://www.azleg.gov" target="_blank">azleg.gov</a>. Updated daily at 6:00 AM Arizona time.<br>
+    <a href="/">Back to Cactus Watch</a>
+  </p>
+
+</div>
+
+</body>
+</html>

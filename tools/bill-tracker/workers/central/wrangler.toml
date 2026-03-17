@@ -24,4 +24,4 @@ subrequests = 50000
 
 [vars]
 ENVIRONMENT = "production"
-ADMIN_EMAIL = "alex.logvin@gmail.com"
+ADMIN_EMAIL = "admin@cactus.watch"

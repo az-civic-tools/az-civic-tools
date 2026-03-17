@@ -450,6 +450,48 @@ a:hover { color: var(--bt-mesa-warm); }
 .bt-status--dead             { background: var(--bt-status-dead); }
 .bt-status--held             { background: var(--bt-status-held); }
 
+/* --- Hearing badge on bill cards --- */
+.bt-hearing-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #F59E0B;
+}
+
+/* --- Hearing filter toggle --- */
+.bt-hearing-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bt-text);
+  padding: 6px 10px;
+  border-radius: var(--bt-radius);
+  border: 1px solid var(--bt-border);
+  background: var(--bt-surface);
+  white-space: nowrap;
+  transition: border-color 0.15s;
+}
+.bt-hearing-filter:hover {
+  border-color: var(--bt-terracotta);
+}
+.bt-hearing-filter input[type="checkbox"] {
+  accent-color: var(--bt-terracotta);
+  width: 14px;
+  height: 14px;
+}
+.bt-hearing-filter-label {
+  line-height: 1;
+}
+
 /* --- Sponsor / Party badge --- */
 .bt-party {
   display: inline-block;
@@ -848,6 +890,708 @@ a:hover { color: var(--bt-mesa-warm); }
 .bt-empty-text { font-size: 18px; font-weight: 600; }
 .bt-empty-sub { font-size: 15px; margin-top: 6px; }
 
+/* --- Upcoming Hearings View --- */
+.bt-hearings-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.bt-hearings-title {
+  font-family: var(--bt-font-display);
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 700;
+  color: var(--bt-heading);
+  margin: 0;
+}
+.bt-hearings-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+.bt-hearings-date-group {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 24px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--bt-terracotta);
+}
+.bt-hearings-date-group:first-child {
+  margin-top: 0;
+}
+.bt-hearings-date-heading {
+  font-family: var(--bt-font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--bt-heading);
+  margin: 0;
+}
+.bt-hearings-date-count {
+  font-size: 13px;
+  color: var(--bt-text-light);
+}
+.bt-hearings-date-toggle {
+  margin-left: auto;
+  font-size: 12px;
+  padding: 2px 12px;
+}
+
+/* Hearing card — full layout */
+.bt-hearing-card-full {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Bill info header */
+.bt-hearing-bill-info {
+  padding: 14px 18px 10px;
+  background: var(--bt-sand-light, #faf5ef);
+  border-bottom: 1px solid var(--bt-border-light);
+  cursor: pointer;
+}
+.bt-hearing-bill-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.bt-hearing-bill-number {
+  font-family: var(--bt-font-display);
+  font-weight: 700;
+  font-size: 32px;
+  color: var(--bt-earth);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.bt-hearing-bill-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--bt-text);
+  line-height: 1.35;
+  margin-bottom: 2px;
+}
+.bt-hearing-bill-desc {
+  font-size: 12px;
+  color: var(--bt-text-light);
+  font-style: italic;
+  margin-bottom: 2px;
+}
+.bt-hearing-bill-sponsor {
+  font-size: 12px;
+  color: var(--bt-text-light);
+}
+.bt-hearing-bill-orgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  width: 100%;
+}
+.bt-detail-org-recs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.bt-hearing-done-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+/* Two-column hearing body */
+.bt-hearing-body {
+  display: flex;
+  min-height: 0;
+}
+.bt-hearing-left {
+  flex: 0 0 420px;
+  padding: 14px 18px;
+  min-width: 0;
+}
+.bt-hearing-right {
+  flex: 1 1 0;
+  padding: 14px 18px;
+  border-left: 2px solid var(--bt-border);
+  background: var(--bt-bg, #fcfaf6);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bt-hearing-summary-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bt-text-light);
+}
+.bt-hearing-summary-text {
+  font-size: 13px;
+  color: var(--bt-text);
+  line-height: 1.5;
+}
+.bt-hearing-azleg-link {
+  font-size: 12px;
+  color: var(--bt-earth);
+  text-decoration: none;
+  margin-top: auto;
+}
+.bt-hearing-azleg-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive: stack on narrow screens */
+@media (max-width: 768px) {
+  .bt-hearing-body {
+    flex-direction: column;
+  }
+  .bt-hearing-left {
+    flex-basis: auto;
+  }
+  .bt-hearing-right {
+    flex-basis: auto;
+    border-left: none;
+    border-top: 2px solid var(--bt-border);
+  }
+  .bt-hearing-bill-number {
+    font-size: 26px;
+  }
+}
+
+/* Hearing action row — three sections */
+.bt-hearing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 18px 14px;
+  border-top: 1px dashed var(--bt-border-light);
+}
+.bt-hearing-actions-left {
+  flex: 1 1 auto;
+  min-width: 200px;
+}
+.bt-hearing-actions-center {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.bt-hearing-actions-right {
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-self: flex-end;
+}
+.bt-hearing-actions--minimal {
+  padding: 8px 18px 12px;
+}
+.bt-hearing-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+.bt-hearing-action-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--bt-text);
+}
+.bt-hearing-action-check input[type="checkbox"] {
+  accent-color: var(--bt-terracotta);
+  width: 15px;
+  height: 15px;
+}
+.bt-hearing-position-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.bt-hearing-position-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bt-text-light);
+}
+
+/* Add to list button on hearing cards */
+.bt-hearing-list-btn {
+  white-space: nowrap;
+}
+.bt-hearing-list-btn--tracked {
+  background: #D1FAE5;
+  color: #065F46;
+  border-color: #6EE7B7;
+}
+
+/* Org recommendation badges (future Thicket integration) */
+.bt-hearing-org-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.bt-hearing-org-rec:hover {
+  filter: brightness(0.9);
+}
+.bt-hearing-org-rec--oppose {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+.bt-hearing-org-rec--support {
+  background: #D1FAE5;
+  color: #065F46;
+}
+.bt-hearing-org-rec--neutral {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+/* Submit position row in tracking section */
+.bt-submit-position-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Organization lists on My Lists page */
+.bt-org-card {
+  background: var(--bt-surface);
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.bt-org-card-header {
+  padding: 12px 16px;
+  background: var(--bt-sand-light, #faf5ef);
+  border-bottom: 1px solid var(--bt-border-light);
+}
+.bt-org-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.bt-org-card-name {
+  font-family: var(--bt-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--bt-heading);
+}
+.bt-org-card-link {
+  font-size: 12px;
+  color: var(--bt-earth);
+  text-decoration: none;
+}
+.bt-org-card-link:hover { text-decoration: underline; }
+.bt-org-list-toggle { cursor: pointer; }
+.bt-org-list-toggle:hover { background: var(--bt-sand-light, #faf5ef); }
+.bt-org-list {
+  border-bottom: 1px solid var(--bt-border-light);
+}
+.bt-org-list:last-child { border-bottom: none; }
+.bt-org-list-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--bt-bg, #fcfaf6);
+}
+.bt-org-list-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--bt-text);
+}
+.bt-org-list-count {
+  font-size: 12px;
+  color: var(--bt-text-light);
+}
+.bt-org-follow-btn {
+  margin-left: auto;
+}
+.bt-org-follow-btn--active {
+  background: #D1FAE5;
+  color: #065F46;
+  border-color: #6EE7B7;
+}
+.bt-org-list-bills {
+  padding: 4px 16px 8px;
+}
+.bt-org-list-bill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 13px;
+  border-bottom: 1px dotted var(--bt-border-light);
+}
+.bt-org-list-bill:last-child { border-bottom: none; }
+.bt-org-list-bill:hover { background: var(--bt-sand-light, #faf5ef); }
+.bt-org-list-bill-number {
+  font-family: var(--bt-font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--bt-earth);
+  min-width: 70px;
+}
+.bt-org-list-bill-desc {
+  color: var(--bt-text-light);
+  font-size: 12px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tracking header with label input */
+.bt-detail-tracking-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.bt-tracking-label-input {
+  flex: 1;
+  font-family: var(--bt-font-body);
+  font-size: 14px;
+  padding: 5px 10px;
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  background: var(--bt-card-bg);
+  color: var(--bt-text);
+  transition: border-color 0.2s;
+}
+.bt-tracking-label-input:focus {
+  border-color: var(--bt-terracotta);
+  outline: none;
+}
+
+/* Tracking section divider + note */
+.bt-tracking-divider {
+  border-top: 1px solid var(--bt-border-light);
+  margin: 12px 0 8px;
+}
+.bt-tracking-note {
+  font-size: 12px;
+  color: var(--bt-text-light);
+  line-height: 1.45;
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+/* Compact tracked bill description */
+.bt-tracked-desc {
+  font-size: 12px;
+  color: var(--bt-text-light);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.bt-tracked-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* Tracked bill row */
+.bt-tracked-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-bottom: 1px dotted var(--bt-border-light);
+  gap: 8px;
+}
+.bt-tracked-row:last-child { border-bottom: none; }
+.bt-tracked-row:hover { background: var(--bt-sand-light, #faf5ef); }
+.bt-tracked-row-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.bt-tracked-row-actions {
+  flex-shrink: 0;
+  position: relative;
+}
+.bt-tracked-edit-btn {
+  background: none;
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  color: var(--bt-text-light);
+  transition: color 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+.bt-tracked-edit-btn:hover {
+  color: var(--bt-text);
+  border-color: var(--bt-text-light);
+}
+.bt-tracked-edit-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 50;
+  display: none;
+  gap: 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  padding: 6px 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  white-space: nowrap;
+}
+.bt-tracked-edit-menu.bt-edit-menu--open {
+  display: flex;
+}
+
+/* Action-needed badges on tracked bills */
+.bt-tracked-todos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+}
+.bt-todo-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+/* RTS Needed badge on tracked bills */
+.bt-rts-needed-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #FEE2E2;
+  color: #991B1B;
+  animation: bt-pulse 2s ease-in-out infinite;
+}
+@keyframes bt-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Position buttons on tracked bill cards */
+.bt-tracked-position-btns {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+.bt-position-btn--sm {
+  font-size: 11px;
+  padding: 3px 10px;
+}
+
+/* Tracked bill actions layout */
+.bt-tracked-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* --- Feedback FAB & Modal --- */
+.bt-feedback-fab {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 900;
+  background: var(--bt-terracotta);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-family: var(--bt-font-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.bt-feedback-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+.bt-feedback-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+}
+.bt-feedback-overlay.bt-feedback--open {
+  display: flex;
+}
+.bt-feedback-modal {
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--bt-border);
+}
+.bt-feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: var(--bt-sand-light, #faf5ef);
+  border-bottom: 1px solid var(--bt-border);
+  border-radius: 12px 12px 0 0;
+}
+.bt-feedback-title {
+  font-family: var(--bt-font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--bt-heading);
+  margin: 0;
+}
+.bt-feedback-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--bt-text-light);
+  padding: 0 4px;
+  line-height: 1;
+}
+.bt-feedback-close:hover { color: var(--bt-text); }
+.bt-feedback-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #FFFFFF;
+}
+.bt-feedback-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--bt-text);
+  margin-bottom: -8px;
+}
+.bt-feedback-input, .bt-feedback-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  font-size: 14px;
+  font-family: var(--bt-font-body);
+  box-sizing: border-box;
+  background: #FFFFFF;
+}
+.bt-feedback-input:focus, .bt-feedback-textarea:focus {
+  border-color: var(--bt-terracotta);
+  outline: none;
+}
+.bt-feedback-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  font-size: 14px;
+  font-family: var(--bt-font-body);
+  resize: vertical;
+  min-height: 120px;
+  box-sizing: border-box;
+  background: #FFFFFF;
+}
+.bt-feedback-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.bt-feedback-check input { margin-top: 2px; accent-color: var(--bt-terracotta); }
+.bt-feedback-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+.bt-feedback-submit {
+  min-width: 140px;
+}
+.bt-feedback-status {
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: var(--bt-radius);
+  text-align: center;
+  font-weight: 600;
+}
+.bt-feedback-status--success { background: #D1FAE5; color: #065F46; }
+.bt-feedback-status--error { background: #FEE2E2; color: #991B1B; }
+
+/* --- Hearings Pagination --- */
+.bt-hearings-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 0;
+  flex-wrap: wrap;
+}
+.bt-hearings-pagination .bt-page-size-label {
+  font-size: 13px;
+  color: var(--bt-text-light);
+  margin-right: 4px;
+}
+.bt-hearings-pagination .bt-page-size-btn {
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--bt-border);
+  border-radius: var(--bt-radius);
+  background: var(--bt-surface);
+  cursor: pointer;
+  color: var(--bt-text);
+}
+.bt-hearings-pagination .bt-page-size-btn--active {
+  background: var(--bt-terracotta);
+  color: white;
+  border-color: var(--bt-terracotta);
+}
+
 /* --- Footer --- */
 .bt-footer {
   text-align: center;
@@ -869,6 +1613,24 @@ a:hover { color: var(--bt-mesa-warm); }
   flex-direction: column;
   align-items: flex-end;
   gap: 12px;
+}
+
+/* Guide link */
+.bt-guide-link {
+  display: inline-block;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  text-decoration: none;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.bt-guide-link:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* User badge */
@@ -1201,7 +1963,7 @@ a:hover { color: var(--bt-mesa-warm); }
   border-radius: var(--bt-radius);
   margin-bottom: 20px;
   box-shadow: var(--bt-shadow-card);
-  overflow: hidden;
+  overflow: visible;
 }
 .bt-list-card-header {
   display: flex;
@@ -1474,6 +2236,7 @@ a:hover { color: var(--bt-mesa-warm); }
   border-radius: 12px;
   background: #D1FAE5;
   color: #065F46;
+  white-space: nowrap;
 }
 .bt-rts-closed-badge {
   font-size: 11px;
@@ -1484,12 +2247,18 @@ a:hover { color: var(--bt-mesa-warm); }
   border-radius: 12px;
   background: var(--bt-sand-dark);
   color: var(--bt-text-light);
+  white-space: nowrap;
 }
 .bt-rts-agenda-details {
   display: flex;
   gap: 12px;
   font-size: 13px;
   color: var(--bt-text-muted);
+  margin-bottom: 2px;
+}
+.bt-rts-agenda-time {
+  font-size: 12px;
+  color: var(--bt-text-light);
   margin-bottom: 8px;
 }
 .bt-rts-agenda-positions {
@@ -2119,3 +2888,27 @@ a:hover { color: var(--bt-mesa-warm); }
 .bt-back-link { display: inline-block; margin-bottom: 24px; color: var(--bt-terracotta); text-decoration: none; font-weight: 600; }
 .bt-back-link:hover { color: var(--bt-terracotta-light); }
 .bt-prose-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--bt-border); font-size: 14px; color: var(--bt-text-muted); }
+
+/* --- Accessibility: Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Accessibility: Focus Visible --- */
+.bt-select:focus-visible,
+.bt-search:focus-visible,
+.bt-feedback-input:focus-visible,
+.bt-feedback-textarea:focus-visible {
+  outline: 3px solid var(--bt-focus, #C1440E);
+  outline-offset: 2px;
+}
+
+/* --- Accessibility: Touch Targets --- */
+.bt-card-add {
+  min-width: 44px;
+  min-height: 44px;
+}

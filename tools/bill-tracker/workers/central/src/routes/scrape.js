@@ -6,6 +6,8 @@
  */
 
 import { runScraper, runFullScrape, BILL_PREFIXES } from '../scraper.js';
+import { runRtsScraper } from '../rts-scraper.js';
+import { runOverviewScraper } from '../overview-scraper.js';
 
 export async function handleScrape(request, env) {
   const authHeader = request.headers.get('Authorization');
@@ -51,7 +53,47 @@ export async function handleScrape(request, env) {
     const result = await runScraper(env, { prefix, sessionId, startAt });
     return Response.json({ success: true, ...result });
   } catch (err) {
-    return Response.json({ error: `Scrape failed: ${err.message}` }, { status: 500 });
+    console.error('Scrape failed:', err);
+    return Response.json({ error: 'Scrape failed. Check server logs.' }, { status: 500 });
+  }
+}
+
+export async function handleScrapeRts(request, env) {
+  const authHeader = request.headers.get('Authorization');
+  const expectedToken = env.SCRAPE_TOKEN;
+
+  if (!expectedToken) {
+    return Response.json({ error: 'Scrape endpoint not configured' }, { status: 503 });
+  }
+
+  if (!authHeader || authHeader !== `Bearer ${expectedToken}`) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const result = await runRtsScraper(env);
+    return Response.json({ success: true, ...result });
+  } catch (err) {
+    console.error('RTS scrape failed:', err);
+    return Response.json({ error: 'RTS scrape failed. Check server logs.' }, { status: 500 });
+  }
+}
+
+export async function handleScrapeOverviews(request, env) {
+  const authHeader = request.headers.get('Authorization');
+  const expectedToken = env.SCRAPE_TOKEN;
+  if (!expectedToken) return Response.json({ error: 'Scrape endpoint not configured' }, { status: 503 });
+  if (!authHeader || authHeader !== `Bearer ${expectedToken}`) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+  let body = {};
+  try { body = await request.json(); } catch {}
+
+  try {
+    const result = await runOverviewScraper(env, { force: !!body.force });
+    return Response.json({ success: true, ...result });
+  } catch (err) {
+    console.error('Overview scrape failed:', err);
+    return Response.json({ error: 'Overview scrape failed. Check server logs.' }, { status: 500 });
   }
 }
 
@@ -78,6 +120,7 @@ export async function handleScrapeAll(request, env) {
     const result = await runFullScrape(env, sessionId);
     return Response.json({ success: true, ...result });
   } catch (err) {
-    return Response.json({ error: `Full scrape failed: ${err.message}` }, { status: 500 });
+    console.error('Full scrape failed:', err);
+    return Response.json({ error: 'Full scrape failed. Check server logs.' }, { status: 500 });
   }
 }

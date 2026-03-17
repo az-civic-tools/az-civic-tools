@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS bills (
   governor_action_date TEXT,
   azleg_url TEXT,
   keywords TEXT,
+  overview TEXT,
   scraped_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   UNIQUE(session_id, number)
@@ -99,6 +100,47 @@ CREATE TABLE IF NOT EXISTS floor_actions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_floor_actions_bill ON floor_actions(bill_id);
+
+-- RTS (Request to Speak) agenda items — scraped nightly from azleg.gov
+CREATE TABLE IF NOT EXISTS rts_agendas (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  agenda_item_id INTEGER NOT NULL UNIQUE,
+  bill_number TEXT NOT NULL,
+  committee_name TEXT,
+  committee_short TEXT,
+  chamber TEXT,
+  agenda_date TEXT,
+  agenda_time TEXT,
+  location TEXT,
+  can_rts INTEGER DEFAULT 0,
+  is_past INTEGER DEFAULT 0,
+  positions_for INTEGER DEFAULT 0,
+  positions_against INTEGER DEFAULT 0,
+  positions_neutral INTEGER DEFAULT 0,
+  rts_url TEXT NOT NULL,
+  scraped_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_rts_agendas_bill ON rts_agendas(bill_number);
+CREATE INDEX IF NOT EXISTS idx_rts_agendas_date ON rts_agendas(agenda_date);
+
+-- Organization bill recommendations (CEBV, etc.)
+CREATE TABLE IF NOT EXISTS org_recommendations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  org_code TEXT NOT NULL,
+  org_name TEXT NOT NULL,
+  bill_number TEXT NOT NULL,
+  position TEXT NOT NULL,
+  category TEXT,
+  description TEXT,
+  source_url TEXT NOT NULL,
+  source_date TEXT,
+  scraped_at TEXT NOT NULL,
+  UNIQUE(org_code, bill_number, source_url)
+);
+
+CREATE INDEX IF NOT EXISTS idx_org_recs_bill ON org_recommendations(bill_number);
+CREATE INDEX IF NOT EXISTS idx_org_recs_org ON org_recommendations(org_code);
 
 -- Scraper audit log
 CREATE TABLE IF NOT EXISTS scrape_log (

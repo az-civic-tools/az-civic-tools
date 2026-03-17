@@ -7,9 +7,11 @@
  *   GET  /api/bills/:number  — single bill detail
  *   GET  /api/bills/sync     — changed bills since a given date
  *   GET  /api/meta           — session info, last scrape, counts
+ *   GET  /api/hearings        — all upcoming hearings with bill data
  *   GET  /api/rts/:number    — RTS agenda items + deep links for a bill
  *   POST /api/scrape         — trigger single-prefix scrape (auth required)
  *   POST /api/scrape/all     — trigger full scrape, all prefixes (auth required)
+ *   POST /api/scrape/rts     — trigger RTS agenda scrape (auth required)
  *   GET  /api/nokings/images — list NoKings3 images grouped by city
  *   POST /api/nokings/images — upload image (admin only)
  *   GET  /api/nokings/image/:id    — serve image bytes
@@ -18,10 +20,16 @@
 
 import { handleListBills, handleGetBill, handleSyncBills } from './routes/bills.js';
 import { handleMeta } from './routes/meta.js';
-import { handleScrape, handleScrapeAll } from './routes/scrape.js';
+import { handleScrape, handleScrapeAll, handleScrapeRts, handleScrapeOverviews } from './routes/scrape.js';
 import { handleRts } from './routes/rts.js';
+import { handleHearings } from './routes/hearings.js';
+import { handleOrgs } from './routes/orgs.js';
+import { handleFeedback } from './routes/feedback.js';
+import { handleGetTracking, handleSaveTracking } from './routes/user-tracking.js';
 import { handleListImages, handleUploadImage, handleGetImage, handleEditImage, handleDeleteImage, handleListAdmins, handleAddAdmin, handleUpdateAdmin, handleDeleteAdmin, handleAdminCheck } from './routes/nokings.js';
 import { runScraper, BILL_PREFIXES } from './scraper.js';
+import { runRtsScraper } from './rts-scraper.js';
+import { runOverviewScraper } from './overview-scraper.js';
 import { checkRateLimit } from './rate-limit.js';
 
 const ALLOWED_ORIGINS = new Set([
@@ -83,10 +91,26 @@ export default {
       } else if (path === '/api/meta' && request.method === 'GET') {
         response = await handleMeta(env);
         cacheTtl = CACHE_TTL.meta;
+      } else if (path === '/api/orgs' && request.method === 'GET') {
+        response = await handleOrgs(request, env);
+        cacheTtl = CACHE_TTL.rts;
+      } else if (path === '/api/hearings' && request.method === 'GET') {
+        response = await handleHearings(request, env);
+        cacheTtl = CACHE_TTL.rts;
       } else if (path.match(/^\/api\/rts\/[A-Za-z]+\d+$/) && request.method === 'GET') {
         const number = path.split('/').pop().toUpperCase();
         response = await handleRts(number, env);
         cacheTtl = CACHE_TTL.rts;
+      } else if (path === '/api/user/tracking' && request.method === 'GET') {
+        response = await handleGetTracking(request, env);
+      } else if (path === '/api/user/tracking' && request.method === 'PUT') {
+        response = await handleSaveTracking(request, env);
+      } else if (path === '/api/feedback' && request.method === 'POST') {
+        response = await handleFeedback(request, env);
+      } else if (path === '/api/scrape/overviews' && request.method === 'POST') {
+        response = await handleScrapeOverviews(request, env);
+      } else if (path === '/api/scrape/rts' && request.method === 'POST') {
+        response = await handleScrapeRts(request, env);
       } else if (path === '/api/scrape/all' && request.method === 'POST') {
         response = await handleScrapeAll(request, env);
       } else if (path === '/api/scrape' && request.method === 'POST') {
@@ -172,6 +196,24 @@ async function runScheduledScrape(env) {
     } catch (err) {
       console.error(`Cron: ${prefix} failed:`, err);
     }
+  }
+
+  // Scrape RTS agendas after bill data
+  try {
+    console.log('Cron: scraping RTS agendas...');
+    const rtsResult = await runRtsScraper(env);
+    console.log(`Cron: RTS done — ${rtsResult.itemsStored} agenda items from ${rtsResult.pages} pages`);
+  } catch (err) {
+    console.error('Cron: RTS scrape failed:', err);
+  }
+
+  // Scrape bill overviews for bills with upcoming hearings
+  try {
+    console.log('Cron: scraping bill overviews...');
+    const overviewResult = await runOverviewScraper(env);
+    console.log(`Cron: overviews done — ${overviewResult.updated}/${overviewResult.billsChecked} updated`);
+  } catch (err) {
+    console.error('Cron: overview scrape failed:', err);
   }
 
   console.log('Cron scrape complete');

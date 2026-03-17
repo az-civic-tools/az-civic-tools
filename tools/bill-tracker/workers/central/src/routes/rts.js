@@ -1,39 +1,44 @@
 /**
- * Cactus Watch — RTS (Request to Speak) Proxy Route
+ * Cactus Watch — RTS (Request to Speak) Route
  *
- * GET /api/rts/:billNumber — Proxy to azleg.gov AgendaItem API
- *   Returns active agenda items for a bill, including:
+ * GET /api/rts/:billNumber — Read RTS agenda items from D1 (scraped nightly)
+ *   Returns upcoming agenda items for a bill, including:
  *   - Direct deep-link to the RTS "Add Request" page
  *   - Committee name, date, time, room
  *   - Whether RTS is currently open
  *   - Public position tallies (For / Against / Neutral)
  *
- * Caches responses for 1 hour to minimize azleg.gov calls.
- * Returns empty results when the legislative session is not active.
+ * Data is populated by the nightly RTS scraper (rts-scraper.js).
  */
-
-import { AZLEG_API, CURRENT_SESSION } from '../../shared/constants.js';
 
 /** Approximate session date range — update when session changes */
 const SESSION_WINDOW = {
   start: '2026-01-01',
-  end: '2026-06-30',  // AZ regular sessions typically end by late June
+  end: '2026-06-30',
 };
 
-const AZLEG_RTS_BASE = 'https://apps.azleg.gov/RequestToSpeak/New';
-
-/**
- * Check whether the current legislative session is likely active.
- * Returns false outside the session window, preventing unnecessary
- * API calls to azleg.gov during the interim.
- */
 function isSessionActive() {
   const now = new Date().toISOString().slice(0, 10);
   return now >= SESSION_WINDOW.start && now <= SESSION_WINDOW.end;
 }
 
+function formatRow(a) {
+  return {
+    agenda_item_id: a.agenda_item_id,
+    rts_url: a.rts_url,
+    committee: a.committee_name,
+    committee_short: a.committee_short,
+    chamber: a.chamber,
+    date: a.agenda_date,
+    time: a.agenda_time,
+    room: a.location,
+    can_rts: !!a.can_rts,
+    is_past: !!a.is_past,
+    positions: { for: a.positions_for, against: a.positions_against, neutral: a.positions_neutral },
+  };
+}
+
 export async function handleRts(billNumber, env) {
-  // Outside session window — return empty without calling azleg
   if (!isSessionActive()) {
     return Response.json({
       bill: billNumber,
@@ -44,70 +49,25 @@ export async function handleRts(billNumber, env) {
   }
 
   try {
-    const params = new URLSearchParams({
-      searchPhrase: billNumber,
-      sessionId: String(CURRENT_SESSION.id),
-      body: '',
-      page: '1',
-      pageSize: '10',
-      showPastAgendas: 'false',
-      rtsOnly: 'true',
-      includeRequests: 'false',
-      filterUserRequests: 'false',
-    });
-
-    const resp = await fetch(`${AZLEG_API}/AgendaItem/?${params}`, {
-      headers: { 'Accept': 'application/json' },
-    });
-
-    if (!resp.ok) {
-      return Response.json(
-        { error: 'Failed to fetch RTS data from azleg.gov', status: resp.status },
-        { status: 502 }
-      );
-    }
-
-    const data = await resp.json();
-    const items = data.ListItems || [];
-
-    // Transform azleg response into our clean format
-    const agendas = items
-      .filter(item => item.BillNumber === billNumber)
-      .map(item => {
-        // Tally public positions
-        const positions = { for: 0, against: 0, neutral: 0 };
-        for (const bp of (item.BillPositions || [])) {
-          const opinion = (bp.Opinion || '').toLowerCase();
-          if (opinion === 'for') positions.for++;
-          else if (opinion === 'against') positions.against++;
-          else if (opinion === 'neutral') positions.neutral++;
-        }
-
-        return {
-          agenda_item_id: item.AgendaItemId,
-          rts_url: `${AZLEG_RTS_BASE}/${item.AgendaItemId}`,
-          committee: item.CommitteeName,
-          committee_short: item.CommitteeShortName,
-          chamber: item.Body,
-          date: item.Agenda?.Date || null,
-          time: item.Agenda?.Time || null,
-          room: item.Location || item.Agenda?.Room || null,
-          can_rts: !!item.CanRts,
-          is_past: !!item.IsPast,
-          positions,
-        };
-      });
+    const result = await env.DB.prepare(`
+      SELECT agenda_item_id, committee_name, committee_short, chamber,
+             agenda_date, agenda_time, location, can_rts, is_past,
+             positions_for, positions_against, positions_neutral, rts_url
+      FROM rts_agendas
+      WHERE bill_number = ? AND is_past = 0
+      ORDER BY agenda_date ASC
+    `).bind(billNumber).all();
 
     return Response.json({
       bill: billNumber,
       session_active: true,
-      agendas,
+      agendas: (result.results || []).map(formatRow),
     });
   } catch (err) {
-    console.error('RTS proxy error:', err);
+    console.error('RTS query error:', err);
     return Response.json(
-      { error: 'Failed to fetch RTS data' },
-      { status: 502 }
+      { error: 'Failed to query RTS data' },
+      { status: 500 }
     );
   }
 }

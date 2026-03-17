@@ -88,7 +88,7 @@
     meta: null,
     currentPage: 1,
     activeTab: 'browse',
-    filters: { search: '', chamber: '', status: '', type: '', sort: 'updated_at', order: 'desc' },
+    filters: { search: '', chamber: '', status: '', type: '', hearing: false, sort: 'updated_at', order: 'desc' },
     billCache: {},  // number → bill data from list/API
     user: null,     // null = logged out, object = logged in
   };
@@ -120,6 +120,52 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this._data));
       } catch (e) { console.error('Failed to save tracking data:', e); }
+      this._scheduleSyncToServer();
+    },
+
+    _syncTimer: null,
+    _syncInFlight: false,
+
+    _scheduleSyncToServer() {
+      if (!isLoggedIn()) return;
+      if (this._syncTimer) clearTimeout(this._syncTimer);
+      this._syncTimer = setTimeout(() => this._syncToServer(), 3000);
+    },
+
+    async _syncToServer() {
+      if (this._syncInFlight || !this._data) return;
+      this._syncInFlight = true;
+      try {
+        const resp = await fetch(`${state.apiBase}/api/user/tracking`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this._data),
+        });
+        if (!resp.ok) {
+          console.warn('Server sync failed:', resp.status);
+        }
+      } catch (err) {
+        console.warn('Server sync error (offline?):', err);
+      } finally {
+        this._syncInFlight = false;
+      }
+    },
+
+    async loadFromServer() {
+      try {
+        const resp = await fetch(`${state.apiBase}/api/user/tracking`, {
+          credentials: 'include',
+        });
+        if (!resp.ok) return;
+        const result = await resp.json();
+        if (result.data) {
+          this._data = result.data;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(this._data));
+        }
+      } catch (err) {
+        console.warn('Failed to load tracking from server (offline?):', err);
+      }
     },
 
     _createDefault() {
@@ -158,11 +204,12 @@
       const data = this.load();
       const list = data.lists[listId];
       if (!list || list.items[bill.number]) return;
+
       list.items[bill.number] = {
         number: bill.number,
         addedAt: new Date().toISOString(),
-        trackingType: 'watching',
-        position: null, // 'for', 'neutral', 'against'
+        trackingType: 'rts_comment',
+        position: null,
         notes: '',
         rtsComment: '',
         lastKnownStatus: bill.status,
@@ -223,7 +270,7 @@
       this.save();
     },
 
-    /** Check all tracked bills against current data, clear RTS on status change */
+    /** Check all tracked bills against current data, flag when RTS re-submission needed */
     checkStatusChanges(billMap) {
       const data = this.load();
       let changed = false;
@@ -231,11 +278,27 @@
         for (const item of Object.values(list.items)) {
           const current = billMap[item.number];
           if (!current) continue;
+
+          // Detect status change (new committee, new chamber, etc.)
           if (current.status !== item.lastKnownStatus) {
             item.needsAttention = true;
+            item.rtsNeeded = true;
             item.statusChangedAt = new Date().toISOString();
             item.lastKnownStatus = current.status;
             item.lastKnownAction = current.last_action || '';
+            changed = true;
+          }
+
+          // Detect new last_action (committee movement even without status change)
+          if (current.last_action && current.last_action !== item.lastKnownAction) {
+            item.lastKnownAction = current.last_action;
+            // If the action mentions a new committee or transmit, flag for RTS
+            const actionLower = (current.last_action || '').toLowerCase();
+            if (actionLower.includes('transmitted') || actionLower.includes('committee')) {
+              item.needsAttention = true;
+              item.rtsNeeded = true;
+              item.statusChangedAt = new Date().toISOString();
+            }
             changed = true;
           }
         }
@@ -260,6 +323,46 @@
       }
       return seen.size;
     },
+
+    /** Get hearing action for a specific agenda item */
+    getHearingAction(agendaItemId) {
+      const data = this.load();
+      return (data.hearingActions && data.hearingActions[String(agendaItemId)]) || null;
+    },
+
+    /** Set hearing action (voted/commented/position) for a specific agenda item */
+    setHearingAction(agendaItemId, updates) {
+      const data = this.load();
+      if (!data.hearingActions) data.hearingActions = {};
+      const key = String(agendaItemId);
+      const existing = data.hearingActions[key] || { loggedAt: new Date().toISOString() };
+      data.hearingActions[key] = { ...existing, ...updates, updatedAt: new Date().toISOString() };
+      this.save();
+    },
+
+    /** Follow/unfollow an org list category */
+    followOrgList(orgCode, category, follow) {
+      const data = this.load();
+      if (!data.followedOrgLists) data.followedOrgLists = {};
+      if (!data.followedOrgLists[orgCode]) data.followedOrgLists[orgCode] = {};
+      data.followedOrgLists[orgCode][category] = follow;
+      this.save();
+    },
+
+    isOrgListFollowed(orgCode, category) {
+      const data = this.load();
+      return !!(data.followedOrgLists && data.followedOrgLists[orgCode] && data.followedOrgLists[orgCode][category]);
+    },
+
+    getFollowedOrgLists() {
+      return this.load().followedOrgLists || {};
+    },
+
+    /** Check if any hearing action exists for an agenda item */
+    hasHearingAction(agendaItemId) {
+      const action = this.getHearingAction(agendaItemId);
+      return action && (action.voted || action.commented);
+    },
   };
 
   /* ============================================================
@@ -272,8 +375,6 @@
     if (dataApi) { state.mode = 'production'; state.apiBase = dataApi; return; }
 
     const params = new URLSearchParams(window.location.search);
-    const apiParam = params.get('api');
-    if (apiParam) { state.mode = 'production'; state.apiBase = apiParam; return; }
     if (params.has('demo')) { state.mode = 'demo'; return; }
 
     const host = window.location.hostname;
@@ -296,10 +397,12 @@
     await checkAuthState();
 
     if (isLoggedIn()) {
+      await tracking.loadFromServer();
       tracking.load();
     }
     renderUserBadge();
     bindEvents();
+    initFeedback();
     await loadMeta();
     await loadBills();
     updateListsBadge();
@@ -462,11 +565,12 @@
     const params = new URLSearchParams();
     params.set('page', state.currentPage);
     params.set('limit', PAGE_SIZE);
-    const { search, chamber, status, type, sort, order } = state.filters;
+    const { search, chamber, status, type, sort, order, hearing } = state.filters;
     if (search) params.set('search', search);
     if (chamber) params.set('chamber', chamber);
     if (status) params.set('status', status);
     if (type) params.set('type', type);
+    if (hearing) params.set('hearing', '1');
     if (sort) params.set('sort', sort);
     params.set('order', order);
     return fetchJSON(`${state.apiBase}/api/bills?${params}`);
@@ -534,6 +638,47 @@
     if (!iso) return '';
     try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
     catch { return iso; }
+  }
+
+  /** Check if a hearing's start time has passed in AZ time (America/Phoenix, UTC-7 year-round) */
+  function isHearingPast(dateStr, timeStr) {
+    if (!dateStr) return false;
+    try {
+      // Parse the date (e.g. "3/16/2026")
+      const dateParts = dateStr.match(/(\d+)\/(\d+)\/(\d+)/);
+      if (!dateParts) return false;
+      const [, month, day, year] = dateParts;
+
+      // Parse time (e.g. "1:00 P.M." or "2:00 P.M. or upon recess...")
+      let hours = 23, minutes = 59; // default to end of day if no time
+      if (timeStr) {
+        const timeMatch = timeStr.match(/(\d+):(\d+)\s*(A\.?M\.?|P\.?M\.?)/i);
+        if (timeMatch) {
+          hours = parseInt(timeMatch[1], 10);
+          minutes = parseInt(timeMatch[2], 10);
+          const isPM = timeMatch[3].replace(/\./g, '').toUpperCase() === 'PM';
+          if (isPM && hours !== 12) hours += 12;
+          if (!isPM && hours === 12) hours = 0;
+        }
+      }
+
+      // Build AZ date (UTC-7)
+      const hearingUtc = new Date(Date.UTC(
+        parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10),
+        hours + 7, minutes
+      ));
+      return Date.now() > hearingUtc.getTime();
+    } catch { return false; }
+  }
+
+  /** Render org recommendation badges */
+  function renderOrgBadges(recommendations) {
+    if (!recommendations?.length) return '';
+    return recommendations.map(r => {
+      const posClass = r.position === 'oppose' ? 'bt-hearing-org-rec--oppose' : 'bt-hearing-org-rec--support';
+      const label = r.position === 'oppose' ? 'OPPOSE' : 'SUPPORT';
+      return `<a href="${esc(r.source_url)}" target="_blank" rel="noopener" class="bt-hearing-org-rec ${posClass}" title="${esc(r.org_name)}: ${label} — ${esc(r.category || '')}">${esc(r.org_code)}: ${label}</a>`;
+    }).join('');
   }
 
   function statusLabel(s) { return STATUS_LABELS[s] || s; }
@@ -613,6 +758,7 @@
           ${bill.last_action_date ? `<span>${formatDate(bill.last_action_date)}</span>` : ''}
         </div>
         <div class="bt-card-actions">
+          ${bill.has_hearing ? '<span class="bt-hearing-badge">Hearing</span>' : ''}
           <span class="bt-status bt-status--${esc(bill.status)}">${statusLabel(bill.status)}</span>
           ${isLoggedIn() ? `<button class="bt-card-add ${isTracked ? 'bt-card-add--tracked' : ''}" data-number="${esc(bill.number)}" aria-label="Add ${esc(bill.number)} to list" title="${isTracked ? 'On a list' : 'Add to list'}">
             ${isTracked ? '&#10003;' : '+'}
@@ -648,7 +794,7 @@
 
   function renderResultsBar(total) {
     const el = document.getElementById('bt-results-bar');
-    const hasFilters = state.filters.search || state.filters.chamber || state.filters.status || state.filters.type;
+    const hasFilters = state.filters.search || state.filters.chamber || state.filters.status || state.filters.type || state.filters.hearing;
     el.innerHTML = `
       <span><span class="bt-results-count">${total.toLocaleString()}</span> bill${total !== 1 ? 's' : ''} found</span>
       ${hasFilters ? `<button class="bt-results-clear" id="bt-clear-filters">Clear filters</button>` : ''}
@@ -683,6 +829,7 @@
           ${bill.last_action ? `<div><dt>Last Action</dt><dd>${esc(bill.last_action)} (${formatDate(bill.last_action_date)})</dd></div>` : ''}
           ${bill.governor_action ? `<div><dt>Governor</dt><dd>${esc(bill.governor_action)} (${formatDate(bill.governor_action_date)})</dd></div>` : ''}
         </dl>
+        ${bill.org_recommendations?.length ? `<div class="bt-detail-org-recs" style="margin-top: 10px;">${renderOrgBadges(bill.org_recommendations)}</div>` : ''}
         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
           ${bill.azleg_url ? `<a href="${esc(bill.azleg_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-detail-azleg">&#127963; View on AZLeg.gov &rarr;</a>` : ''}
           ${isLoggedIn() ? `<button class="bt-btn bt-btn--small bt-detail-add-btn" data-number="${esc(bill.number)}">${isTracked ? '&#10003; On list' : '+ Add to list'}</button>` : ''}
@@ -712,11 +859,19 @@
       html += `<div class="bt-detail-section"><h3 class="bt-detail-section-title">Floor Votes</h3>${bill.votes.map((v, vi) => renderVote(v, vi)).join('')}</div>`;
     }
 
+    // RTS Agendas — show for ALL bills, not just tracked
+    if (bill.rts_agendas?.length) {
+      html += renderRtsAgendasSection(bill.rts_agendas, bill.number);
+    } else if (!bill.rts_agendas) {
+      // Bill detail from API didn't include rts_agendas (demo mode or old cache) — async fallback
+      html += `<div class="bt-rts-agendas" id="bt-rts-agendas" data-bill="${esc(bill.number)}"></div>`;
+    }
+
     body.innerHTML = html;
     bindDetailEvents(body, bill);
 
-    // Load RTS agenda data asynchronously (only if bill is tracked)
-    if (tracking.isTracked(bill.number)) {
+    // Async fallback for demo mode or when rts_agendas not in response
+    if (!bill.rts_agendas && isLoggedIn() && tracking.isTracked(bill.number)) {
       loadRtsAgendas(bill.number);
     }
   }
@@ -728,8 +883,13 @@
     const listNames = lists.map(l => l.name).join(', ');
     const userActions = tracking.getBillActions(bill.number);
 
+    const customLabel = item.customLabel || bill.short_title || bill.description || '';
+
     let html = `<div class="bt-detail-tracking">
-      <div class="bt-detail-tracking-title">&#128204; Tracking</div>
+      <div class="bt-detail-tracking-header">
+        <span class="bt-detail-tracking-title">&#128204; Tracking</span>
+        <input type="text" class="bt-tracking-label-input" id="bt-tracking-label" data-list="${firstList.id}" data-number="${bill.number}" value="${esc(customLabel)}" placeholder="Bill label..." maxlength="80">
+      </div>
       <div class="bt-detail-tracking-lists">On: <strong>${esc(listNames)}</strong></div>`;
 
     // Status change alert
@@ -738,6 +898,10 @@
     }
 
     // Position selector (For / Neutral / Against)
+    // Check if any hearing action has "voted" set for this bill's agendas
+    const billAgendas = bill.rts_agendas || [];
+    const hasSubmitted = billAgendas.some(a => tracking.getHearingAction(a.agenda_item_id)?.voted);
+
     html += `<div class="bt-position-row">
       <span class="bt-position-label">My Position:</span>
       <div class="bt-position-selector">
@@ -745,17 +909,21 @@
           `<button class="bt-position-btn bt-position-btn--${key} ${item.position === key ? 'bt-position-btn--active' : ''}" data-position="${key}" data-list="${firstList.id}" data-number="${bill.number}">${label}</button>`
         ).join('')}
       </div>
+    </div>
+    <div class="bt-submit-position-row">
+      <button class="bt-btn bt-btn--small bt-submit-position-btn" data-number="${esc(bill.number)}">&#128483; Submit Position on AZLeg.gov</button>
+      <label class="bt-hearing-action-check">
+        <input type="checkbox" class="bt-detail-submitted-cb" data-number="${esc(bill.number)}" ${hasSubmitted ? 'checked' : ''}>
+        <span>I submitted my position</span>
+      </label>
     </div>`;
 
-    // Tracking type selector
-    html += `<div class="bt-track-type-selector">
-      ${Object.entries(TRACK_TYPE_LABELS).map(([key, label]) =>
-        `<button class="bt-track-type-btn ${item.trackingType === key ? 'bt-track-type-btn--active' : ''}" data-type="${key}" data-list="${firstList.id}" data-number="${bill.number}">${label}</button>`
-      ).join('')}
-    </div>`;
+    // Position note + divider before RTS Comment
+    html += `<div class="bt-tracking-divider"></div>
+    <div class="bt-tracking-note">Your position (For / Neutral / Against) only needs to be set once — it is saved throughout the bill's life. Your RTS comment below must be re-submitted each time the bill moves to a new committee or chamber.</div>`;
 
-    // RTS Comment area (visible for rts_comment type)
-    if (item.trackingType === 'rts_comment') {
+    // RTS Comment area (always visible for tracked bills)
+    {
       const charCount = (item.rtsComment || '').length;
       const charClass = charCount > 250 ? 'bt-rts-counter--over' : charCount > 200 ? 'bt-rts-counter--warn' : '';
       html += `<div class="bt-rts-section">
@@ -776,9 +944,6 @@
       <div class="bt-rts-label">My Notes</div>
       <textarea class="bt-notes-textarea" id="bt-notes-textarea" data-list="${firstList.id}" data-number="${bill.number}" placeholder="Personal notes — not cleared on status change...">${esc(item.notes || '')}</textarea>
     </div>`;
-
-    // RTS agenda links — populated asynchronously
-    html += `<div class="bt-rts-agendas" id="bt-rts-agendas" data-bill="${esc(bill.number)}"></div>`;
 
     // RTS Action History
     const historyEntries = buildActionHistory(bill, userActions);
@@ -811,14 +976,6 @@
           date: formatDate(actions.commented_date),
           text: `RTS Comment Left — ${stage.label}`,
           timestamp: actions.commented_date,
-        });
-      }
-      if (actions.voted && actions.voted_date) {
-        const positionLabel = bill ? '' : '';
-        entries.push({
-          date: formatDate(actions.voted_date),
-          text: `RTS Vote — ${stage.label}`,
-          timestamp: actions.voted_date,
         });
       }
     }
@@ -1154,32 +1311,15 @@
               ${stage.sublabel ? `<div class="bt-tl-sublabel">${stage.sublabel}</div>` : ''}
               ${stage.detail ? `<div class="bt-tl-detail">${esc(stage.detail)}${stage.votes ? ` (${stage.votes})` : ''}</div>` : ''}`;
 
-          // User action checkboxes
-          if (stage.actionable && stage.phase !== 'future' && isTracked && (trackingType === 'rts_comment' || trackingType === 'vote_only')) {
+          // User action checkboxes (RTS Comment only — vote tracking moved to main detail)
+          if (stage.actionable && stage.phase !== 'future' && isTracked && trackingType === 'rts_comment' && stage.type === 'committee') {
             const actions = userActions[stage.id] || {};
-            html += `<div class="bt-tl-actions">`;
-
-            if (stage.type === 'committee') {
-              if (trackingType === 'rts_comment') {
-                html += `<label class="bt-tl-action">
-                  <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="commented" ${actions.commented ? 'checked' : ''}>
-                  <span>I left an RTS Comment</span>
-                </label>`;
-              }
-              html += `<label class="bt-tl-action">
-                <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="voted" ${actions.voted ? 'checked' : ''}>
-                <span>I left an RTS Vote</span>
-              </label>`;
-            }
-
-            if (stage.type === 'vote') {
-              html += `<label class="bt-tl-action">
-                <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="voted" ${actions.voted ? 'checked' : ''}>
-                <span>I left an RTS Vote</span>
-              </label>`;
-            }
-
-            html += `</div>`;
+            html += `<div class="bt-tl-actions">
+              <label class="bt-tl-action">
+                <input type="checkbox" class="bt-tl-checkbox" data-bill="${esc(bill.number)}" data-stage="${stage.id}" data-action="commented" ${actions.commented ? 'checked' : ''}>
+                <span>I left an RTS Comment</span>
+              </label>
+            </div>`;
           }
 
           html += `</div></div>`;
@@ -1286,28 +1426,21 @@
       });
     });
 
-    // Position buttons
+    // Position buttons — sync to both list item AND hearing actions
     body.querySelectorAll('.bt-position-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const current = btn.dataset.position;
         const lists = tracking.getListsForBill(bill.number);
-        // Toggle off if already selected, otherwise set
         const newPosition = lists[0]?.items[bill.number]?.position === current ? null : current;
         for (const list of lists) {
           tracking.updateItem(list.id, bill.number, { position: newPosition });
         }
+        // Sync to hearing actions for all agendas on this bill
+        for (const a of (bill.rts_agendas || [])) {
+          tracking.setHearingAction(a.agenda_item_id, { position: newPosition });
+        }
         renderBillDetail(bill);
-        showTimeline(bill); // Re-render timeline too
-      });
-    });
-
-    // Tracking type buttons
-    body.querySelectorAll('.bt-track-type-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const { type, list, number } = btn.dataset;
-        tracking.updateItem(list, number, { trackingType: type, needsAttention: false });
-        renderBillDetail(bill);
-        showTimeline(bill); // Re-render timeline too
+        showTimeline(bill);
       });
     });
 
@@ -1363,6 +1496,48 @@
       });
     }
 
+    // Tracking label auto-save
+    const labelInput = body.querySelector('#bt-tracking-label');
+    if (labelInput) {
+      let labelTimer = null;
+      labelInput.addEventListener('input', () => {
+        clearTimeout(labelTimer);
+        labelTimer = setTimeout(() => {
+          tracking.updateItem(labelInput.dataset.list, labelInput.dataset.number, {
+            customLabel: labelInput.value,
+          });
+        }, 500);
+      });
+    }
+
+    // Submit Position button — opens AZLeg RTS and copies bill number
+    const submitPosBtn = body.querySelector('.bt-submit-position-btn');
+    if (submitPosBtn) {
+      submitPosBtn.addEventListener('click', () => {
+        const num = submitPosBtn.dataset.number;
+        navigator.clipboard.writeText(num).then(() => {
+          const orig = submitPosBtn.innerHTML;
+          submitPosBtn.innerHTML = '&#10003; Copied ' + esc(num) + '!';
+          setTimeout(() => { submitPosBtn.innerHTML = orig; }, 2000);
+        });
+        window.open('https://apps.azleg.gov/RequestToSpeak/MyBillPositions', '_blank');
+      });
+    }
+
+    // "I submitted my position" checkbox in tracking section
+    const submittedCb = body.querySelector('.bt-detail-submitted-cb');
+    if (submittedCb) {
+      submittedCb.addEventListener('change', () => {
+        const agendas = bill.rts_agendas || [];
+        for (const a of agendas) {
+          tracking.setHearingAction(a.agenda_item_id, { voted: submittedCb.checked });
+        }
+      });
+    }
+
+    // Bind hearing card events (RTS submit link copies comment to clipboard)
+    bindHearingActions(body, bill);
+
     // Add to list button in detail
     const addBtn = body.querySelector('.bt-detail-add-btn');
     if (addBtn) {
@@ -1374,7 +1549,219 @@
   }
 
   /* ============================================================
-     RTS Agenda Fetcher — populates deep links asynchronously
+     RTS Agendas — inline rendering from bill detail API response
+     ============================================================ */
+
+  function renderRtsAgendasSection(agendas, billNumber) {
+    const upcoming = agendas.filter(a => !a.is_past);
+    if (upcoming.length === 0) return '';
+
+    let html = `<div class="bt-detail-section"><h3 class="bt-detail-section-title">Upcoming Hearings</h3>`;
+    for (const agenda of upcoming) {
+      // Inject bill_number so the card can reference it for clipboard copy
+      const agendaWithBill = { ...agenda, bill_number: billNumber };
+      // In detail view: no full action row — just the comment checkbox
+      html += renderHearingCard(agendaWithBill, false, null, true);
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function renderHearingCard(agenda, showActions, bill, inDetailView) {
+    const action = isLoggedIn() ? tracking.getHearingAction(agenda.agenda_item_id) : null;
+    const billNumber = bill?.number || agenda.bill_number;
+    const isTracked = isLoggedIn() && billNumber && tracking.isTracked(billNumber);
+
+    let html = `<div class="bt-rts-agenda-card bt-hearing-card-full" data-agenda-id="${agenda.agenda_item_id}">`;
+
+    // Bill header row (for hearings tab)
+    if (bill) {
+      const billDesc = bill.description && bill.description !== (bill.number + ' - ' + bill.short_title)
+        ? bill.description : '';
+      html += `<div class="bt-hearing-bill-info" data-number="${esc(bill.number)}">
+        <div class="bt-hearing-bill-header">
+          <span class="bt-hearing-bill-number">${esc(bill.number)}</span>
+          <span class="bt-status bt-status--${esc(bill.status || '')}" style="font-size: 11px; padding: 2px 8px;">${statusLabel(bill.status)}</span>
+          ${action?.voted ? '<span class="bt-hearing-done-badge" title="You logged your position">&#10003; Voted</span>' : ''}
+          ${action?.commented ? '<span class="bt-hearing-done-badge" title="You left a comment">&#10003; Commented</span>' : ''}
+          ${agenda.can_rts ? '<span class="bt-rts-open-badge" style="margin-left: auto;">RTS Open</span>' : '<span class="bt-rts-closed-badge" style="margin-left: auto;">RTS Closed</span>'}
+        </div>
+        <div class="bt-hearing-bill-title">${esc(bill.short_title || bill.description || '')}</div>
+        ${billDesc ? `<div class="bt-hearing-bill-desc">${esc(billDesc)}</div>` : ''}
+        ${bill.sponsor ? `<div class="bt-hearing-bill-sponsor"><span class="bt-party bt-party--${esc(bill.sponsor_party || '')}"></span>${esc(bill.sponsor)}</div>` : ''}
+        ${bill.org_recommendations?.length ? `<div class="bt-hearing-bill-orgs">${renderOrgBadges(bill.org_recommendations)}</div>` : ''}
+      </div>`;
+    }
+
+    // Main hearing body — two-column layout
+    html += `<div class="bt-hearing-body">`;
+
+    // Left column: hearing details + RTS
+    html += `<div class="bt-hearing-left">
+        <div class="bt-rts-agenda-header">
+          <span class="bt-rts-agenda-committee">${agenda.chamber === 'H' ? 'House' : agenda.chamber === 'S' ? 'Senate' : esc(agenda.chamber)} ${esc(agenda.committee)}</span>
+          ${!bill ? (agenda.can_rts ? '<span class="bt-rts-open-badge">RTS Open</span>' : '<span class="bt-rts-closed-badge">RTS Closed</span>') : ''}
+        </div>
+        <div class="bt-rts-agenda-details">
+          ${agenda.date ? `<span>${formatDate(agenda.date)}</span>` : ''}
+          ${agenda.room ? `<span>${esc(agenda.room)}</span>` : ''}
+        </div>
+        ${agenda.time ? `<div class="bt-rts-agenda-time">${esc(agenda.time)}</div>` : ''}
+        <div class="bt-rts-agenda-positions">
+          <span class="bt-rts-tally bt-rts-tally--for">${agenda.positions.for} For</span>
+          <span class="bt-rts-tally bt-rts-tally--against">${agenda.positions.against} Against</span>
+          <span class="bt-rts-tally bt-rts-tally--neutral">${agenda.positions.neutral} Neutral</span>
+        </div>
+        <div class="bt-rts-link-row">
+          ${agenda.can_rts
+            ? `<a href="${esc(agenda.rts_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts bt-rts-submit-link" data-bill="${esc(billNumber)}">&#128483; Submit Request to Speak</a>`
+            : `<a href="https://apps.azleg.gov/RequestToSpeak/MyBillPositions" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-rts-azleg-link bt-rts-azleg-link--rts">&#128483; Set My Bill Position</a>`
+          }
+        </div>
+      </div>`;
+
+    // Right column: bill overview (only in hearings tab where bill context exists)
+    if (bill) {
+      const overview = bill.overview || bill.description || bill.short_title || '';
+      html += `<div class="bt-hearing-right">
+        <div class="bt-hearing-summary-label">Bill Overview</div>
+        <div class="bt-hearing-summary-text">${esc(overview)}</div>
+        ${bill.azleg_url ? `<a href="${esc(bill.azleg_url)}" target="_blank" rel="noopener" class="bt-hearing-azleg-link">View full bill on AZLeg.gov &rarr;</a>` : ''}
+      </div>`;
+    }
+
+    html += `</div>`; // close bt-hearing-body
+
+    // Detail view: just a "Left my comment" checkbox below the Submit RTS button
+    if (isLoggedIn() && inDetailView && isTracked) {
+      html += `<div class="bt-hearing-actions bt-hearing-actions--minimal" data-agenda-id="${agenda.agenda_item_id}">
+        <label class="bt-hearing-action-check">
+          <input type="checkbox" class="bt-hearing-commented-cb" data-agenda-id="${agenda.agenda_item_id}" ${action?.commented ? 'checked' : ''}>
+          <span>I left my RTS comment for this hearing</span>
+        </label>
+      </div>`;
+    }
+
+    // Full action row — checkboxes, org recommendations, and list button (hearings tab only)
+    if (isLoggedIn() && !inDetailView) {
+      // Sync position: use hearing action position, fallback to bill tracking position
+      let activePosition = action?.position || null;
+      if (!activePosition && isTracked) {
+        const lists = tracking.getListsForBill(billNumber);
+        activePosition = lists[0]?.items[billNumber]?.position || null;
+      }
+
+      html += `<div class="bt-hearing-actions" data-agenda-id="${agenda.agenda_item_id}">
+        <div class="bt-hearing-actions-left">
+          <div class="bt-hearing-actions-row">
+            <label class="bt-hearing-action-check">
+              <input type="checkbox" class="bt-hearing-voted-cb" data-agenda-id="${agenda.agenda_item_id}" data-bill="${esc(billNumber)}" ${action?.voted ? 'checked' : ''}>
+              <span>I submitted my position</span>
+            </label>
+            <label class="bt-hearing-action-check">
+              <input type="checkbox" class="bt-hearing-commented-cb" data-agenda-id="${agenda.agenda_item_id}" ${action?.commented ? 'checked' : ''}>
+              <span>I left my RTS comment</span>
+            </label>
+          </div>
+          <div class="bt-hearing-position-row" ${action?.voted ? '' : 'hidden'}>
+            <span class="bt-hearing-position-label">My vote:</span>
+            ${['for', 'neutral', 'against'].map(pos =>
+              `<button class="bt-position-btn bt-position-btn--${pos} ${activePosition === pos ? 'bt-position-btn--active' : ''}" data-agenda-id="${agenda.agenda_item_id}" data-bill="${esc(billNumber)}" data-hearing-position="${pos}">${POSITION_LABELS[pos]}</button>`
+            ).join('')}
+          </div>
+        </div>
+        <div class="bt-hearing-actions-center">
+          ${bill?.org_recommendations ? renderOrgBadges(bill.org_recommendations) : ''}
+        </div>
+        ${!inDetailView ? `<div class="bt-hearing-actions-right">
+          <button class="bt-btn bt-btn--small bt-hearing-list-btn ${isTracked ? 'bt-hearing-list-btn--tracked' : ''}" data-number="${esc(billNumber)}" title="${isTracked ? 'On a list' : 'Add to list'}">
+            ${isTracked ? '&#10003; On List' : '+ Add to List'}
+          </button>
+        </div>` : ''}
+      </div>`;
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  /** Bind hearing action checkboxes and position buttons */
+  function bindHearingActions(container, bill) {
+    container.querySelectorAll('.bt-hearing-voted-cb').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const id = cb.dataset.agendaId;
+        tracking.setHearingAction(id, { voted: cb.checked });
+        const posRow = cb.closest('.bt-hearing-actions').querySelector('.bt-hearing-position-row');
+        if (posRow) posRow.hidden = !cb.checked;
+        if (!cb.checked) {
+          tracking.setHearingAction(id, { position: null });
+          posRow?.querySelectorAll('.bt-position-btn').forEach(b => b.classList.remove('bt-position-btn--active'));
+        }
+        // Sync all voted checkboxes with same agenda ID
+        document.querySelectorAll(`.bt-hearing-voted-cb[data-agenda-id="${id}"]`).forEach(other => {
+          if (other !== cb) other.checked = cb.checked;
+        });
+      });
+    });
+    container.querySelectorAll('.bt-hearing-commented-cb').forEach(cb => {
+      cb.addEventListener('change', () => {
+        tracking.setHearingAction(cb.dataset.agendaId, { commented: cb.checked });
+        // Sync all checkboxes with same agenda ID across the page
+        document.querySelectorAll(`.bt-hearing-commented-cb[data-agenda-id="${cb.dataset.agendaId}"]`).forEach(other => {
+          if (other !== cb) other.checked = cb.checked;
+        });
+      });
+    });
+    container.querySelectorAll('[data-hearing-position]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.agendaId;
+        const pos = btn.dataset.hearingPosition;
+        const billNum = btn.dataset.bill;
+        const current = tracking.getHearingAction(id);
+        const newPos = current?.position === pos ? null : pos;
+        tracking.setHearingAction(id, { position: newPos });
+        // Also sync to bill tracking position if bill is on a list
+        if (billNum && tracking.isTracked(billNum)) {
+          const lists = tracking.getListsForBill(billNum);
+          for (const list of lists) {
+            tracking.updateItem(list.id, billNum, { position: newPos });
+          }
+        }
+        btn.closest('.bt-hearing-position-row').querySelectorAll('.bt-position-btn').forEach(b => {
+          b.classList.toggle('bt-position-btn--active', b.dataset.hearingPosition === newPos);
+        });
+      });
+    });
+    // Copy RTS comment to clipboard when clicking Submit Request to Speak
+    container.querySelectorAll('.bt-rts-submit-link').forEach(link => {
+      link.addEventListener('click', () => {
+        const num = link.dataset.bill;
+        if (!num || !isLoggedIn()) return;
+        const lists = tracking.getListsForBill(num);
+        const comment = lists[0]?.items[num]?.rtsComment;
+        if (comment) {
+          navigator.clipboard.writeText(comment).catch(() => {});
+        }
+      });
+    });
+
+    // Add-to-list buttons on hearing cards
+    container.querySelectorAll('.bt-hearing-list-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const num = btn.dataset.number;
+        // Ensure bill is in cache (hearings tab may not have loaded it)
+        if (!state.billCache[num] && hearingsState.data) {
+          const hearing = hearingsState.data.hearings.find(h => h.bill_number === num);
+          if (hearing?.bill) state.billCache[num] = hearing.bill;
+        }
+        showListPopover(btn, num);
+      });
+    });
+  }
+
+  /* ============================================================
+     RTS Agenda Fetcher — async fallback for demo mode
      ============================================================ */
 
   const rtsCache = {}; // billNumber → { data, timestamp }
@@ -1462,7 +1849,7 @@
      ============================================================ */
 
   // Track which lists are expanded and whether archived bills are shown
-  const listsUIState = { expanded: {}, showArchived: false };
+  const listsUIState = { expanded: {}, showArchived: false, orgListsExpanded: false };
 
   function renderMyLists() {
     const container = document.getElementById('bt-lists-container');
@@ -1496,6 +1883,162 @@
 
     container.innerHTML = lists.map(list => renderListCard(list)).join('');
     bindListEvents(container);
+
+    // Org lists section collapse/expand
+    const orgHeading = document.getElementById('bt-org-lists-heading');
+    const orgContainer = document.getElementById('bt-org-lists-container');
+    const orgChevron = document.getElementById('bt-org-lists-chevron');
+    if (orgHeading && orgContainer) {
+      orgContainer.hidden = !listsUIState.orgListsExpanded;
+      orgChevron.innerHTML = listsUIState.orgListsExpanded ? '&#9660;' : '&#9654;';
+      orgHeading.onclick = () => {
+        listsUIState.orgListsExpanded = !listsUIState.orgListsExpanded;
+        orgContainer.hidden = !listsUIState.orgListsExpanded;
+        orgChevron.innerHTML = listsUIState.orgListsExpanded ? '&#9660;' : '&#9654;';
+        if (listsUIState.orgListsExpanded) loadOrgLists();
+      };
+      if (listsUIState.orgListsExpanded) loadOrgLists();
+    }
+  }
+
+  let orgListsCache = null;
+
+  async function loadOrgLists() {
+    const container = document.getElementById('bt-org-lists-container');
+    if (!container) return;
+
+    if (state.mode === 'demo') {
+      container.innerHTML = '<div class="bt-empty-sub">Organization lists unavailable in demo mode</div>';
+      return;
+    }
+
+    if (!orgListsCache) {
+      try {
+        orgListsCache = await fetchJSON(`${state.apiBase}/api/orgs`);
+      } catch (err) {
+        console.error('Failed to load org lists:', err);
+        container.innerHTML = '';
+        return;
+      }
+    }
+
+    renderOrgLists(container, orgListsCache);
+  }
+
+  const orgUIState = { expanded: {} };
+
+  function renderOrgLists(container, data) {
+    const orgs = data.orgs || [];
+    if (orgs.length === 0) {
+      container.innerHTML = '<div class="bt-empty-sub">No organization lists available yet.</div>';
+      return;
+    }
+
+    let html = '';
+    for (const org of orgs) {
+      html += `<div class="bt-org-card">
+        <div class="bt-org-card-header">
+          <span class="bt-org-card-name">${esc(org.name)} (${esc(org.code)})</span>
+          ${org.website ? `<a href="${esc(org.website)}" target="_blank" rel="noopener" class="bt-org-card-link">${esc(org.website)} &rarr;</a>` : ''}
+        </div>`;
+
+      for (const [category, bills] of Object.entries(org.categories)) {
+        const isFollowed = isLoggedIn() && tracking.isOrgListFollowed(org.code, category);
+        const catKey = org.code + '-' + category;
+        const isExpanded = !!orgUIState.expanded[catKey];
+        html += `<div class="bt-org-list ${isFollowed ? 'bt-org-list--followed' : ''}">
+          <div class="bt-org-list-header bt-org-list-toggle" data-cat-key="${esc(catKey)}" role="button" tabindex="0">
+            <span class="bt-list-card-chevron">${isExpanded ? '&#9660;' : '&#9654;'}</span>
+            <span class="bt-org-list-name">${esc(category)}</span>
+            <span class="bt-org-list-count">${bills.length} bill${bills.length !== 1 ? 's' : ''}</span>
+            ${isLoggedIn() ? `<button class="bt-btn bt-btn--small bt-org-follow-btn ${isFollowed ? 'bt-org-follow-btn--active' : ''}" data-org="${esc(org.code)}" data-category="${esc(category)}">
+              ${isFollowed ? '&#10003; Following' : 'Follow This List'}
+            </button>` : ''}
+          </div>
+          ${isExpanded ? `<div class="bt-org-list-bills">
+            ${bills.map(b => {
+              const posClass = b.position === 'oppose' ? 'bt-hearing-org-rec--oppose' : 'bt-hearing-org-rec--support';
+              const posLabel = b.position === 'oppose' ? 'OPPOSE' : 'SUPPORT';
+              return `<div class="bt-org-list-bill" data-number="${esc(b.bill_number)}" style="cursor: pointer;">
+                <span class="bt-org-list-bill-number">${esc(b.bill_number)}</span>
+                <span class="bt-hearing-org-rec ${posClass}" style="font-size: 10px;">${posLabel}</span>
+                <span class="bt-org-list-bill-desc">${esc(b.description || '')}</span>
+              </div>`;
+            }).join('')}
+          </div>` : ''}
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
+    container.innerHTML = html;
+
+    // Bind category toggles
+    container.querySelectorAll('.bt-org-list-toggle').forEach(header => {
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.bt-org-follow-btn')) return; // Don't toggle when clicking follow
+        const key = header.dataset.catKey;
+        orgUIState.expanded[key] = !orgUIState.expanded[key];
+        renderOrgLists(container, data);
+      });
+    });
+
+    // Bind follow buttons
+    container.querySelectorAll('.bt-org-follow-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const orgCode = btn.dataset.org;
+        const category = btn.dataset.category;
+        const isFollowed = tracking.isOrgListFollowed(orgCode, category);
+        tracking.followOrgList(orgCode, category, !isFollowed);
+
+        if (!isFollowed) {
+          // Create a named list for this org category and add all bills
+          const org = orgListsCache?.orgs?.find(o => o.code === orgCode);
+          const bills = org?.categories?.[category] || [];
+          const listName = `${orgCode}: ${category}`;
+
+          // Find existing list with this name, or create new one
+          let targetList = tracking.getListArray().find(l => l.name === listName);
+          let listId;
+          if (targetList) {
+            listId = targetList.id;
+          } else {
+            listId = tracking.createList(listName);
+          }
+
+          // Track which bills are in this org list (for new-bill detection)
+          const data = tracking.load();
+          if (!data.orgListBills) data.orgListBills = {};
+          data.orgListBills[`${orgCode}-${category}`] = bills.map(b => b.bill_number);
+          if (!data.orgListSeen) data.orgListSeen = {};
+          data.orgListSeen[`${orgCode}-${category}`] = bills.map(b => b.bill_number);
+          tracking.save();
+
+          for (const b of bills) {
+            const cached = state.billCache[b.bill_number];
+            const billObj = cached || { number: b.bill_number, status: 'unknown', last_action: '' };
+            const existing = tracking.load().lists[listId]?.items[b.bill_number];
+            if (!existing) {
+              tracking.addToList(listId, billObj);
+              const pos = b.position === 'oppose' ? 'against' : b.position === 'support' ? 'for' : null;
+              const updates = { orgPosition: b.position, savedTitle: b.description || '' };
+              if (pos) updates.position = pos;
+              if (b.source_url) updates.notes = b.source_url;
+              tracking.updateItem(listId, b.bill_number, updates);
+            }
+          }
+          updateListsBadge();
+        }
+
+        renderMyLists();
+      });
+    });
+
+    // Bind bill clicks to open detail
+    container.querySelectorAll('.bt-org-list-bill').forEach(el => {
+      el.addEventListener('click', () => openBillDetail(el.dataset.number));
+    });
   }
 
   function renderListCard(list) {
@@ -1503,31 +2046,39 @@
     const activeItems = allItems.filter(i => !i.archived);
     const archivedItems = allItems.filter(i => i.archived);
     const visibleItems = listsUIState.showArchived ? allItems : activeItems;
-    const rtsItems = activeItems.filter(i => i.trackingType === 'rts_comment');
-    const voteItems = activeItems.filter(i => i.trackingType === 'vote_only');
-    const watchItems = activeItems.filter(i => i.trackingType === 'watching');
     const isExpanded = !!listsUIState.expanded[list.id];
+
+    // Count items needing action
+    const actionNeeded = activeItems.filter(i => {
+      if (!i.position) return true;
+      const bill = state.billCache[i.number];
+      const agendas = bill?.rts_agendas || [];
+      if (agendas.some(a => !a.is_past && !tracking.getHearingAction(a.agenda_item_id)?.commented)) return true;
+      if (i.rtsNeeded) return true;
+      return false;
+    }).length;
 
     let html = `<div class="bt-list-card ${isExpanded ? 'bt-list-card--expanded' : ''}" data-list-id="${list.id}">
       <div class="bt-list-card-header bt-list-card-toggle" data-list-id="${list.id}" role="button" aria-expanded="${isExpanded}" tabindex="0">
         <div class="bt-list-card-header-left">
           <span class="bt-list-card-chevron" aria-hidden="true">${isExpanded ? '&#9660;' : '&#9654;'}</span>
           <span class="bt-list-card-name">${esc(list.name)}</span>
-          <span class="bt-list-card-count">${activeItems.length} bill${activeItems.length !== 1 ? 's' : ''}${rtsItems.length ? ` &middot; ${rtsItems.length} RTS` : ''}${voteItems.length ? ` &middot; ${voteItems.length} Vote` : ''}${watchItems.length ? ` &middot; ${watchItems.length} Watch` : ''}${archivedItems.length ? ` &middot; ${archivedItems.length} archived` : ''}</span>
+          <span class="bt-list-card-count">${activeItems.length} bill${activeItems.length !== 1 ? 's' : ''}${actionNeeded ? ` &middot; ${actionNeeded} need action` : ''}${archivedItems.length ? ` &middot; ${archivedItems.length} archived` : ''}</span>
         </div>
-        ${activeItems.some(i => i.needsAttention) ? '<span class="bt-list-card-attention">&#9888;&#65039;</span>' : ''}
+        ${actionNeeded > 0 ? '<span class="bt-list-card-attention">&#9888;&#65039;</span>' : ''}
       </div>`;
 
     if (isExpanded) {
       if (visibleItems.length === 0) {
         html += `<div class="bt-list-empty">${listsUIState.showArchived ? 'No bills in this list.' : 'No active bills. Browse bills and click + to add them.'}</div>`;
       } else {
-        // Show attention items first, then RTS, then vote, then watching; archived last
+        // Sort: items needing action first, then by bill number; archived last
         const sorted = [...visibleItems].sort((a, b) => {
           if (a.archived !== b.archived) return a.archived ? 1 : -1;
-          if (a.needsAttention !== b.needsAttention) return a.needsAttention ? -1 : 1;
-          const typeOrder = { rts_comment: 0, vote_only: 1, watching: 2 };
-          return (typeOrder[a.trackingType] || 3) - (typeOrder[b.trackingType] || 3);
+          const aTodo = !a.position || a.rtsNeeded;
+          const bTodo = !b.position || b.rtsNeeded;
+          if (aTodo !== bTodo) return aTodo ? -1 : 1;
+          return (a.number || '').localeCompare(b.number || '');
         });
 
         html += sorted.map(item => renderTrackedBill(list.id, item)).join('');
@@ -1540,50 +2091,50 @@
 
   function renderTrackedBill(listId, item) {
     const bill = state.billCache[item.number];
-    const title = bill?.short_title || bill?.description || '';
+    const title = item.customLabel || bill?.short_title || bill?.description || item.savedTitle || '';
     const isArchived = !!item.archived;
-    const posClass = item.position ? `bt-position-badge--${item.position}` : '';
+    const posClass = item.orgPosition === 'oppose' ? 'bt-hearing-org-rec--oppose' :
+                     item.orgPosition === 'support' ? 'bt-hearing-org-rec--support' : '';
+    const posLabel = item.orgPosition === 'oppose' ? 'OPPOSE' :
+                     item.orgPosition === 'support' ? 'SUPPORT' : '';
 
-    let html = `<div class="bt-tracked-bill ${item.needsAttention ? 'bt-tracked-bill--attention' : ''} ${isArchived ? 'bt-tracked-bill--archived' : ''}" data-bill-number="${esc(item.number)}">
-      <div class="bt-tracked-info">
-        <div class="bt-tracked-header">
-          <span class="bt-tracked-number" data-number="${esc(item.number)}">${esc(item.number)}</span>
-          ${item.position ? `<span class="bt-position-badge ${posClass}">${POSITION_LABELS[item.position]}</span>` : ''}
-          <span class="bt-status bt-status--${esc(item.lastKnownStatus)}" style="font-size: 11px; padding: 2px 8px;">${statusLabel(item.lastKnownStatus)}</span>
-          <span class="bt-track-type bt-track-type--${item.trackingType}">${TRACK_TYPE_LABELS[item.trackingType]}</span>
-          ${isArchived ? '<span class="bt-track-type bt-track-type--archived">Archived</span>' : ''}
+    // Determine action-needed indicators
+    const todos = [];
+    if (!isArchived) {
+      if (!item.position) todos.push('Set Position');
+
+      // Check if position submitted to AZLeg
+      const agendas = bill?.rts_agendas || [];
+      const hasSubmitted = agendas.some(a => tracking.getHearingAction(a.agenda_item_id)?.voted);
+      if (item.position && !hasSubmitted) todos.push('Submit to AZLeg');
+
+      // Check if on agenda but no RTS comment left
+      const hasUpcoming = agendas.some(a => !a.is_past);
+      if (hasUpcoming) {
+        const hasCommented = agendas.some(a => tracking.getHearingAction(a.agenda_item_id)?.commented);
+        if (!hasCommented) todos.push('RTS Comment Needed');
+      }
+
+      if (item.rtsNeeded) todos.push('Bill Moved');
+    }
+
+    let html = `<div class="bt-tracked-row ${isArchived ? 'bt-tracked-bill--archived' : ''}" data-bill-number="${esc(item.number)}" data-number="${esc(item.number)}">
+      <div class="bt-tracked-row-info" data-number="${esc(item.number)}">
+        <span class="bt-org-list-bill-number">${esc(item.number)}</span>
+        ${posLabel ? `<span class="bt-hearing-org-rec ${posClass}" style="font-size: 10px;">${posLabel}</span>` : ''}
+        ${isArchived ? '<span class="bt-track-type bt-track-type--archived" style="font-size: 10px;">Archived</span>' : ''}
+        <span class="bt-org-list-bill-desc">${esc(title)}</span>
+        ${todos.length > 0 ? todos.map(t => `<span class="bt-todo-badge">${t}</span>`).join('') : ''}
+      </div>
+      <div class="bt-tracked-row-actions">
+        <button class="bt-tracked-edit-btn" data-list="${listId}" data-number="${esc(item.number)}" title="Edit" aria-label="Edit bill">&#9998;</button>
+        <div class="bt-tracked-edit-menu" data-list="${listId}" data-number="${esc(item.number)}">
+          ${isArchived
+            ? `<button class="bt-btn bt-btn--small bt-unarchive-bill" data-list="${listId}" data-number="${esc(item.number)}">Restore</button>`
+            : `<button class="bt-btn bt-btn--small bt-archive-bill" data-list="${listId}" data-number="${esc(item.number)}">Archive</button>`
+          }
+          <button class="bt-btn bt-btn--small bt-btn--danger bt-remove-from-list" data-list="${listId}" data-number="${esc(item.number)}">Remove</button>
         </div>
-        ${title ? `<div class="bt-tracked-title">${esc(title)}</div>` : ''}`;
-
-    // Status change alert (only for active items)
-    if (item.needsAttention && !isArchived) {
-      html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed — re-submit your RTS on azleg.gov</div>`;
-    }
-
-    // Read-only RTS comment (only if has content, not archived)
-    if (item.trackingType === 'rts_comment' && item.rtsComment && !isArchived) {
-      html += `<div class="bt-rts-section bt-rts-section--readonly">
-        <div class="bt-rts-label">My RTS Comment</div>
-        <div class="bt-rts-readonly">${esc(item.rtsComment)}</div>
-      </div>`;
-    }
-
-    // Read-only notes (only if has content, not archived)
-    if (item.notes && !isArchived) {
-      html += `<div class="bt-rts-section bt-rts-section--readonly">
-        <div class="bt-rts-label">My Notes</div>
-        <div class="bt-rts-readonly">${esc(item.notes)}</div>
-      </div>`;
-    }
-
-    html += `</div>
-      <div class="bt-tracked-actions">
-        ${isArchived
-          ? `<button class="bt-btn bt-btn--small bt-unarchive-bill" data-list="${listId}" data-number="${esc(item.number)}">Restore</button>
-             <button class="bt-btn bt-btn--small bt-btn--danger bt-remove-from-list" data-list="${listId}" data-number="${esc(item.number)}">Remove</button>`
-          : `<button class="bt-btn bt-btn--small bt-archive-bill" data-list="${listId}" data-number="${esc(item.number)}">Archive</button>
-             <button class="bt-btn bt-btn--small bt-btn--danger bt-remove-from-list" data-list="${listId}" data-number="${esc(item.number)}">Remove</button>`
-        }
       </div>
     </div>`;
     return html;
@@ -1605,12 +2156,32 @@
       });
     });
 
-    // Remove bill from list (with confirmation)
+    // Pencil edit button toggle
+    container.querySelectorAll('.bt-tracked-edit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const menu = btn.closest('.bt-tracked-row-actions')?.querySelector('.bt-tracked-edit-menu');
+        if (menu) {
+          const isOpen = menu.classList.contains('bt-edit-menu--open');
+          // Close all menus first
+          container.querySelectorAll('.bt-tracked-edit-menu').forEach(m => m.classList.remove('bt-edit-menu--open'));
+          if (!isOpen) menu.classList.add('bt-edit-menu--open');
+        }
+      });
+    });
+
+    // Remove bill from list (with enhanced confirmation)
     container.querySelectorAll('.bt-remove-from-list').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (confirm(`Remove ${btn.dataset.number} from this list permanently?\n\nIf you just want to hide it, use Archive instead.`)) {
-          tracking.removeFromList(btn.dataset.list, btn.dataset.number);
+        const num = btn.dataset.number;
+        const listsForBill = tracking.getListsForBill(num);
+        const isOnlyList = listsForBill.length <= 1;
+        const msg = isOnlyList
+          ? `Remove ${num} from this list?\n\nThis is the only list ${num} is on. Removing it will delete your position, notes, and RTS comments on Cactus Watch.\n\nThis does NOT affect your submissions on azleg.gov.`
+          : `Remove ${num} from this list?\n\nIf you just want to hide it, use Archive instead.`;
+        if (confirm(msg)) {
+          tracking.removeFromList(btn.dataset.list, num);
           renderMyLists();
           updateListsBadge();
         }
@@ -1637,15 +2208,183 @@
       });
     });
 
-    // Click anywhere on tracked bill row to open detail
-    container.querySelectorAll('.bt-tracked-bill').forEach(row => {
-      row.style.cursor = 'pointer';
-      row.addEventListener('click', (e) => {
-        // Don't navigate if clicking buttons
-        if (e.target.closest('.bt-tracked-actions')) return;
-        const number = row.dataset.billNumber;
+    // Dismiss RTS needed
+    container.querySelectorAll('.bt-dismiss-rts').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tracking.updateItem(btn.dataset.list, btn.dataset.number, { rtsNeeded: false, needsAttention: false });
+        renderMyLists();
+        updateListsBadge();
+      });
+    });
+
+    // Close edit menus on outside click
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.bt-tracked-edit-btn') && !e.target.closest('.bt-tracked-edit-menu')) {
+        container.querySelectorAll('.bt-tracked-edit-menu').forEach(m => m.classList.remove('bt-edit-menu--open'));
+      }
+    });
+
+    // Click on bill info to open detail
+    container.querySelectorAll('.bt-tracked-row-info').forEach(el => {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', () => {
+        const number = el.dataset.number;
         if (number) openBillDetail(number);
       });
+    });
+  }
+
+  /* ============================================================
+     Rendering — Upcoming Hearings View
+     ============================================================ */
+
+  const hearingsState = { data: null, chamber: '', committee: '', org: '', search: '', collapsedDates: {}, pageSize: 20 };
+
+  async function loadHearings() {
+    const container = document.getElementById('bt-hearings-container');
+    container.innerHTML = '<div class="bt-loading"><div class="bt-spinner"></div><p>Loading hearings...</p></div>';
+
+    try {
+      const params = new URLSearchParams();
+      if (hearingsState.chamber) params.set('chamber', hearingsState.chamber);
+      if (hearingsState.committee) params.set('committee', hearingsState.committee);
+
+      const data = state.mode === 'demo'
+        ? { hearings: [], total: 0, committees: [] }
+        : await fetchJSON(`${state.apiBase}/api/hearings?${params}`);
+
+      hearingsState.data = data;
+
+      // Populate committee filter
+      const committeeSel = document.getElementById('bt-hearings-committee');
+      const currentVal = committeeSel.value;
+      committeeSel.innerHTML = '<option value="">All Committees</option>' +
+        (data.committees || []).map(c => `<option value="${esc(c)}" ${c === currentVal ? 'selected' : ''}>${esc(c)}</option>`).join('');
+
+      // Populate org filter — include all known orgs
+      const orgSel = document.getElementById('bt-hearings-org');
+      if (orgSel) {
+        const orgs = new Set();
+        for (const h of data.hearings) {
+          for (const r of (h.bill?.org_recommendations || [])) orgs.add(r.org_code);
+        }
+        // Also add orgs from the org lists cache if loaded
+        if (orgListsCache?.orgs) {
+          for (const o of orgListsCache.orgs) orgs.add(o.code);
+        }
+        const currentOrg = orgSel.value;
+        orgSel.innerHTML = '<option value="">All Bills</option><option value="__my_lists__">My Lists</option>' +
+          [...orgs].sort().map(o => `<option value="${esc(o)}" ${o === currentOrg ? 'selected' : ''}>${esc(o)}</option>`).join('');
+      }
+
+      renderHearings(data);
+    } catch (err) {
+      console.error('Failed to load hearings:', err);
+      container.innerHTML = '<div class="bt-empty"><div class="bt-empty-icon">&#9888;&#65039;</div><div class="bt-empty-text">Failed to load hearings</div></div>';
+    }
+  }
+
+  function renderHearings(data) {
+    const container = document.getElementById('bt-hearings-container');
+    let hearings = data.hearings || [];
+
+    // Bill number search — bypasses other filters
+    if (hearingsState.search) {
+      const q = hearingsState.search.toUpperCase();
+      hearings = (data.hearings || []).filter(h => h.bill_number.includes(q));
+      // Skip other filters when searching
+    } else {
+
+    // Filter out hearings whose start time has passed (AZ time = America/Phoenix, no DST)
+    hearings = hearings.filter(h => !isHearingPast(h.date, h.time));
+
+    // Organization filter
+    if (hearingsState.org === '__my_lists__' && isLoggedIn()) {
+      // Show only bills on user's lists (personal + followed org lists)
+      const followedOrgs = tracking.load().followedOrgLists || {};
+      hearings = hearings.filter(h => {
+        if (tracking.isTracked(h.bill_number)) return true;
+        // Check if bill is on a followed org list
+        for (const [orgCode, cats] of Object.entries(followedOrgs)) {
+          if (!cats) continue;
+          const recs = h.bill?.org_recommendations || [];
+          if (recs.some(r => r.org_code === orgCode && cats[r.category])) return true;
+        }
+        return false;
+      });
+    } else if (hearingsState.org) {
+      hearings = hearings.filter(h =>
+        (h.bill?.org_recommendations || []).some(r => r.org_code === hearingsState.org)
+      );
+    }
+
+    } // close else block from search bypass
+
+    if (hearings.length === 0) {
+      container.innerHTML = '<div class="bt-empty"><div class="bt-empty-icon">&#128483;</div><div class="bt-empty-text">No upcoming hearings found</div><div class="bt-empty-sub">Try adjusting your filters</div></div>';
+      return;
+    }
+
+    // Pagination
+    const totalHearings = hearings.length;
+    if (hearingsState.pageSize > 0 && hearingsState.pageSize < totalHearings) {
+      hearings = hearings.slice(0, hearingsState.pageSize);
+    }
+
+    // Render pagination controls
+    const pagEl = document.getElementById('bt-hearings-pagination');
+    if (pagEl) {
+      const sizes = [20, 50, 100, 0];
+      const sizeLabels = { 20: '20', 50: '50', 100: '100', 0: 'All' };
+      pagEl.innerHTML = `<span class="bt-page-size-label">Showing ${hearings.length} of ${totalHearings} &middot; Show:</span>` +
+        sizes.map(s => `<button class="bt-page-size-btn ${hearingsState.pageSize === s ? 'bt-page-size-btn--active' : ''}" data-size="${s}">${sizeLabels[s]}</button>`).join('');
+      pagEl.querySelectorAll('.bt-page-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          hearingsState.pageSize = parseInt(btn.dataset.size, 10);
+          renderHearings(hearingsState.data);
+        });
+      });
+    }
+
+    // Group by date
+    const byDate = {};
+    for (const h of hearings) {
+      const dateKey = h.date || 'Unknown';
+      if (!byDate[dateKey]) byDate[dateKey] = [];
+      byDate[dateKey].push(h);
+    }
+
+    let html = '';
+    for (const [date, items] of Object.entries(byDate)) {
+      const isCollapsed = !!hearingsState.collapsedDates[date];
+      html += `<div class="bt-hearings-date-group">
+        <h3 class="bt-hearings-date-heading">${formatDate(date)}</h3>
+        <div class="bt-hearings-date-count">${items.length} hearing${items.length !== 1 ? 's' : ''}</div>
+        <button class="bt-btn bt-btn--small bt-hearings-date-toggle" data-date="${esc(date)}">${isCollapsed ? 'Show' : 'Hide'}</button>
+      </div>`;
+      if (!isCollapsed) {
+        for (const h of items) {
+          html += renderHearingCard(h, isLoggedIn(), h.bill);
+        }
+      }
+    }
+
+    container.innerHTML = html;
+    bindHearingActions(container);
+
+    // Date collapse toggles
+    container.querySelectorAll('.bt-hearings-date-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const date = btn.dataset.date;
+        hearingsState.collapsedDates[date] = !hearingsState.collapsedDates[date];
+        renderHearings(hearingsState.data);
+      });
+    });
+
+    // Bind bill info clicks to open bill detail
+    container.querySelectorAll('.bt-hearing-bill-info').forEach(el => {
+      el.addEventListener('click', () => openBillDetail(el.dataset.number));
     });
   }
 
@@ -1691,6 +2430,18 @@
             btn.className = `bt-card-add ${tracked ? 'bt-card-add--tracked' : ''}`;
             btn.innerHTML = tracked ? '&#10003;' : '+';
           });
+          // Re-render bill detail if overlay is open (to show/hide tracking section)
+          const detailBody = document.getElementById('bt-detail-body');
+          if (detailBody && !document.getElementById('bt-overlay').hidden && bill) {
+            renderBillDetail(bill);
+            if (tracking.isTracked(billNumber)) showTimeline(bill);
+          }
+          // Update hearing list buttons
+          document.querySelectorAll(`.bt-hearing-list-btn[data-number="${billNumber}"]`).forEach(btn => {
+            const tracked = tracking.isTracked(billNumber);
+            btn.className = `bt-btn bt-btn--small bt-hearing-list-btn ${tracked ? 'bt-hearing-list-btn--tracked' : ''}`;
+            btn.innerHTML = tracked ? '&#10003; On List' : '+ Add to List';
+          });
         });
       });
     }
@@ -1732,6 +2483,7 @@
     state.activeTab = tab;
     const browseView = document.getElementById('bt-browse-view');
     const listsView = document.getElementById('bt-lists-view');
+    const hearingsView = document.getElementById('bt-hearings-view');
     const browseControls = document.getElementById('bt-browse-controls');
     const resultsBar = document.getElementById('bt-results-bar');
 
@@ -1741,18 +2493,14 @@
       t.setAttribute('aria-selected', isActive);
     });
 
-    if (tab === 'browse') {
-      browseView.hidden = false;
-      listsView.hidden = true;
-      browseControls.style.display = '';
-      resultsBar.style.display = '';
-    } else {
-      browseView.hidden = true;
-      listsView.hidden = false;
-      browseControls.style.display = 'none';
-      resultsBar.style.display = 'none';
-      renderMyLists();
-    }
+    browseView.hidden = tab !== 'browse';
+    listsView.hidden = tab !== 'lists';
+    hearingsView.hidden = tab !== 'hearings';
+    browseControls.style.display = tab === 'browse' ? '' : 'none';
+    resultsBar.style.display = tab === 'browse' ? '' : 'none';
+
+    if (tab === 'lists') renderMyLists();
+    if (tab === 'hearings') loadHearings();
   }
 
   function bindEvents() {
@@ -1790,6 +2538,51 @@
         state.filters[id.replace('bt-filter-', '')] = e.target.value;
         state.currentPage = 1;
         loadBills();
+      });
+    }
+
+    // Hearing filter toggle
+    const hearingFilter = document.getElementById('bt-filter-hearing');
+    if (hearingFilter) {
+      hearingFilter.addEventListener('change', () => {
+        state.filters.hearing = hearingFilter.checked;
+        state.currentPage = 1;
+        loadBills();
+      });
+    }
+
+    // Hearings tab filters
+    const hearingsChamber = document.getElementById('bt-hearings-chamber');
+    if (hearingsChamber) {
+      hearingsChamber.addEventListener('change', () => {
+        hearingsState.chamber = hearingsChamber.value;
+        loadHearings();
+      });
+    }
+    const hearingsCommittee = document.getElementById('bt-hearings-committee');
+    if (hearingsCommittee) {
+      hearingsCommittee.addEventListener('change', () => {
+        hearingsState.committee = hearingsCommittee.value;
+        if (hearingsState.data) renderHearings(hearingsState.data);
+      });
+    }
+    // Hearings search box
+    const hearingsSearch = document.getElementById('bt-hearings-search');
+    if (hearingsSearch) {
+      let searchTimer = null;
+      hearingsSearch.addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+          hearingsState.search = hearingsSearch.value.trim();
+          if (hearingsState.data) renderHearings(hearingsState.data);
+        }, 300);
+      });
+    }
+    const hearingsOrg = document.getElementById('bt-hearings-org');
+    if (hearingsOrg) {
+      hearingsOrg.addEventListener('change', () => {
+        hearingsState.org = hearingsOrg.value;
+        if (hearingsState.data) renderHearings(hearingsState.data);
       });
     }
 
@@ -1957,14 +2750,95 @@
   }
 
   function clearFilters() {
-    state.filters = { search: '', chamber: '', status: '', type: '', sort: 'updated_at', order: 'desc' };
+    state.filters = { search: '', chamber: '', status: '', type: '', hearing: false, sort: 'updated_at', order: 'desc' };
     state.currentPage = 1;
     document.getElementById('bt-search').value = '';
     document.getElementById('bt-filter-chamber').value = '';
     document.getElementById('bt-filter-status').value = '';
     document.getElementById('bt-filter-type').value = '';
     document.getElementById('bt-filter-sort').value = 'updated_at';
+    const hearingCb = document.getElementById('bt-filter-hearing');
+    if (hearingCb) hearingCb.checked = false;
     loadBills();
+  }
+
+  /* ============================================================
+     Feedback Modal
+     ============================================================ */
+
+  function initFeedback() {
+    const fab = document.getElementById('bt-feedback-fab');
+    const overlay = document.getElementById('bt-feedback-overlay');
+    const closeBtn = document.getElementById('bt-feedback-close');
+    const submitBtn = document.getElementById('bt-feedback-submit');
+    const emailInput = document.getElementById('bt-feedback-email');
+
+    if (!fab) return;
+
+    fab.addEventListener('click', () => {
+      overlay.classList.add('bt-feedback--open');
+      // Autofill email if logged in
+      if (isLoggedIn() && state.user.email && !emailInput.value) {
+        emailInput.value = state.user.email;
+      }
+    });
+
+    const closeFeedback = () => overlay.classList.remove('bt-feedback--open');
+    closeBtn.addEventListener('click', closeFeedback);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeFeedback();
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      const category = document.getElementById('bt-feedback-category').value;
+      const message = document.getElementById('bt-feedback-message').value.trim();
+      const wantsResponse = document.getElementById('bt-feedback-response').checked;
+      const statusEl = document.getElementById('bt-feedback-status');
+
+      if (!email || !email.includes('@')) {
+        statusEl.hidden = false;
+        statusEl.className = 'bt-feedback-status bt-feedback-status--error';
+        statusEl.textContent = 'Please enter a valid email address.';
+        return;
+      }
+      if (!message || message.length < 5) {
+        statusEl.hidden = false;
+        statusEl.className = 'bt-feedback-status bt-feedback-status--error';
+        statusEl.textContent = 'Please enter a message (at least 5 characters).';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      statusEl.hidden = true;
+
+      try {
+        const resp = await fetch(`${state.apiBase}/api/feedback`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, category, message, wantsResponse }),
+        });
+
+        if (resp.ok) {
+          statusEl.hidden = false;
+          statusEl.className = 'bt-feedback-status bt-feedback-status--success';
+          statusEl.textContent = 'Feedback sent! Thank you.';
+          document.getElementById('bt-feedback-message').value = '';
+          setTimeout(() => { closeFeedback(); statusEl.hidden = true; }, 2000);
+        } else {
+          const data = await resp.json().catch(() => ({}));
+          throw new Error(data.error || 'Failed to send');
+        }
+      } catch (err) {
+        statusEl.hidden = false;
+        statusEl.className = 'bt-feedback-status bt-feedback-status--error';
+        statusEl.textContent = `Failed to send: ${err.message}`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Feedback';
+      }
+    });
   }
 
   /* ============================================================
@@ -1977,3 +2851,4 @@
     init();
   }
 })();
+// v6

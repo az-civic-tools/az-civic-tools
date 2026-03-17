@@ -1,0 +1,11 @@
+/cactus-watch.html
+  Cache-Control: public, max-age=300, s-maxage=300
+
+/cactus-watch.js
+  Cache-Control: public, max-age=300, s-maxage=300
+
+/cactus-watch.css
+  Cache-Control: public, max-age=300, s-maxage=300
+
+/
+  Cache-Control: public, max-age=300, s-maxage=300
