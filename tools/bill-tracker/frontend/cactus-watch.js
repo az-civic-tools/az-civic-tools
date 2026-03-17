@@ -894,7 +894,7 @@
 
     // Status change alert
     if (item.needsAttention) {
-      html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span>Status changed to <strong>${statusLabel(bill.status)}</strong> — re-submit your RTS comment on azleg.gov</div>`;
+      html += `<div class="bt-status-alert"><span class="bt-status-alert-icon">&#9888;&#65039;</span><span>This bill's status changed to <strong>${statusLabel(bill.status)}</strong>. You may need to re-submit your RTS comment on azleg.gov.</span></div>`;
     }
 
     // Position selector (For / Neutral / Against)
@@ -1930,7 +1930,7 @@
     // Attention summary
     const attentionCount = tracking.getAttentionCount();
     attentionEl.innerHTML = attentionCount > 0
-      ? `<div class="bt-attention-banner"><span class="bt-attention-banner-icon">&#9888;&#65039;</span>${attentionCount} bill${attentionCount !== 1 ? 's' : ''} need${attentionCount === 1 ? 's' : ''} attention — status changed, re-submit RTS on azleg.gov</div>`
+      ? `<div class="bt-attention-banner"><span class="bt-attention-banner-icon">&#9888;&#65039;</span>${attentionCount} bill${attentionCount !== 1 ? 's' : ''} need${attentionCount === 1 ? 's' : ''} attention! You may need to log another RTS comment on AZLeg.</div>`
       : '';
 
     // Update settings menu delete list options

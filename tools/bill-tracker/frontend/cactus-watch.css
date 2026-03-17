@@ -2102,11 +2102,12 @@ a:hover { color: var(--bt-mesa-warm); }
   border: 1px solid #F59E0B;
   border-radius: 8px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: #92400E;
-  line-height: 1.4;
+  line-height: 1.5;
 }
-.bt-status-alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.bt-status-alert strong { font-weight: 700; }
+.bt-status-alert-icon { font-size: 15px; flex-shrink: 0; line-height: 1.5; }
 
 /* RTS comment area */
 .bt-rts-section {
