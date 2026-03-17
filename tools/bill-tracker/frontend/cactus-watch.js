@@ -1952,6 +1952,34 @@
       return;
     }
 
+    // Fetch bill data for tracked bills not yet in cache
+    const uncachedNumbers = [];
+    for (const list of lists) {
+      for (const num of Object.keys(list.items)) {
+        if (!state.billCache[num]) uncachedNumbers.push(num);
+      }
+    }
+    if (uncachedNumbers.length > 0 && state.mode !== 'demo') {
+      // Fetch in parallel (batch of individual requests)
+      const unique = [...new Set(uncachedNumbers)];
+      Promise.all(unique.slice(0, 50).map(num =>
+        fetchJSON(`${state.apiBase}/api/bills/${num}`).then(bill => {
+          state.billCache[num] = bill;
+          // Backfill savedTitle for items missing it
+          for (const list of Object.values(tracking.load().lists)) {
+            const item = list.items[num];
+            if (item && !item.savedTitle && !item.customLabel) {
+              tracking.updateItem(list.id, num, { savedTitle: bill.short_title || bill.description || '' });
+            }
+          }
+        }).catch(() => {})
+      )).then(() => {
+        // Re-render once data arrives
+        container.innerHTML = lists.map(list => renderListCard(list)).join('');
+        bindListEvents(container);
+      });
+    }
+
     container.innerHTML = lists.map(list => renderListCard(list)).join('');
     bindListEvents(container);
 
@@ -2189,22 +2217,28 @@
       if (item.rtsNeeded) todos.push('Bill Moved');
     }
 
+    // Use bill number as fallback if title is still blank
+    const displayTitle = title || item.number;
+    const needsAttention = todos.length > 0;
+
     let html = `<div class="bt-tracked-row ${isArchived ? 'bt-tracked-bill--archived' : ''}" data-bill-number="${esc(item.number)}" data-number="${esc(item.number)}">
       <div class="bt-tracked-row-info" data-number="${esc(item.number)}">
         <span class="bt-org-list-bill-number">${esc(item.number)}</span>
         ${posLabel ? `<span class="bt-hearing-org-rec ${posClass}" style="font-size: 10px;">${posLabel}</span>` : ''}
         ${isArchived ? '<span class="bt-track-type bt-track-type--archived" style="font-size: 10px;">Archived</span>' : ''}
-        <span class="bt-org-list-bill-desc">${esc(title)}</span>
-        ${todos.length > 0 ? todos.map(t => `<span class="bt-todo-badge">${t}</span>`).join('') : ''}
+        <span class="bt-org-list-bill-desc">${esc(displayTitle)}</span>
       </div>
-      <div class="bt-tracked-row-actions">
-        <button class="bt-tracked-edit-btn" data-list="${listId}" data-number="${esc(item.number)}" title="Edit" aria-label="Edit bill">&#9998;</button>
-        <div class="bt-tracked-edit-menu" data-list="${listId}" data-number="${esc(item.number)}">
-          ${isArchived
-            ? `<button class="bt-btn bt-btn--small bt-unarchive-bill" data-list="${listId}" data-number="${esc(item.number)}">Restore</button>`
-            : `<button class="bt-btn bt-btn--small bt-archive-bill" data-list="${listId}" data-number="${esc(item.number)}">Archive</button>`
-          }
-          <button class="bt-btn bt-btn--small bt-btn--danger bt-remove-from-list" data-list="${listId}" data-number="${esc(item.number)}">Remove</button>
+      <div class="bt-tracked-row-end">
+        <span class="bt-tracked-attention-col" title="${needsAttention ? todos.join(', ') : ''}">${needsAttention ? '&#9888;&#65039;' : ''}</span>
+        <div class="bt-tracked-row-actions">
+          <button class="bt-tracked-edit-btn" data-list="${listId}" data-number="${esc(item.number)}" title="Edit" aria-label="Edit bill">&#9998;</button>
+          <div class="bt-tracked-edit-menu" data-list="${listId}" data-number="${esc(item.number)}">
+            ${isArchived
+              ? `<button class="bt-btn bt-btn--small bt-unarchive-bill" data-list="${listId}" data-number="${esc(item.number)}">Restore</button>`
+              : `<button class="bt-btn bt-btn--small bt-archive-bill" data-list="${listId}" data-number="${esc(item.number)}">Archive</button>`
+            }
+            <button class="bt-btn bt-btn--small bt-btn--danger bt-remove-from-list" data-list="${listId}" data-number="${esc(item.number)}">Remove</button>
+          </div>
         </div>
       </div>
     </div>`;
@@ -2231,7 +2265,7 @@
     container.querySelectorAll('.bt-tracked-edit-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const menu = btn.closest('.bt-tracked-row-actions')?.querySelector('.bt-tracked-edit-menu');
+        const menu = btn.closest('.bt-tracked-row-end')?.querySelector('.bt-tracked-edit-menu');
         if (menu) {
           const isOpen = menu.classList.contains('bt-edit-menu--open');
           // Close all menus first

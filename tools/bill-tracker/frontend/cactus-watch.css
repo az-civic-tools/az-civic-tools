@@ -1334,9 +1334,24 @@ a:hover { color: var(--bt-mesa-warm); }
   flex: 1;
   min-width: 0;
 }
+.bt-tracked-row-end {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.bt-tracked-attention-col {
+  width: 28px;
+  text-align: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
 .bt-tracked-row-actions {
   flex-shrink: 0;
   position: relative;
+  width: 36px;
+  text-align: center;
 }
 .bt-tracked-edit-btn {
   background: none;
