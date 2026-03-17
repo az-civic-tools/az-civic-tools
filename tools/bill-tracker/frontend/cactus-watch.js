@@ -1366,8 +1366,47 @@
   }
 
   function showTimeline(bill) {
+    renderAdvocacyPanel(bill);
     renderTimeline(bill);
     document.getElementById('bt-timeline').classList.add('bt-timeline--open');
+  }
+
+  function renderAdvocacyPanel(bill) {
+    const panel = document.getElementById('bt-advocacy-panel');
+    if (!panel) return;
+
+    const recs = bill.org_recommendations || [];
+    if (!isLoggedIn() || recs.length === 0) {
+      panel.innerHTML = '';
+      return;
+    }
+
+    // Filter to only orgs the user follows
+    const followed = tracking.getFollowedOrgLists();
+    const followedOrgs = new Set(Object.keys(followed).filter(orgCode => {
+      const cats = followed[orgCode];
+      return cats && Object.values(cats).some(v => v);
+    }));
+
+    const visibleRecs = recs.filter(r => followedOrgs.has(r.org_code));
+    if (visibleRecs.length === 0) {
+      panel.innerHTML = '';
+      return;
+    }
+
+    let html = `<div class="bt-advocacy-header">Advocacy Positions</div>`;
+    for (const rec of visibleRecs) {
+      const posClass = rec.position === 'oppose' ? 'bt-hearing-org-rec--oppose' : 'bt-hearing-org-rec--support';
+      const posLabel = rec.position === 'oppose' ? 'OPPOSE' : 'SUPPORT';
+      html += `<div class="bt-advocacy-card">
+        <div class="bt-advocacy-org">${esc(rec.org_name || rec.org_code)}</div>
+        <span class="bt-hearing-org-rec ${posClass}">${posLabel}</span>
+        ${rec.category ? `<div class="bt-advocacy-category">${esc(rec.category)}</div>` : ''}
+        ${rec.description ? `<div class="bt-advocacy-desc">${esc(rec.description)}</div>` : ''}
+        ${rec.source_url ? `<a href="${esc(rec.source_url)}" target="_blank" rel="noopener" class="bt-advocacy-source">View source &rarr;</a>` : ''}
+      </div>`;
+    }
+    panel.innerHTML = html;
   }
 
   function hideTimeline() {

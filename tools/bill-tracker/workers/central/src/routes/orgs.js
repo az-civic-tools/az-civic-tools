@@ -14,6 +14,7 @@ export async function handleOrgs(request, env) {
   // Known org websites
   const ORG_WEBSITES = {
     CEBV: 'https://cebv.us',
+    SecularAZ: 'https://secularaz.org',
   };
 
   // Group by org, then by category
@@ -22,7 +23,7 @@ export async function handleOrgs(request, env) {
     if (!orgs[row.org_code]) {
       orgs[row.org_code] = { code: row.org_code, name: row.org_name, website: ORG_WEBSITES[row.org_code] || null, categories: {} };
     }
-    const cat = row.category || 'Other';
+    const cat = row.category || 'All Bills';
     if (!orgs[row.org_code].categories[cat]) {
       orgs[row.org_code].categories[cat] = [];
     }

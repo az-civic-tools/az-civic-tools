@@ -183,7 +183,7 @@ export async function handleGetBill(number, env) {
       ORDER BY agenda_date ASC
     `).bind(normalized).all(),
     env.DB.prepare(
-      'SELECT org_code, org_name, position, category, source_url FROM org_recommendations WHERE bill_number = ?'
+      'SELECT org_code, org_name, position, category, description, source_url FROM org_recommendations WHERE bill_number = ?'
     ).bind(normalized).all(),
   ]);
 
@@ -235,6 +235,7 @@ export async function handleGetBill(number, env) {
       org_name: r.org_name,
       position: r.position,
       category: r.category,
+      description: r.description,
       source_url: r.source_url,
     })),
   };

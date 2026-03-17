@@ -2889,6 +2889,57 @@ a:hover { color: var(--bt-mesa-warm); }
 .bt-back-link:hover { color: var(--bt-terracotta-light); }
 .bt-prose-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--bt-border); font-size: 14px; color: var(--bt-text-muted); }
 
+/* --- Advocacy Positions Panel --- */
+.bt-advocacy-panel:empty { display: none; }
+.bt-advocacy-panel {
+  padding: 16px 20px 0;
+  border-bottom: 2px solid var(--bt-border);
+  margin-bottom: 8px;
+}
+.bt-advocacy-header {
+  font-family: var(--bt-font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--bt-terracotta);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+.bt-advocacy-card {
+  background: var(--bt-card-bg, #fff);
+  border: 1px solid var(--bt-border-light);
+  border-radius: var(--bt-radius);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.bt-advocacy-org {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--bt-earth);
+  margin-bottom: 4px;
+}
+.bt-advocacy-category {
+  font-size: 11px;
+  color: var(--bt-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+.bt-advocacy-desc {
+  font-size: 12px;
+  color: var(--bt-text);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+.bt-advocacy-source {
+  font-size: 11px;
+  color: var(--bt-earth);
+  text-decoration: none;
+  margin-top: 6px;
+  display: inline-block;
+}
+.bt-advocacy-source:hover { text-decoration: underline; }
+
 /* --- Accessibility: Reduced Motion --- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
