@@ -1369,6 +1369,12 @@
     renderAdvocacyPanel(bill);
     renderTimeline(bill);
     document.getElementById('bt-timeline').classList.add('bt-timeline--open');
+    // Show advocacy panel if it has content
+    const advocacyEl = document.getElementById('bt-advocacy');
+    const panelEl = document.getElementById('bt-advocacy-panel');
+    if (advocacyEl) {
+      advocacyEl.classList.toggle('bt-advocacy--open', panelEl && panelEl.innerHTML.length > 0);
+    }
   }
 
   function renderAdvocacyPanel(bill) {
@@ -1376,41 +1382,67 @@
     if (!panel) return;
 
     const recs = bill.org_recommendations || [];
-    if (!isLoggedIn() || recs.length === 0) {
+    if (recs.length === 0) {
       panel.innerHTML = '';
       return;
     }
 
-    // Filter to only orgs the user follows
-    const followed = tracking.getFollowedOrgLists();
-    const followedOrgs = new Set(Object.keys(followed).filter(orgCode => {
-      const cats = followed[orgCode];
-      return cats && Object.values(cats).some(v => v);
-    }));
-
-    const visibleRecs = recs.filter(r => followedOrgs.has(r.org_code));
+    let visibleRecs;
+    if (isLoggedIn()) {
+      // Logged in: filter to only orgs the user follows
+      const followed = tracking.getFollowedOrgLists();
+      const followedOrgs = new Set(Object.keys(followed).filter(orgCode => {
+        const cats = followed[orgCode];
+        return cats && Object.values(cats).some(v => v);
+      }));
+      visibleRecs = recs.filter(r => followedOrgs.has(r.org_code));
+    } else {
+      // Guest: show all org positions
+      visibleRecs = recs;
+    }
     if (visibleRecs.length === 0) {
       panel.innerHTML = '';
       return;
     }
 
     let html = `<div class="bt-advocacy-header">Advocacy Positions</div>`;
-    for (const rec of visibleRecs) {
+    for (let i = 0; i < visibleRecs.length; i++) {
+      const rec = visibleRecs[i];
       const posClass = rec.position === 'oppose' ? 'bt-hearing-org-rec--oppose' : 'bt-hearing-org-rec--support';
       const posLabel = rec.position === 'oppose' ? 'OPPOSE' : 'SUPPORT';
       html += `<div class="bt-advocacy-card">
-        <div class="bt-advocacy-org">${esc(rec.org_name || rec.org_code)}</div>
-        <span class="bt-hearing-org-rec ${posClass}">${posLabel}</span>
-        ${rec.category ? `<div class="bt-advocacy-category">${esc(rec.category)}</div>` : ''}
-        ${rec.description ? `<div class="bt-advocacy-desc">${esc(rec.description)}</div>` : ''}
-        ${rec.source_url ? `<a href="${esc(rec.source_url)}" target="_blank" rel="noopener" class="bt-advocacy-source">View source &rarr;</a>` : ''}
+        <div class="bt-advocacy-card-header bt-advocacy-toggle" data-idx="${i}" role="button" tabindex="0">
+          <span class="bt-list-card-chevron bt-advocacy-chevron">&#9660;</span>
+          <span class="bt-advocacy-org">${esc(rec.org_name || rec.org_code)}</span>
+          <span class="bt-hearing-org-rec ${posClass}" style="margin-left: auto;">${posLabel}</span>
+        </div>
+        <div class="bt-advocacy-card-body" data-idx="${i}">
+          ${rec.category && rec.category !== 'All Bills' ? `<div class="bt-advocacy-category">${esc(rec.category)}</div>` : ''}
+          ${rec.description ? `<div class="bt-advocacy-desc">${esc(rec.description)}</div>` : ''}
+          ${rec.source_url ? `<a href="${esc(rec.source_url)}" target="_blank" rel="noopener" class="bt-advocacy-source">View source &rarr;</a>` : ''}
+        </div>
       </div>`;
     }
     panel.innerHTML = html;
+
+    // Bind collapse/expand toggles
+    panel.querySelectorAll('.bt-advocacy-toggle').forEach(header => {
+      header.addEventListener('click', () => {
+        const body = panel.querySelector(`.bt-advocacy-card-body[data-idx="${header.dataset.idx}"]`);
+        const chevron = header.querySelector('.bt-advocacy-chevron');
+        if (body) {
+          const isOpen = body.style.display !== 'none';
+          body.style.display = isOpen ? 'none' : '';
+          chevron.innerHTML = isOpen ? '&#9654;' : '&#9660;';
+        }
+      });
+    });
   }
 
   function hideTimeline() {
     document.getElementById('bt-timeline').classList.remove('bt-timeline--open');
+    const advocacyEl = document.getElementById('bt-advocacy');
+    if (advocacyEl) advocacyEl.classList.remove('bt-advocacy--open');
   }
 
   function renderVote(vote, index) {
