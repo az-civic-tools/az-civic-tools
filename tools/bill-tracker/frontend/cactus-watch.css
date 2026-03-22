@@ -2919,7 +2919,7 @@ a:hover { color: var(--bt-mesa-warm); }
   flex-shrink: 0;
 }
 .bt-advocacy--open {
-  width: 250px;
+  width: 500px;
   overflow-y: auto;
   overflow-x: hidden;
   border-right: 2px solid var(--bt-border);
@@ -2989,10 +2989,169 @@ a:hover { color: var(--bt-mesa-warm); }
 }
 .bt-advocacy-source:hover { text-decoration: underline; }
 
+@media (max-width: 1400px) {
+  .bt-advocacy--open { width: 350px; }
+}
 @media (max-width: 1200px) {
   .bt-advocacy { display: none; }
 }
 
+/* --- Advocacy card footer & logo --- */
+.bt-advocacy-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+.bt-advocacy-logo-link {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.bt-advocacy-logo-link:hover { opacity: 1; }
+.bt-advocacy-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+/* --- Detail: top row (bill number + add to list + status) --- */
+.bt-detail-top-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.bt-detail-top-row .bt-detail-add-btn {
+  flex-shrink: 0;
+}
+
+/* --- Detail: action row (lifecycle toggle + azleg button) --- */
+.bt-detail-action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  justify-content: space-between;
+}
+.bt-lifecycle-toggle {
+  color: var(--bt-earth);
+  border-color: var(--bt-border);
+  transition: background 0.2s, border-color 0.2s;
+}
+.bt-lifecycle-toggle:hover {
+  background: var(--bt-sand);
+  border-color: var(--bt-earth);
+}
+
+/* --- Next Action row --- */
+.bt-next-action-row {
+  flex-basis: 100%;
+  padding-top: 6px;
+  border-top: 1px dashed var(--bt-border-light);
+  margin-top: 4px;
+}
+.bt-next-action-row dt {
+  color: var(--bt-sage);
+}
+.bt-next-action-row dd {
+  color: var(--bt-text);
+  font-weight: 600;
+}
+.bt-next-action-info {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--bt-text-light);
+  padding: 0 4px;
+  vertical-align: middle;
+  transition: color 0.2s;
+}
+.bt-next-action-info:hover {
+  color: var(--bt-terracotta);
+}
+
+/* --- Next Action Info Modal --- */
+.bt-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 24, 16, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bt-fade-in 0.2s ease;
+}
+.bt-modal-backdrop[hidden] { display: none; }
+.bt-modal-content {
+  background: var(--bt-card-bg);
+  border-radius: var(--bt-radius);
+  padding: 28px 32px;
+  max-width: 480px;
+  width: 90vw;
+  box-shadow: 0 16px 48px rgba(44, 24, 16, 0.25);
+  position: relative;
+}
+.bt-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--bt-text-muted);
+  line-height: 1;
+}
+.bt-modal-close:hover { color: var(--bt-terracotta); }
+.bt-modal-title {
+  font-family: var(--bt-font-display);
+  font-size: 20px;
+  color: var(--bt-mesa);
+  margin-bottom: 12px;
+}
+.bt-modal-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--bt-text);
+  margin-bottom: 12px;
+}
+.bt-modal-disclaimer {
+  font-size: 13px;
+  color: var(--bt-text-light);
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: var(--bt-sand);
+  border-radius: var(--bt-radius-sm);
+  border-left: 3px solid var(--bt-gold);
+}
+
+/* --- Collapsible sections --- */
+.bt-collapsible-toggle {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bt-collapsible-toggle:hover {
+  color: var(--bt-terracotta);
+}
+.bt-collapsible-chevron {
+  font-size: 12px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.bt-collapsible-count {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--bt-text-light);
+}
 
 /* --- Accessibility: Reduced Motion --- */
 @media (prefers-reduced-motion: reduce) {

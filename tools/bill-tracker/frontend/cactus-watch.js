@@ -34,6 +34,45 @@
     signed: 'Signed', vetoed: 'Vetoed', dead: 'Dead', held: 'Held',
   };
 
+  // Organization metadata (homepage, logo) keyed by org_code
+  // Logos use Google favicon service as a reliable CDN proxy
+  const ORG_META = {
+    CEBV: { url: 'https://www.cebv.us/', logo: 'https://www.google.com/s2/favicons?domain=cebv.us&sz=64' },
+    SecularAZ: { url: 'https://secularaz.org/', logo: 'https://www.google.com/s2/favicons?domain=secularaz.org&sz=64' },
+    SOSAZ: { url: 'https://saveourschoolsaz.org/', logo: 'https://www.google.com/s2/favicons?domain=saveourschoolsaz.org&sz=64' },
+  };
+
+  /**
+   * Predict the likely next legislative action for a bill based on its
+   * current status and chamber of origin. Returns { text, detail }.
+   */
+  function predictNextAction(bill) {
+    const s = bill.status;
+    const chamber = bill.chamber; // 'H' or 'S'
+    const otherChamber = chamber === 'H' ? 'Senate' : 'House';
+    const originChamber = chamber === 'H' ? 'House' : 'Senate';
+
+    // Terminal states
+    if (s === 'signed') return { text: 'Enacted — no further action', detail: 'This bill has been signed into law by the Governor.' };
+    if (s === 'vetoed') return { text: 'Vetoed — no further action expected', detail: 'The Governor vetoed this bill. An override would require a two-thirds vote in both chambers.' };
+    if (s === 'dead') return { text: 'Dead — no further action expected', detail: 'This bill is considered dead for the current session.' };
+    if (s === 'held') return { text: 'Held by the Governor', detail: 'The Governor is holding the bill without signing or vetoing. It may become law without signature or expire.' };
+
+    // Active states
+    if (s === 'introduced') return { text: `Committee assignment in the ${originChamber}`, detail: `Newly introduced bills are assigned to one or more committees in their chamber of origin (${originChamber}) for review.` };
+    if (s === 'in_committee') return { text: `Committee hearing and vote in the ${originChamber}`, detail: `The bill is currently in committee. It will be scheduled for a hearing where the public can testify, followed by a committee vote.` };
+    if (s === 'passed_committee') return { text: `${originChamber} floor debate and vote`, detail: `After passing committee, the bill moves to the full ${originChamber} floor for Rules review, caucus, and a final chamber vote.` };
+    if (s === 'on_floor') return { text: `${originChamber} floor vote`, detail: `The bill is on the ${originChamber} floor calendar. It will be debated, potentially amended, and voted on by the full chamber.` };
+    if (s === 'passed_house' && chamber === 'H') return { text: `${otherChamber} committee assignment`, detail: `Having passed the House, the bill crosses over to the ${otherChamber} for a first reading and committee assignment.` };
+    if (s === 'passed_house' && chamber === 'S') return { text: 'Conference committee or Governor transmittal', detail: 'The bill passed the House but originated in the Senate. If amended, it may go to a conference committee; otherwise it heads to the Governor.' };
+    if (s === 'passed_senate' && chamber === 'S') return { text: `${otherChamber} committee assignment`, detail: `Having passed the Senate, the bill crosses over to the ${otherChamber} for a first reading and committee assignment.` };
+    if (s === 'passed_senate' && chamber === 'H') return { text: 'Conference committee or Governor transmittal', detail: 'The bill passed the Senate but originated in the House. If amended, it may go to a conference committee; otherwise it heads to the Governor.' };
+    if (s === 'passed_both') return { text: 'Transmitted to the Governor', detail: 'The bill has passed both chambers and will be transmitted to the Governor for signature or veto.' };
+    if (s === 'to_governor') return { text: 'Governor decision (sign, veto, or hold)', detail: 'The Governor has received the bill and will sign it into law, veto it, or allow it to become law without signature.' };
+
+    return { text: 'Awaiting next legislative action', detail: 'The next step depends on the current stage of the legislative process.' };
+  }
+
   const TYPE_LABELS = {
     bill: 'Bill', memorial: 'Memorial', resolution: 'Resolution',
     concurrent_resolution: 'Concurrent Resolution', joint_resolution: 'Joint Resolution',
@@ -815,10 +854,15 @@
     const listsForBill = isLoggedIn() ? tracking.getListsForBill(bill.number) : [];
     const isTracked = listsForBill.length > 0;
 
+    const nextAction = predictNextAction(bill);
+
     let html = `
       <div class="bt-detail-header">
-        <div class="bt-detail-number">${esc(bill.number)}</div>
-        <span class="bt-status bt-status--${esc(bill.status)}">${statusLabel(bill.status)}</span>
+        <div class="bt-detail-top-row">
+          <div class="bt-detail-number">${esc(bill.number)}</div>
+          ${isLoggedIn() ? `<button class="bt-btn bt-btn--small bt-detail-add-btn" data-number="${esc(bill.number)}">${isTracked ? '&#10003; On list' : '+ Add to list'}</button>` : ''}
+          <span class="bt-status bt-status--${esc(bill.status)}">${statusLabel(bill.status)}</span>
+        </div>
         ${bill.short_title ? `<div class="bt-detail-title">${esc(bill.short_title)}</div>` : ''}
         ${bill.description ? `<div class="bt-detail-description">${esc(bill.description)}</div>` : ''}
         <dl class="bt-detail-meta">
@@ -828,14 +872,25 @@
           ${bill.date_introduced ? `<div><dt>Introduced</dt><dd>${formatDate(bill.date_introduced)}</dd></div>` : ''}
           ${bill.last_action ? `<div><dt>Last Action</dt><dd>${esc(bill.last_action)} (${formatDate(bill.last_action_date)})</dd></div>` : ''}
           ${bill.governor_action ? `<div><dt>Governor</dt><dd>${esc(bill.governor_action)} (${formatDate(bill.governor_action_date)})</dd></div>` : ''}
+          <div class="bt-next-action-row"><dt>Next Action</dt><dd>${esc(nextAction.text)} <button class="bt-next-action-info" aria-label="About next action prediction" title="About this prediction">&#9432;</button></dd></div>
         </dl>
         ${bill.org_recommendations?.length ? `<div class="bt-detail-org-recs" style="margin-top: 10px;">${renderOrgBadges(bill.org_recommendations)}</div>` : ''}
-        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
-          ${bill.azleg_url ? `<a href="${esc(bill.azleg_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-detail-azleg">&#127963; View on AZLeg.gov &rarr;</a>` : ''}
-          ${isLoggedIn() ? `<button class="bt-btn bt-btn--small bt-detail-add-btn" data-number="${esc(bill.number)}">${isTracked ? '&#10003; On list' : '+ Add to list'}</button>` : ''}
+        <div class="bt-detail-action-row">
+          <button class="bt-btn bt-btn--small bt-lifecycle-toggle" id="bt-lifecycle-toggle">&#8592; Show Bill Lifecycle</button>
+          ${bill.azleg_url ? `<a href="${esc(bill.azleg_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-detail-azleg">&#127963; View on AZLeg.gov &#8599;</a>` : ''}
         </div>
       </div>
     `;
+
+    // Next action info modal (hidden, shown on click)
+    html += `<div class="bt-modal-backdrop bt-next-action-modal" id="bt-next-action-modal" hidden>
+      <div class="bt-modal-content">
+        <button class="bt-modal-close" id="bt-next-action-modal-close" aria-label="Close">&times;</button>
+        <h3 class="bt-modal-title">&#9432; Predicted Next Action</h3>
+        <p class="bt-modal-text">${esc(nextAction.detail)}</p>
+        <p class="bt-modal-disclaimer">This prediction is based on the standard Arizona legislative process. Bills can be amended, held, fast-tracked, or moved to different committees at any time. The actual next action may differ.</p>
+      </div>
+    </div>`;
 
     // Tracking section (if on a list)
     if (isTracked) {
@@ -847,11 +902,15 @@
       html += `<div class="bt-detail-section"><h3 class="bt-detail-section-title">Cosponsors (${bill.cosponsors.length})</h3><ul class="bt-cosponsor-list">${bill.cosponsors.map(c => `<li class="bt-cosponsor"><span class="bt-party bt-party--${esc(c.party)}"></span>${esc(c.name)}</li>`).join('')}</ul></div>`;
     }
 
-    // Committee actions
+    // Committee actions (collapsible, starts collapsed)
     if (bill.committee_actions?.length) {
-      html += `<div class="bt-detail-section"><h3 class="bt-detail-section-title">Committee Actions</h3><ul class="bt-committee-list">${bill.committee_actions.map(ca => `
-        <li class="bt-committee-item"><div class="bt-committee-name">${esc(ca.committee_name)}</div><div class="bt-committee-detail">${ca.action ? `<strong>${actionLabel(ca.action)}</strong>` : ''}${(ca.ayes != null && ca.nays != null) ? ` — ${ca.ayes} ayes, ${ca.nays} nays` : ''}${ca.action_date ? ` &middot; ${formatDate(ca.action_date)}` : ''}</div></li>
-      `).join('')}</ul></div>`;
+      html += `<div class="bt-detail-section bt-collapsible" data-collapsed="true">
+        <h3 class="bt-detail-section-title bt-collapsible-toggle" role="button" tabindex="0" aria-expanded="false">
+          <span class="bt-collapsible-chevron">&#9654;</span> Committee Actions <span class="bt-collapsible-count">(${bill.committee_actions.length})</span>
+        </h3>
+        <ul class="bt-committee-list bt-collapsible-body" style="display: none;">${bill.committee_actions.map(ca => `
+          <li class="bt-committee-item"><div class="bt-committee-name">${esc(ca.committee_name)}</div><div class="bt-committee-detail">${ca.action ? `<strong>${actionLabel(ca.action)}</strong>` : ''}${(ca.ayes != null && ca.nays != null) ? ` — ${ca.ayes} ayes, ${ca.nays} nays` : ''}${ca.action_date ? ` &middot; ${formatDate(ca.action_date)}` : ''}</div></li>
+        `).join('')}</ul></div>`;
     }
 
     // Floor votes
@@ -1375,6 +1434,9 @@
     if (advocacyEl) {
       advocacyEl.classList.toggle('bt-advocacy--open', panelEl && panelEl.innerHTML.length > 0);
     }
+    // Update lifecycle toggle button text
+    const toggleBtn = document.querySelector('#bt-lifecycle-toggle');
+    if (toggleBtn) toggleBtn.innerHTML = 'Hide Bill Lifecycle &#8594;';
   }
 
   function renderAdvocacyPanel(bill) {
@@ -1410,6 +1472,7 @@
       const rec = visibleRecs[i];
       const posClass = rec.position === 'oppose' ? 'bt-hearing-org-rec--oppose' : 'bt-hearing-org-rec--support';
       const posLabel = rec.position === 'oppose' ? 'OPPOSE' : 'SUPPORT';
+      const orgMeta = ORG_META[rec.org_code] || {};
       html += `<div class="bt-advocacy-card">
         <div class="bt-advocacy-card-header bt-advocacy-toggle" data-idx="${i}" role="button" tabindex="0">
           <span class="bt-list-card-chevron bt-advocacy-chevron">&#9660;</span>
@@ -1419,7 +1482,12 @@
         <div class="bt-advocacy-card-body" data-idx="${i}">
           ${rec.category && rec.category !== 'All Bills' ? `<div class="bt-advocacy-category">${esc(rec.category)}</div>` : ''}
           ${rec.description ? `<div class="bt-advocacy-desc">${esc(rec.description)}</div>` : ''}
-          ${rec.source_url ? `<a href="${esc(rec.source_url)}" target="_blank" rel="noopener" class="bt-advocacy-source">View source &rarr;</a>` : ''}
+          <div class="bt-advocacy-card-footer">
+            ${rec.source_url ? `<a href="${esc(rec.source_url)}" target="_blank" rel="noopener" class="bt-advocacy-source">View source &#8599;</a>` : ''}
+            ${orgMeta.url ? `<a href="${esc(orgMeta.url)}" target="_blank" rel="noopener" class="bt-advocacy-logo-link" title="${esc(rec.org_name || rec.org_code)}">
+              ${orgMeta.logo ? `<img src="${esc(orgMeta.logo)}" alt="${esc(rec.org_name || rec.org_code)}" class="bt-advocacy-logo">` : ''}
+            </a>` : ''}
+          </div>
         </div>
       </div>`;
     }
@@ -1441,8 +1509,9 @@
 
   function hideTimeline() {
     document.getElementById('bt-timeline').classList.remove('bt-timeline--open');
-    const advocacyEl = document.getElementById('bt-advocacy');
-    if (advocacyEl) advocacyEl.classList.remove('bt-advocacy--open');
+    // Update lifecycle toggle button text
+    const toggleBtn = document.querySelector('#bt-lifecycle-toggle');
+    if (toggleBtn) toggleBtn.innerHTML = '&#8592; Show Bill Lifecycle';
   }
 
   function renderVote(vote, index) {
@@ -1488,6 +1557,49 @@
   }
 
   function bindDetailEvents(body, bill) {
+    // Collapsible section toggles (Committee Actions, etc.)
+    body.querySelectorAll('.bt-collapsible-toggle').forEach(toggle => {
+      const handler = () => {
+        const section = toggle.closest('.bt-collapsible');
+        const bodyEl = section.querySelector('.bt-collapsible-body');
+        const chevron = toggle.querySelector('.bt-collapsible-chevron');
+        const isCollapsed = section.dataset.collapsed === 'true';
+        section.dataset.collapsed = isCollapsed ? 'false' : 'true';
+        bodyEl.style.display = isCollapsed ? '' : 'none';
+        chevron.innerHTML = isCollapsed ? '&#9660;' : '&#9654;';
+        toggle.setAttribute('aria-expanded', isCollapsed);
+      };
+      toggle.addEventListener('click', handler);
+      toggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+      });
+    });
+
+    // Lifecycle panel toggle button
+    const lifecycleToggle = body.querySelector('#bt-lifecycle-toggle');
+    if (lifecycleToggle) {
+      lifecycleToggle.addEventListener('click', () => {
+        const tlEl = document.getElementById('bt-timeline');
+        const isOpen = tlEl.classList.contains('bt-timeline--open');
+        if (isOpen) {
+          hideTimeline();
+          lifecycleToggle.innerHTML = '&#8592; Show Bill Lifecycle';
+        } else {
+          showTimeline(bill);
+          lifecycleToggle.innerHTML = 'Hide Bill Lifecycle &#8594;';
+        }
+      });
+    }
+
+    // Next action info modal
+    const infoBtn = body.querySelector('.bt-next-action-info');
+    const modal = body.querySelector('#bt-next-action-modal');
+    if (infoBtn && modal) {
+      infoBtn.addEventListener('click', () => { modal.hidden = false; });
+      modal.querySelector('#bt-next-action-modal-close').addEventListener('click', () => { modal.hidden = true; });
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.hidden = true; });
+    }
+
     // Vote toggles
     body.querySelectorAll('.bt-vote-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1510,8 +1622,18 @@
         for (const a of (bill.rts_agendas || [])) {
           tracking.setHearingAction(a.agenda_item_id, { position: newPosition });
         }
+        const timelineWasOpen = document.getElementById('bt-timeline').classList.contains('bt-timeline--open');
         renderBillDetail(bill);
-        showTimeline(bill);
+        renderAdvocacyPanel(bill);
+        renderTimeline(bill);
+        if (timelineWasOpen) {
+          document.getElementById('bt-timeline').classList.add('bt-timeline--open');
+          const toggleBtn = document.querySelector('#bt-lifecycle-toggle');
+          if (toggleBtn) toggleBtn.innerHTML = 'Hide Bill Lifecycle &#8594;';
+        }
+        const advocacyEl = document.getElementById('bt-advocacy');
+        const panelEl = document.getElementById('bt-advocacy-panel');
+        if (advocacyEl) advocacyEl.classList.toggle('bt-advocacy--open', panelEl && panelEl.innerHTML.length > 0);
       });
     });
 
@@ -2835,7 +2957,15 @@
     try {
       const bill = await loadBillDetail(number);
       renderBillDetail(bill);
-      showTimeline(bill);
+      // Pre-render timeline and advocacy but keep panels collapsed
+      renderAdvocacyPanel(bill);
+      renderTimeline(bill);
+      // Advocacy panel opens if it has content (wider now, no overlap)
+      const advocacyEl = document.getElementById('bt-advocacy');
+      const panelEl = document.getElementById('bt-advocacy-panel');
+      if (advocacyEl) {
+        advocacyEl.classList.toggle('bt-advocacy--open', panelEl && panelEl.innerHTML.length > 0);
+      }
     } catch (err) {
       console.error('Failed to load bill detail:', err);
       body.innerHTML = `<div class="bt-empty"><div class="bt-empty-icon">&#9888;&#65039;</div><div class="bt-empty-text">Failed to load bill detail</div></div>`;
@@ -2846,6 +2976,9 @@
     const overlay = document.getElementById('bt-overlay');
     if (overlay.hidden) return;
     hideTimeline();
+    // Also close advocacy panel
+    const advocacyEl = document.getElementById('bt-advocacy');
+    if (advocacyEl) advocacyEl.classList.remove('bt-advocacy--open');
     overlay.hidden = true;
     document.body.style.overflow = '';
     // Refresh list view if active (tracking may have changed)

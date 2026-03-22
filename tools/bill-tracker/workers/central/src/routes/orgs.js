@@ -15,6 +15,7 @@ export async function handleOrgs(request, env) {
   const ORG_WEBSITES = {
     CEBV: 'https://cebv.us',
     SecularAZ: 'https://secularaz.org',
+    SOSAZ: 'https://saveourschoolsaz.org',
   };
 
   // Group by org, then by category
