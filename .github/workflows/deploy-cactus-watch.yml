@@ -1,0 +1,29 @@
+name: Deploy cactus.watch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/bill-tracker/frontend/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: cb42ef6355fdff56c319a847fa137f21
+          projectName: cactus-watch
+          directory: tools/bill-tracker/frontend
+
+      - name: Purge CDN cache
+        run: |
+          curl -s -X POST \
+            "https://api.cloudflare.com/client/v4/zones/dfc2bb1edf9fb1847988f6413a8ba8bf/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_CACHE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything": true}'
