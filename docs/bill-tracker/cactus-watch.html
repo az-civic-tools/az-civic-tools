@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="cactus-watch.css">
+  <link rel="stylesheet" href="cactus-watch.css?v=35">
 </head>
 <body>
 
@@ -31,6 +31,7 @@
       </div>
       <div class="bt-header-right">
         <div class="bt-meta-stats" id="bt-meta-stats"></div>
+        <a href="/wiki/guide" class="bt-guide-link">New? Start Here</a>
         <div class="bt-user-badge" id="bt-user-badge"></div>
       </div>
     </div>
@@ -42,6 +43,9 @@
       <!-- Nav tabs -->
       <nav class="bt-nav" role="tablist">
         <button class="bt-nav-tab bt-nav-tab--active" data-tab="browse" role="tab" aria-selected="true">Browse Bills</button>
+        <button class="bt-nav-tab" data-tab="hearings" role="tab" aria-selected="false">
+          Upcoming Hearings
+        </button>
         <button class="bt-nav-tab" data-tab="lists" role="tab" aria-selected="false">
           My Lists <span class="bt-nav-badge" id="bt-lists-badge" hidden>0</span>
         </button>
@@ -88,18 +92,46 @@
             <option value="number">Bill Number</option>
             <option value="sponsor">Sponsor</option>
           </select>
+          <label class="bt-hearing-filter" title="Show only bills with upcoming committee hearings">
+            <input type="checkbox" id="bt-filter-hearing">
+            <span class="bt-hearing-filter-label">Has Hearing</span>
+          </label>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Active filters / result count -->
-  <div class="bt-results-bar" id="bt-results-bar"></div>
+  <div class="bt-results-bar" id="bt-results-bar" aria-live="polite"></div>
 
   <!-- Browse view -->
   <main class="bt-main" id="bt-browse-view">
-    <div class="bt-bill-list" id="bt-bill-list"></div>
+    <div class="bt-bill-list" id="bt-bill-list" aria-live="polite"></div>
     <div class="bt-pagination" id="bt-pagination"></div>
+  </main>
+
+  <!-- Upcoming Hearings view -->
+  <main class="bt-main bt-hearings-view" id="bt-hearings-view" hidden>
+    <div class="bt-hearings-header">
+      <h2 class="bt-hearings-title">Upcoming Hearings</h2>
+      <div class="bt-hearings-filters">
+        <input type="search" id="bt-hearings-search" class="bt-feedback-input" style="width: 140px; padding: 6px 10px; font-size: 13px;" placeholder="Bill number..." aria-label="Search by bill number">
+        <select id="bt-hearings-chamber" class="bt-select" aria-label="Filter hearings by chamber">
+          <option value="">All Chambers</option>
+          <option value="House">House</option>
+          <option value="Senate">Senate</option>
+        </select>
+        <select id="bt-hearings-committee" class="bt-select" aria-label="Filter by committee">
+          <option value="">All Committees</option>
+        </select>
+        <select id="bt-hearings-org" class="bt-select" aria-label="Filter by organization">
+          <option value="">All Bills</option>
+          <option value="__my_lists__">My Lists</option>
+        </select>
+      </div>
+    </div>
+    <div class="bt-hearings-container" id="bt-hearings-container"></div>
+    <div class="bt-hearings-pagination" id="bt-hearings-pagination"></div>
   </main>
 
   <!-- My Lists view -->
@@ -121,11 +153,22 @@
     </div>
     <div class="bt-lists-attention" id="bt-lists-attention"></div>
     <div class="bt-lists-container" id="bt-lists-container"></div>
+
+    <div class="bt-org-lists-section" style="margin-top: 32px;">
+      <div class="bt-org-lists-heading" id="bt-org-lists-heading" role="button" tabindex="0" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+        <span class="bt-list-card-chevron" id="bt-org-lists-chevron">&#9654;</span>
+        <h2 class="bt-lists-title" style="margin: 0;">Organization Lists</h2>
+      </div>
+      <div class="bt-org-lists-container" id="bt-org-lists-container" hidden></div>
+    </div>
   </main>
 
   <!-- Bill detail overlay -->
   <div class="bt-overlay" id="bt-overlay" hidden>
     <div class="bt-overlay-backdrop" id="bt-overlay-backdrop"></div>
+    <div class="bt-advocacy" id="bt-advocacy">
+      <div class="bt-advocacy-panel" id="bt-advocacy-panel"></div>
+    </div>
     <div class="bt-timeline" id="bt-timeline">
       <div class="bt-timeline-body" id="bt-timeline-body"></div>
     </div>
@@ -147,7 +190,7 @@
   </div>
 
   <!-- Loading -->
-  <div class="bt-loading" id="bt-loading">
+  <div class="bt-loading" id="bt-loading" role="status" aria-live="assertive">
     <div class="bt-spinner"></div>
     <p>Loading bills...</p>
   </div>
@@ -156,8 +199,48 @@
   <footer class="bt-footer">
     <p>Data sourced from <a href="https://www.azleg.gov" target="_blank" rel="noopener">azleg.gov</a> &middot; Updated daily at 6:00 AM Arizona time</p>
     <p>Part of <a href="https://github.com/az-civic-tools/az-civic-tools" target="_blank" rel="noopener">AZ Civic Tools</a> &middot; Free &amp; open source &middot; MIT License</p>
+    <p><a href="/privacy">Privacy Policy</a> &middot; <a href="/accessibility">Accessibility</a></p>
   </footer>
 
-  <script src="cactus-watch.js"></script>
+  <!-- Feedback button -->
+  <button class="bt-feedback-fab" id="bt-feedback-fab" aria-label="Send feedback">Feedback</button>
+
+  <!-- Feedback modal -->
+  <div class="bt-feedback-overlay" id="bt-feedback-overlay">
+    <div class="bt-feedback-modal">
+      <div class="bt-feedback-header">
+        <h3 class="bt-feedback-title">Send Feedback</h3>
+        <button class="bt-feedback-close" id="bt-feedback-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="bt-feedback-body">
+        <label class="bt-feedback-label" for="bt-feedback-email">Your Email <span style="color: #991B1B;">*</span></label>
+        <input type="email" class="bt-feedback-input" id="bt-feedback-email" placeholder="you@example.com" required>
+
+        <label class="bt-feedback-label" for="bt-feedback-category">Category</label>
+        <select class="bt-select bt-feedback-select" id="bt-feedback-category">
+          <option value="help">I need help</option>
+          <option value="bug">I found a bug</option>
+          <option value="feature">Feature request</option>
+          <option value="talk">I'd like to talk</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label class="bt-feedback-label" for="bt-feedback-message">Message <span style="color: #991B1B;">*</span></label>
+        <textarea class="bt-feedback-textarea" id="bt-feedback-message" rows="5" placeholder="Tell us what's on your mind..."></textarea>
+
+        <label class="bt-feedback-check">
+          <input type="checkbox" id="bt-feedback-response">
+          <span>I would like a response <span style="font-size: 11px; color: var(--bt-text-light);">(replies are not guaranteed and typically take 48 hours)</span></span>
+        </label>
+
+        <div class="bt-feedback-actions">
+          <button class="bt-btn bt-btn--primary bt-feedback-submit" id="bt-feedback-submit">Send Feedback</button>
+        </div>
+        <div class="bt-feedback-status" id="bt-feedback-status" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="cactus-watch.js?v=35"></script>
 </body>
 </html>
