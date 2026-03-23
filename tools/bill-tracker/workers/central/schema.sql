@@ -34,6 +34,9 @@ CREATE TABLE IF NOT EXISTS bills (
   azleg_url TEXT,
   keywords TEXT,
   overview TEXT,
+  dead_reason TEXT,
+  deadline_dead_at TEXT,
+  original_short_title TEXT,
   scraped_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   UNIQUE(session_id, number)

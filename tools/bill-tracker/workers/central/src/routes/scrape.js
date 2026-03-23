@@ -8,6 +8,7 @@
 import { runScraper, runFullScrape, BILL_PREFIXES } from '../scraper.js';
 import { runRtsScraper } from '../rts-scraper.js';
 import { runOverviewScraper } from '../overview-scraper.js';
+import { runDeadlineChecker } from '../deadline-checker.js';
 
 export async function handleScrape(request, env) {
   const authHeader = request.headers.get('Authorization');
@@ -94,6 +95,21 @@ export async function handleScrapeOverviews(request, env) {
   } catch (err) {
     console.error('Overview scrape failed:', err);
     return Response.json({ error: 'Overview scrape failed. Check server logs.' }, { status: 500 });
+  }
+}
+
+export async function handleScrapeDeadlines(request, env) {
+  const authHeader = request.headers.get('Authorization');
+  const expectedToken = env.SCRAPE_TOKEN;
+  if (!expectedToken) return Response.json({ error: 'Scrape endpoint not configured' }, { status: 503 });
+  if (!authHeader || authHeader !== `Bearer ${expectedToken}`) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+  try {
+    const result = await runDeadlineChecker(env);
+    return Response.json({ success: true, ...result });
+  } catch (err) {
+    console.error('Deadline checker failed:', err);
+    return Response.json({ error: 'Deadline checker failed. Check server logs.' }, { status: 500 });
   }
 }
 

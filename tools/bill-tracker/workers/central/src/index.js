@@ -20,7 +20,7 @@
 
 import { handleListBills, handleGetBill, handleSyncBills } from './routes/bills.js';
 import { handleMeta } from './routes/meta.js';
-import { handleScrape, handleScrapeAll, handleScrapeRts, handleScrapeOverviews } from './routes/scrape.js';
+import { handleScrape, handleScrapeAll, handleScrapeRts, handleScrapeOverviews, handleScrapeDeadlines } from './routes/scrape.js';
 import { handleRts } from './routes/rts.js';
 import { handleHearings } from './routes/hearings.js';
 import { handleOrgs } from './routes/orgs.js';
@@ -30,6 +30,7 @@ import { handleListImages, handleUploadImage, handleGetImage, handleEditImage, h
 import { runScraper, BILL_PREFIXES } from './scraper.js';
 import { runRtsScraper } from './rts-scraper.js';
 import { runOverviewScraper } from './overview-scraper.js';
+import { runDeadlineChecker } from './deadline-checker.js';
 import { checkRateLimit } from './rate-limit.js';
 
 const ALLOWED_ORIGINS = new Set([
@@ -107,6 +108,8 @@ export default {
         response = await handleSaveTracking(request, env);
       } else if (path === '/api/feedback' && request.method === 'POST') {
         response = await handleFeedback(request, env);
+      } else if (path === '/api/scrape/deadlines' && request.method === 'POST') {
+        response = await handleScrapeDeadlines(request, env);
       } else if (path === '/api/scrape/overviews' && request.method === 'POST') {
         response = await handleScrapeOverviews(request, env);
       } else if (path === '/api/scrape/rts' && request.method === 'POST') {
@@ -214,6 +217,15 @@ async function runScheduledScrape(env) {
     console.log(`Cron: overviews done — ${overviewResult.updated}/${overviewResult.billsChecked} updated`);
   } catch (err) {
     console.error('Cron: overview scrape failed:', err);
+  }
+
+  // Run deadline checker — mark missed-deadline bills as dead, detect strikers
+  try {
+    console.log('Cron: running deadline checker...');
+    const deadlineResult = await runDeadlineChecker(env);
+    console.log(`Cron: deadline checker done — ${deadlineResult.billsMarkedDead} marked dead, ${deadlineResult.strikers} potential strikers`);
+  } catch (err) {
+    console.error('Cron: deadline checker failed:', err);
   }
 
   console.log('Cron scrape complete');

@@ -16,6 +16,7 @@
 import { AZLEG_API, CURRENT_SESSION, SCRAPE_RATE_LIMIT_MS } from '../shared/constants.js';
 import { SESSIONS } from '../shared/constants.js';
 import { deriveBillStatus, parseBillNumber } from '../shared/bill-utils.js';
+import { checkResurrection } from './deadline-checker.js';
 
 /** Bill prefixes to enumerate and their starting numbers */
 export const BILL_PREFIXES = [
@@ -249,7 +250,7 @@ async function processBill(env, dbSessionId, azlegSessionId, bill) {
     : null;
 
   const existing = await env.DB.prepare(
-    'SELECT id, updated_at FROM bills WHERE session_id = ? AND number = ?'
+    'SELECT id, updated_at, deadline_dead_at, dead_reason FROM bills WHERE session_id = ? AND number = ?'
   ).bind(dbSessionId, number).first();
 
   let billDbId;
@@ -279,7 +280,14 @@ async function processBill(env, dbSessionId, azlegSessionId, bill) {
     ).run();
     billDbId = existing.id;
     result = 'updated';
+
+    // Check if a deadline-dead bill should be resurrected
+    if (existing.deadline_dead_at) {
+      const resurrected = await checkResurrection(env, billDbId, status);
+      if (resurrected) result = 'resurrected';
+    }
   } else {
+    const shortTitle = bill.ShortTitle || bill.NOWTitle || null;
     const insertResult = await env.DB.prepare(`
       INSERT INTO bills (
         session_id, azleg_bill_id, number, short_title, description,
@@ -287,11 +295,11 @@ async function processBill(env, dbSessionId, azlegSessionId, bill) {
         date_introduced, last_action, last_action_date,
         status, final_disposition,
         governor_action, governor_action_date,
-        azleg_url, keywords, scraped_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        azleg_url, keywords, original_short_title, scraped_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       dbSessionId, bill.BillId, number,
-      bill.ShortTitle || bill.NOWTitle || null,
+      shortTitle,
       bill.Description || null,
       primeSponsor?.name || null, primeSponsor?.party || null,
       parsed.chamber, parsed.type,
@@ -299,7 +307,7 @@ async function processBill(env, dbSessionId, azlegSessionId, bill) {
       lastAction?.text || null, lastAction?.date || null,
       status, bill.FinalDisposition || null,
       bill.GovernorAction || null, bill.GovernorActionDate || null,
-      azlegUrl, keywords,
+      azlegUrl, keywords, shortTitle,
       now, now
     ).run();
     billDbId = insertResult.meta.last_row_id;
