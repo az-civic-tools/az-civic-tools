@@ -175,9 +175,15 @@ export async function runFullScrape(env, sessionId) {
 
 /**
  * Fetch a single bill from the azleg API.
+ *
+ * As of March 2026, the old per-field query format
+ *   /Bill/?sessionId=X&legislativeBody=H&billNumber=2008
+ * returns null. The working format uses the full bill number:
+ *   /Bill/?sessionId=X&billNumber=HB2008
+ * which returns the bill object directly (not wrapped in ListItems).
  */
 async function fetchBill(sessionId, body, billNumber) {
-  const url = `${AZLEG_API}/Bill/?sessionId=${sessionId}&legislativeBody=${body}&billNumber=${billNumber}`;
+  const url = `${AZLEG_API}/Bill/?sessionId=${sessionId}&billNumber=${billNumber}`;
   try {
     const resp = await fetch(url, {
       headers: { 'Accept': 'application/json' },
@@ -186,9 +192,12 @@ async function fetchBill(sessionId, body, billNumber) {
     if (!resp.ok) return null;
 
     const data = await resp.json();
-    if (!data || (Array.isArray(data) && data.length === 0)) return null;
+    if (!data) return null;
 
-    return Array.isArray(data) ? data[0] : data;
+    // Handle both possible response shapes: direct object, ListItems wrapper, or array
+    if (data.ListItems) return data.ListItems[0] || null;
+    if (Array.isArray(data)) return data[0] || null;
+    return data;
   } catch (err) {
     console.error(`Failed to fetch ${billNumber}:`, err);
     return null;
@@ -205,7 +214,10 @@ async function fetchSponsors(billId) {
       headers: { 'Accept': 'application/json' },
     });
     if (!resp.ok) return [];
-    return resp.json();
+    const data = await resp.json();
+    // Defensive: unwrap ListItems if API response shape changes
+    if (data && data.ListItems) return data.ListItems;
+    return Array.isArray(data) ? data : [];
   } catch {
     return [];
   }
@@ -222,9 +234,11 @@ async function fetchFloorVote(billId, actionId) {
     });
     if (!resp.ok) return null;
     const data = await resp.json();
+    // Unwrap ListItems if API response shape changed
+    const items = data?.ListItems || data;
     // API returns an array — take the first element
-    if (Array.isArray(data)) return data[0] || null;
-    return data;
+    if (Array.isArray(items)) return items[0] || null;
+    return items;
   } catch {
     return null;
   }
@@ -543,7 +557,9 @@ async function ensureSession(env, azlegSessionId) {
     ).run();
   } else {
     const resp = await fetch(`${AZLEG_API}/Session/`);
-    const sessions = await resp.json();
+    const rawSessions = await resp.json();
+    // Defensive: unwrap ListItems if API response shape changes
+    const sessions = rawSessions?.ListItems || (Array.isArray(rawSessions) ? rawSessions : []);
     const s = sessions.find(s => s.SessionId === azlegSessionId);
     if (s) {
       await env.DB.prepare(

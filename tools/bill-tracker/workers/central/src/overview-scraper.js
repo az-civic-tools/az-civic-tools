@@ -21,6 +21,8 @@ async function fetchDocTypes(billId, sessionId) {
     const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
     if (!resp.ok) return [];
     const data = await resp.json();
+    // Defensive: unwrap ListItems if API response shape changes
+    if (data && data.ListItems) return data.ListItems;
     return Array.isArray(data) ? data : [];
   } catch {
     return [];

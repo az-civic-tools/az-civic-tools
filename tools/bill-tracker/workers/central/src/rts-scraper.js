@@ -106,11 +106,14 @@ export async function runRtsScraper(env) {
   let page = 1;
 
   // Paginate until we get an empty page or hit the safety limit
+  // Note: as of ~Mar 2026, the API returns all items in one page (ignoring perPage)
+  // with TotalPages showing an integer overflow. We handle both paginated and unpaginated.
   while (page <= MAX_PAGES) {
     await sleep(SCRAPE_RATE_LIMIT_MS);
 
     const data = await fetchAgendaPage(CURRENT_SESSION.id, page);
-    const items = data.ListItems || [];
+    // AgendaItem API returns { ListItems: [...] } — unwrap, with array fallback
+    const items = data?.ListItems || (Array.isArray(data) ? data : []);
 
     if (items.length === 0) break;
 
@@ -119,7 +122,9 @@ export async function runRtsScraper(env) {
       allItems.push(transformAgendaItem(item, scrapedAt));
     }
 
-    // If we got fewer than PAGE_SIZE items, we're on the last page
+    // If API returned all items at once (broken pagination) or fewer than PAGE_SIZE, stop
+    const totalPages = data?.TotalPages;
+    if (totalPages != null && (totalPages <= 1 || totalPages < 0)) break;
     if (items.length < PAGE_SIZE) break;
     page++;
   }
