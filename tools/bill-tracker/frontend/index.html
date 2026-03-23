@@ -65,6 +65,9 @@
           </select>
           <select id="bt-filter-status" class="bt-select" aria-label="Filter by status">
             <option value="">All Statuses</option>
+            <option value="__active__">Active Only</option>
+            <option value="__inactive__">Inactive Only</option>
+            <option disabled>──────────</option>
             <option value="introduced">Introduced</option>
             <option value="in_committee">In Committee</option>
             <option value="passed_committee">Passed Committee</option>
@@ -134,8 +137,12 @@
     <div class="bt-hearings-pagination" id="bt-hearings-pagination"></div>
   </main>
 
-  <!-- My Lists view -->
+  <!-- My Lists / Curated Lists view -->
   <main class="bt-main bt-lists-view" id="bt-lists-view" hidden>
+    <div class="bt-curated-header" id="bt-curated-header" hidden>
+      <h2 class="bt-lists-title">Curated Lists</h2>
+      <p class="bt-curated-sub">Bill positions from Arizona advocacy organizations. Sign in to follow lists and track bills.</p>
+    </div>
     <div class="bt-lists-header">
       <h2 class="bt-lists-title">My Lists</h2>
       <div class="bt-lists-header-actions">
