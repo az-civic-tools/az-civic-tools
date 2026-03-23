@@ -1264,6 +1264,24 @@ a:hover { color: var(--bt-mesa-warm); }
   text-overflow: ellipsis;
 }
 
+/* Vetoed bills in org lists */
+.bt-org-list-bill--vetoed .bt-org-list-bill-number,
+.bt-org-list-bill--vetoed .bt-org-list-bill-desc {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.bt-org-list-bill-vetoed-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--bt-red, #B91C1C);
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
 /* Tracking header with label input */
 .bt-detail-tracking-header {
   display: flex;
@@ -1893,6 +1911,15 @@ a:hover { color: var(--bt-mesa-warm); }
   font-weight: 700;
   font-size: 32px;
   color: var(--bt-mesa);
+}
+.bt-curated-header {
+  margin-bottom: 24px;
+}
+.bt-curated-sub {
+  font-size: 15px;
+  color: var(--bt-text-muted);
+  margin-top: 6px;
+  line-height: 1.5;
 }
 .bt-lists-header-actions {
   display: flex;

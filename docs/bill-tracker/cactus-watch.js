@@ -550,9 +550,9 @@
     const cachedBills = Object.values(state.billCache);
     if (cachedBills.length > 0) renderBillList(cachedBills.slice(0, PAGE_SIZE));
 
-    // If on My Lists tab, switch to browse
+    // Re-render lists tab if active (switches to curated view)
     if (state.activeTab === 'lists') {
-      switchTab('browse');
+      renderMyLists();
     }
 
     // Fire-and-forget: destroy server session
@@ -761,18 +761,25 @@
 
   function updateListsBadge() {
     const listsTab = document.querySelector('[data-tab="lists"]');
+    listsTab.hidden = false;
+
     if (!isLoggedIn()) {
-      listsTab.hidden = true;
+      // Logged-out: show "Curated Lists" with no badge
+      listsTab.innerHTML = 'Curated Lists';
       return;
     }
-    listsTab.hidden = false;
+    // Logged-in: show "My Lists" with badge
     const badge = document.getElementById('bt-lists-badge');
+    if (!badge) {
+      listsTab.innerHTML = 'My Lists <span class="bt-nav-badge" id="bt-lists-badge" hidden>0</span>';
+    }
+    const badgeEl = document.getElementById('bt-lists-badge');
     const attention = tracking.getAttentionCount();
     const total = tracking.getTotalTracked();
-    if (total === 0) { badge.hidden = true; return; }
-    badge.hidden = false;
-    badge.textContent = attention > 0 ? attention : total;
-    badge.className = `bt-nav-badge${attention > 0 ? ' bt-nav-badge--attention' : ''}`;
+    if (total === 0) { badgeEl.hidden = true; return; }
+    badgeEl.hidden = false;
+    badgeEl.textContent = attention > 0 ? attention : total;
+    badgeEl.className = `bt-nav-badge${attention > 0 ? ' bt-nav-badge--attention' : ''}`;
   }
 
   /* ============================================================
@@ -2047,6 +2054,36 @@
   function renderMyLists() {
     const container = document.getElementById('bt-lists-container');
     const attentionEl = document.getElementById('bt-lists-attention');
+    const myListsHeader = document.querySelector('.bt-lists-header');
+    const orgSection = document.querySelector('.bt-org-lists-section');
+
+    const curatedHeader = document.getElementById('bt-curated-header');
+
+    if (!isLoggedIn()) {
+      // --- Logged-out: Curated Lists mode ---
+      // Hide personal lists UI entirely
+      if (myListsHeader) myListsHeader.hidden = true;
+      if (curatedHeader) curatedHeader.hidden = false;
+      container.innerHTML = '';
+      attentionEl.innerHTML = '';
+
+      // Show org lists directly (no collapse, auto-expanded)
+      if (orgSection) orgSection.style.marginTop = '0';
+      const orgContainer = document.getElementById('bt-org-lists-container');
+      const orgHeading = document.getElementById('bt-org-lists-heading');
+      if (orgHeading) orgHeading.hidden = true;
+      if (orgContainer) orgContainer.hidden = false;
+      loadOrgLists();
+      return;
+    }
+
+    // --- Logged-in: normal My Lists ---
+    if (myListsHeader) myListsHeader.hidden = false;
+    if (curatedHeader) curatedHeader.hidden = true;
+    if (orgSection) orgSection.style.marginTop = '';
+    const orgHeadingEl = document.getElementById('bt-org-lists-heading');
+    if (orgHeadingEl) orgHeadingEl.hidden = false;
+
     const lists = tracking.getListArray();
 
     // Attention summary
@@ -2180,10 +2217,13 @@
             ${bills.map(b => {
               const posClass = b.position === 'oppose' ? 'bt-hearing-org-rec--oppose' : 'bt-hearing-org-rec--support';
               const posLabel = b.position === 'oppose' ? 'OPPOSE' : 'SUPPORT';
-              return `<div class="bt-org-list-bill" data-number="${esc(b.bill_number)}" style="cursor: pointer;">
+              const billTitle = b.short_title || b.description || '';
+              const isVetoed = b.status === 'vetoed';
+              return `<div class="bt-org-list-bill ${isVetoed ? 'bt-org-list-bill--vetoed' : ''}" data-number="${esc(b.bill_number)}" style="cursor: pointer;">
                 <span class="bt-org-list-bill-number">${esc(b.bill_number)}</span>
                 <span class="bt-hearing-org-rec ${posClass}" style="font-size: 10px;">${posLabel}</span>
-                <span class="bt-org-list-bill-desc">${esc(b.description || '')}</span>
+                ${isVetoed ? '<span class="bt-org-list-bill-vetoed-badge">VETOED</span>' : ''}
+                <span class="bt-org-list-bill-desc">${esc(billTitle)}</span>
               </div>`;
             }).join('')}
           </div>` : ''}

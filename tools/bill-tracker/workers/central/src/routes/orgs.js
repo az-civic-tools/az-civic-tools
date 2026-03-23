@@ -6,7 +6,11 @@
 
 export async function handleOrgs(request, env) {
   const result = await env.DB.prepare(
-    'SELECT org_code, org_name, bill_number, position, category, description, source_url, source_date FROM org_recommendations ORDER BY org_code, category, bill_number'
+    `SELECT r.org_code, r.org_name, r.bill_number, r.position, r.category, r.description, r.source_url, r.source_date,
+            b.short_title, b.status
+     FROM org_recommendations r
+     LEFT JOIN bills b ON r.bill_number = b.number
+     ORDER BY r.org_code, r.category, r.bill_number`
   ).all();
 
   const rows = result.results || [];
@@ -32,6 +36,8 @@ export async function handleOrgs(request, env) {
       bill_number: row.bill_number,
       position: row.position,
       description: row.description,
+      short_title: row.short_title || null,
+      status: row.status || null,
       source_url: row.source_url,
       source_date: row.source_date,
     });
