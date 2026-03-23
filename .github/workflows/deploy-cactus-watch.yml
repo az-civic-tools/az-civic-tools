@@ -13,12 +13,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: cb42ef6355fdff56c319a847fa137f21
-          projectName: cactus-watch
-          directory: tools/bill-tracker/frontend
+          command: pages deploy tools/bill-tracker/frontend --project-name=cactus-watch --branch=main --commit-dirty=true
 
       - name: Purge CDN cache
         run: |
