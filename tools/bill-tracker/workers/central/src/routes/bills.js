@@ -62,8 +62,17 @@ export async function handleListBills(request, env) {
   }
 
   if (status) {
-    conditions.push('b.status = ?');
-    bindings.push(status);
+    const INACTIVE = ['dead', 'vetoed', 'signed', 'held'];
+    if (status === '__active__') {
+      conditions.push(`b.status NOT IN (${INACTIVE.map(() => '?').join(',')})`);
+      bindings.push(...INACTIVE);
+    } else if (status === '__inactive__') {
+      conditions.push(`b.status IN (${INACTIVE.map(() => '?').join(',')})`);
+      bindings.push(...INACTIVE);
+    } else {
+      conditions.push('b.status = ?');
+      bindings.push(status);
+    }
   }
 
   if (sponsor) {

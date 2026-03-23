@@ -633,7 +633,12 @@
       );
     }
     if (chamber) filtered = filtered.filter(b => b.chamber === chamber);
-    if (status) filtered = filtered.filter(b => b.status === status);
+    if (status) {
+      const INACTIVE = ['dead', 'vetoed', 'signed', 'held'];
+      if (status === '__active__') filtered = filtered.filter(b => !INACTIVE.includes(b.status));
+      else if (status === '__inactive__') filtered = filtered.filter(b => INACTIVE.includes(b.status));
+      else filtered = filtered.filter(b => b.status === status);
+    }
     if (type) filtered = filtered.filter(b => b.bill_type === type);
 
     const dir = order === 'asc' ? 1 : -1;

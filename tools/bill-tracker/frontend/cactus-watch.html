@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="cactus-watch.css?v=37">
+  <link rel="stylesheet" href="cactus-watch.css?v=38">
 </head>
 <body>
 
@@ -65,6 +65,9 @@
           </select>
           <select id="bt-filter-status" class="bt-select" aria-label="Filter by status">
             <option value="">All Statuses</option>
+            <option value="__active__">Active Only</option>
+            <option value="__inactive__">Inactive Only</option>
+            <option disabled>──────────</option>
             <option value="introduced">Introduced</option>
             <option value="in_committee">In Committee</option>
             <option value="passed_committee">Passed Committee</option>
@@ -245,6 +248,6 @@
     </div>
   </div>
 
-  <script src="cactus-watch.js?v=37"></script>
+  <script src="cactus-watch.js?v=38"></script>
 </body>
 </html>
