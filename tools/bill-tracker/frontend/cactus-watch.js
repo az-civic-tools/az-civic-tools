@@ -2066,9 +2066,9 @@
 
     if (!isLoggedIn()) {
       // --- Logged-out: Curated Lists mode ---
-      // Hide personal lists UI entirely
-      if (myListsHeader) myListsHeader.hidden = true;
-      if (curatedHeader) curatedHeader.hidden = false;
+      // Hide personal lists UI entirely (use style.display because CSS sets display:flex)
+      if (myListsHeader) myListsHeader.style.display = 'none';
+      if (curatedHeader) curatedHeader.style.display = '';
       container.innerHTML = '';
       attentionEl.innerHTML = '';
 
@@ -2076,15 +2076,15 @@
       if (orgSection) orgSection.style.marginTop = '0';
       const orgContainer = document.getElementById('bt-org-lists-container');
       const orgHeading = document.getElementById('bt-org-lists-heading');
-      if (orgHeading) orgHeading.hidden = true;
-      if (orgContainer) orgContainer.hidden = false;
+      if (orgHeading) orgHeading.style.display = 'none';
+      if (orgContainer) { orgContainer.hidden = false; orgContainer.style.display = ''; }
       loadOrgLists();
       return;
     }
 
     // --- Logged-in: normal My Lists ---
-    if (myListsHeader) myListsHeader.hidden = false;
-    if (curatedHeader) curatedHeader.hidden = true;
+    if (myListsHeader) myListsHeader.style.display = '';
+    if (curatedHeader) curatedHeader.style.display = 'none';
     if (orgSection) orgSection.style.marginTop = '';
     const orgHeadingEl = document.getElementById('bt-org-lists-heading');
     if (orgHeadingEl) orgHeadingEl.hidden = false;
