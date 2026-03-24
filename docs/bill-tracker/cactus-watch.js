@@ -39,7 +39,7 @@
   const ORG_META = {
     CEBV: { url: 'https://www.cebv.us/', logo: 'https://www.google.com/s2/favicons?domain=cebv.us&sz=64' },
     SecularAZ: { url: 'https://secularaz.org/', logo: 'https://www.google.com/s2/favicons?domain=secularaz.org&sz=64' },
-    SOSAZ: { url: 'https://saveourschoolsaz.org/', logo: 'img/sosaz-logo.webp' },
+    SOSAZ: { url: 'https://sosarizona.org/', logo: 'img/sosaz-logo.webp' },
   };
 
   /**
