@@ -67,6 +67,18 @@ function tallyPositions(billPositions) {
 }
 
 /**
+ * Check if a date string (e.g. "3/17/2026" or "2026-03-17") is in the past.
+ */
+function isDatePast(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  if (isNaN(d)) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return d < today;
+}
+
+/**
  * Transform an azleg AgendaItem into the shape for our D1 table.
  */
 function transformAgendaItem(item, scrapedAt) {
@@ -81,7 +93,7 @@ function transformAgendaItem(item, scrapedAt) {
     agenda_time: item.Agenda?.Time || null,
     location: item.Location || item.Agenda?.Room || null,
     can_rts: item.CanRts ? 1 : 0,
-    is_past: item.IsPast ? 1 : 0,
+    is_past: item.IsPast ? 1 : (isDatePast(item.Agenda?.Date) ? 1 : 0),
     positions_for: positions.for,
     positions_against: positions.against,
     positions_neutral: positions.neutral,
