@@ -39,6 +39,8 @@ export async function runDeadlineChecker(env) {
   // --- 1. Origin chamber committee deadline ---
   if (today > deadlines.origin_committee) {
     // House bills still in House committee or never assigned
+    // Exclude bills that have floor actions (they passed committee even if status isn't updated yet)
+    // Exclude bills with upcoming hearings (they're clearly still alive)
     const houseResult = await env.DB.prepare(`
       UPDATE bills SET
         status = 'dead',
@@ -50,7 +52,9 @@ export async function runDeadlineChecker(env) {
         AND status IN ('introduced', 'in_committee')
         AND (dead_reason IS NULL OR dead_reason = '')
         AND (deadline_dead_at IS NULL OR deadline_dead_at = '')
-        AND final_disposition IS NULL OR final_disposition = '' OR final_disposition = 'None'
+        AND (final_disposition IS NULL OR final_disposition = '' OR final_disposition = 'None')
+        AND NOT EXISTS (SELECT 1 FROM floor_actions fa WHERE fa.bill_id = bills.id)
+        AND NOT EXISTS (SELECT 1 FROM rts_agendas ra WHERE ra.bill_number = bills.number AND ra.is_past = 0)
     `).bind(now, now, sessionId).run();
 
     // Senate bills still in Senate committee or never assigned
@@ -65,7 +69,9 @@ export async function runDeadlineChecker(env) {
         AND status IN ('introduced', 'in_committee')
         AND (dead_reason IS NULL OR dead_reason = '')
         AND (deadline_dead_at IS NULL OR deadline_dead_at = '')
-        AND final_disposition IS NULL OR final_disposition = '' OR final_disposition = 'None'
+        AND (final_disposition IS NULL OR final_disposition = '' OR final_disposition = 'None')
+        AND NOT EXISTS (SELECT 1 FROM floor_actions fa WHERE fa.bill_id = bills.id)
+        AND NOT EXISTS (SELECT 1 FROM rts_agendas ra WHERE ra.bill_number = bills.number AND ra.is_past = 0)
     `).bind(now, now, sessionId).run();
 
     const originDead = (houseResult.meta?.changes || 0) + (senateResult.meta?.changes || 0);
