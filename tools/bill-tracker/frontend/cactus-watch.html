@@ -7,10 +7,11 @@
   <meta name="description" content="Track every bill in the Arizona Legislature. Search, filter, and see how your legislators voted.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="cactus-watch.css?v=40">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="bill-tracker.css?v=1">
+  <link rel="stylesheet" href="themes/cactus-watch.css?v=1">
 </head>
-<body>
+<body data-theme="sonoran">
 
   <!-- Demo banner -->
   <div id="bt-demo-banner" class="bt-demo-banner" hidden>
@@ -34,6 +35,37 @@
         <a href="/wiki/guide" class="bt-guide-link">New? Start Here</a>
         <div class="bt-user-badge" id="bt-user-badge"></div>
       </div>
+    </div>
+    <!-- Header skyline stickers -->
+    <div class="header-skyline" aria-hidden="true">
+      <div class="header-ground"></div>
+      <img class="skyline-img ts" src="assets/stickers/saguaro/sonoran/saguaro_1.png" alt="" style="left:5%;height:98px;">
+      <img class="skyline-img tc" src="assets/stickers/saguaro/copper/saguaro_1.png" alt="" style="left:5%;height:98px;">
+      <img class="skyline-img tp" src="assets/stickers/saguaro/prickly/saguaro_1.png" alt="" style="left:5%;height:98px;">
+
+      <img class="skyline-img ts" src="assets/stickers/barrel/sonoran/barrel_1.png" alt="" style="left:15%;height:55px;">
+      <img class="skyline-img tc" src="assets/stickers/barrel/copper/barrel_1.png" alt="" style="left:15%;height:55px;">
+      <img class="skyline-img tp" src="assets/stickers/barrel/prickly/barrel_1.png" alt="" style="left:15%;height:55px;">
+
+      <img class="skyline-img ts" src="assets/stickers/joshua/sonoran/joshua_1.png" alt="" style="left:28%;height:88px;">
+      <img class="skyline-img tc" src="assets/stickers/joshua/copper/joshua_1.png" alt="" style="left:28%;height:88px;">
+      <img class="skyline-img tp" src="assets/stickers/joshua/prickly/joshua_1.png" alt="" style="left:28%;height:88px;">
+
+      <img class="skyline-img ts" src="assets/stickers/aloe/sonoran/aloe_1.png" alt="" style="left:42%;height:65px;">
+      <img class="skyline-img tc" src="assets/stickers/aloe/copper/aloe_1.png" alt="" style="left:42%;height:65px;">
+      <img class="skyline-img tp" src="assets/stickers/aloe/prickly/aloe_1.png" alt="" style="left:42%;height:65px;">
+
+      <img class="skyline-img ts" src="assets/stickers/saguaro/sonoran/saguaro_2.png" alt="" style="left:58%;height:95px;">
+      <img class="skyline-img tc" src="assets/stickers/saguaro/copper/saguaro_2.png" alt="" style="left:58%;height:95px;">
+      <img class="skyline-img tp" src="assets/stickers/saguaro/prickly/saguaro_2.png" alt="" style="left:58%;height:95px;">
+
+      <img class="skyline-img ts" src="assets/stickers/barrel/sonoran/barrel_2.png" alt="" style="left:72%;height:52px;">
+      <img class="skyline-img tc" src="assets/stickers/barrel/copper/barrel_2.png" alt="" style="left:72%;height:52px;">
+      <img class="skyline-img tp" src="assets/stickers/barrel/prickly/barrel_2.png" alt="" style="left:72%;height:52px;">
+
+      <img class="skyline-img ts" src="assets/stickers/joshua/sonoran/joshua_2.png" alt="" style="left:85%;height:85px;">
+      <img class="skyline-img tc" src="assets/stickers/joshua/copper/joshua_2.png" alt="" style="left:85%;height:85px;">
+      <img class="skyline-img tp" src="assets/stickers/joshua/prickly/joshua_2.png" alt="" style="left:85%;height:85px;">
     </div>
   </header>
 
@@ -204,6 +236,37 @@
 
   <!-- Footer -->
   <footer class="bt-footer">
+    <!-- Footer sticker scene -->
+    <div class="footer-scene" aria-hidden="true">
+      <div class="footer-ground-bar"></div>
+      <img class="footer-img ts" src="assets/stickers/saguaro/sonoran/saguaro_3.png" alt="" style="left:8%;height:90px;">
+      <img class="footer-img tc" src="assets/stickers/saguaro/copper/saguaro_3.png" alt="" style="left:8%;height:90px;">
+      <img class="footer-img tp" src="assets/stickers/saguaro/prickly/saguaro_3.png" alt="" style="left:8%;height:90px;">
+
+      <img class="footer-img ts" src="assets/stickers/aloe/sonoran/aloe_2.png" alt="" style="left:20%;height:60px;">
+      <img class="footer-img tc" src="assets/stickers/aloe/copper/aloe_2.png" alt="" style="left:20%;height:60px;">
+      <img class="footer-img tp" src="assets/stickers/aloe/prickly/aloe_2.png" alt="" style="left:20%;height:60px;">
+
+      <img class="footer-img ts" src="assets/stickers/barrel/sonoran/barrel_3.png" alt="" style="left:35%;height:50px;">
+      <img class="footer-img tc" src="assets/stickers/barrel/copper/barrel_3.png" alt="" style="left:35%;height:50px;">
+      <img class="footer-img tp" src="assets/stickers/barrel/prickly/barrel_3.png" alt="" style="left:35%;height:50px;">
+
+      <img class="footer-img ts" src="assets/stickers/joshua/sonoran/joshua_3.png" alt="" style="left:50%;height:82px;">
+      <img class="footer-img tc" src="assets/stickers/joshua/copper/joshua_3.png" alt="" style="left:50%;height:82px;">
+      <img class="footer-img tp" src="assets/stickers/joshua/prickly/joshua_3.png" alt="" style="left:50%;height:82px;">
+
+      <img class="footer-img ts" src="assets/stickers/saguaro/sonoran/saguaro_4.png" alt="" style="left:65%;height:95px;">
+      <img class="footer-img tc" src="assets/stickers/saguaro/copper/saguaro_4.png" alt="" style="left:65%;height:95px;">
+      <img class="footer-img tp" src="assets/stickers/saguaro/prickly/saguaro_4.png" alt="" style="left:65%;height:95px;">
+
+      <img class="footer-img ts" src="assets/stickers/aloe/sonoran/aloe_3.png" alt="" style="left:78%;height:58px;">
+      <img class="footer-img tc" src="assets/stickers/aloe/copper/aloe_3.png" alt="" style="left:78%;height:58px;">
+      <img class="footer-img tp" src="assets/stickers/aloe/prickly/aloe_3.png" alt="" style="left:78%;height:58px;">
+
+      <img class="footer-img ts" src="assets/stickers/barrel/sonoran/barrel_4.png" alt="" style="left:92%;height:48px;">
+      <img class="footer-img tc" src="assets/stickers/barrel/copper/barrel_4.png" alt="" style="left:92%;height:48px;">
+      <img class="footer-img tp" src="assets/stickers/barrel/prickly/barrel_4.png" alt="" style="left:92%;height:48px;">
+    </div>
     <p>Data sourced from <a href="https://www.azleg.gov" target="_blank" rel="noopener">azleg.gov</a> &middot; Updated daily at 6:00 AM Arizona time</p>
     <p>Part of <a href="https://github.com/az-civic-tools/az-civic-tools" target="_blank" rel="noopener">AZ Civic Tools</a> &middot; Free &amp; open source &middot; MIT License</p>
     <p><a href="/privacy">Privacy Policy</a> &middot; <a href="/accessibility">Accessibility</a></p>
@@ -249,5 +312,6 @@
   </div>
 
   <script src="cactus-watch.js?v=40"></script>
+  <script src="theme-switcher.js?v=1"></script>
 </body>
 </html>

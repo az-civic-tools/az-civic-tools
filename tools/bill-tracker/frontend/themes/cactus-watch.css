@@ -1,0 +1,436 @@
+/* ============================================================
+   cactus.watch Theme Overrides
+   Three themes: Sonoran Dusk, Copper State, Prickly Pear
+   Loaded after bill-tracker.css — overrides neutral defaults
+   ============================================================ */
+
+/* --- Sticker visibility --- */
+.ts, .tc, .tp { display: none !important; }
+[data-theme="sonoran"] .ts { display: inline-block !important; }
+[data-theme="copper"]  .tc { display: inline-block !important; }
+[data-theme="prickly"] .tp { display: inline-block !important; }
+
+/* ============================================================
+   Theme: Sonoran Dusk (default)
+   Warm, earthy, grounded — the saturated calm of a desert sunset
+   ============================================================ */
+:root,
+[data-theme="sonoran"] {
+  /* Palette */
+  --bt-mesa:             #4A2C17;
+  --bt-mesa-warm:        #4A2F1E;
+  --bt-terracotta:       #C2512B;
+  --bt-terracotta-light: #D4673F;
+  --bt-copper:           #B87333;
+  --bt-gold:             #C9A84C;
+  --bt-gold-light:       #DBBF6A;
+  --bt-sage:             #7A8B6F;
+  --bt-sage-deep:        #5A6E50;
+  --bt-sage-light:       #95A688;
+  --bt-sand:             #F4EDE4;
+  --bt-sand-dark:        #E8DDD0;
+  --bt-cream:            #FAF7F3;
+  --bt-earth:            #6B5B4F;
+  --bt-earth-light:      #8B7B6F;
+  --bt-stone:            #9A8A7E;
+  --bt-red:              #9B2226;
+  --bt-red-light:        #C43C40;
+
+  /* Functional */
+  --bt-bg:               #F4EDE4;
+  --bt-card-bg:          #FAF7F3;
+  --bt-text:             #3D2B1F;
+  --bt-text-muted:       #6B5B4F;
+  --bt-text-light:       #9A8A7E;
+  --bt-border:           #D4A090;
+  --bt-border-light:     #E8DDD0;
+  --bt-focus:            #C2512B;
+
+  /* Status colors */
+  --bt-status-introduced:       #8B7355;
+  --bt-status-in-committee:     #C2512B;
+  --bt-status-passed-committee: #C9A84C;
+  --bt-status-on-floor:         #B87333;
+  --bt-status-passed-house:     #7A8B6F;
+  --bt-status-passed-senate:    #7A8B6F;
+  --bt-status-passed-both:      #5A6E50;
+  --bt-status-to-governor:      #1B6B50;
+  --bt-status-signed:           #1B4332;
+  --bt-status-vetoed:           #9B2226;
+  --bt-status-dead:             #6B5B4F;
+  --bt-status-held:             #7F5539;
+
+  /* Typography */
+  --bt-font-display:     'Cormorant Garamond', 'Georgia', serif;
+  --bt-font-body:        'Nunito', 'Segoe UI', sans-serif;
+
+  /* Theme-specific */
+  --header-gradient:     linear-gradient(135deg, #4A2C17 0%, #C2512B 50%, #C9A84C 100%);
+  --header-pattern:      none;
+  --dot-color:           #C9A84C;
+  --logo-ext-color:      #C9A84C;
+  --footer-ground:       #4A2C17;
+  --footer-mid:          #C2512B;
+  --accent-bar-display:  none;
+  --accent-line-display: none;
+  --card-left-accent:    none;
+  --dead-opacity:        0.7;
+  --badge-radius:        4px;
+  --pill-radius:         20px;
+
+  /* Shadows */
+  --bt-shadow-sm:        0 1px 3px rgba(44, 24, 16, 0.08);
+  --bt-shadow:           0 2px 8px rgba(44, 24, 16, 0.1);
+  --bt-shadow-lg:        0 8px 30px rgba(44, 24, 16, 0.15);
+  --bt-shadow-card:      0 2px 6px rgba(44, 24, 16, 0.06), 0 1px 2px rgba(44, 24, 16, 0.04);
+}
+
+/* Sonoran: mesa silhouette on header */
+[data-theme="sonoran"] .bt-header-bg::after,
+:root .bt-header-bg::after {
+  height: 60px;
+  background: var(--bt-bg);
+  clip-path: polygon(
+    0% 100%, 0% 70%, 3% 60%, 8% 55%, 12% 50%,
+    15% 52%, 18% 45%, 22% 40%, 25% 42%, 28% 38%,
+    32% 35%, 38% 38%, 42% 30%, 46% 28%, 48% 30%,
+    52% 25%, 56% 28%, 60% 35%, 62% 32%, 65% 38%,
+    68% 40%, 72% 35%, 76% 42%, 80% 50%, 84% 45%,
+    88% 52%, 92% 58%, 96% 62%, 100% 55%, 100% 100%
+  );
+  transition: background 0.45s ease;
+}
+
+/* Sonoran: timeline noise texture */
+[data-theme="sonoran"] .bt-timeline::before {
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   Theme: Copper State
+   Mid-century civic architecture — clean, geometric, confident
+   ============================================================ */
+[data-theme="copper"] {
+  /* Palette */
+  --bt-mesa:             #2D2D2D;
+  --bt-mesa-warm:        #3D3D3D;
+  --bt-terracotta:       #B87333;
+  --bt-terracotta-light: #CF8D4E;
+  --bt-copper:           #B87333;
+  --bt-gold:             #2A7B6F;
+  --bt-gold-light:       #4DA89A;
+  --bt-sage:             #2A7B6F;
+  --bt-sage-deep:        #0F6E56;
+  --bt-sage-light:       #4DA89A;
+  --bt-sand:             #F2F0EC;
+  --bt-sand-dark:        #E2E0DC;
+  --bt-cream:            #FFFFFF;
+  --bt-earth:            #8C8C84;
+  --bt-earth-light:      #A0A098;
+  --bt-stone:            #BBBBBB;
+  --bt-red:              #B91C1C;
+  --bt-red-light:        #DC2626;
+
+  /* Functional */
+  --bt-bg:               #F2F0EC;
+  --bt-card-bg:          #FFFFFF;
+  --bt-text:             #2D2D2D;
+  --bt-text-muted:       #8C8C84;
+  --bt-text-light:       #BBBBBB;
+  --bt-border:           rgba(0, 0, 0, 0.1);
+  --bt-border-light:     rgba(0, 0, 0, 0.05);
+  --bt-focus:            #B87333;
+
+  /* Status colors */
+  --bt-status-introduced:       #6B7280;
+  --bt-status-in-committee:     #B87333;
+  --bt-status-passed-committee: #D4A055;
+  --bt-status-on-floor:         #2A7B6F;
+  --bt-status-passed-house:     #2A7B6F;
+  --bt-status-passed-senate:    #2A7B6F;
+  --bt-status-passed-both:      #0F6E56;
+  --bt-status-to-governor:      #0D9488;
+  --bt-status-signed:           #047857;
+  --bt-status-vetoed:           #B91C1C;
+  --bt-status-dead:             #6B7280;
+  --bt-status-held:             #92400E;
+
+  /* Typography */
+  --bt-font-display:     'DM Serif Display', 'Georgia', serif;
+  --bt-font-body:        'DM Sans', system-ui, sans-serif;
+
+  /* Theme-specific */
+  --header-gradient:     #2D2D2D;
+  --header-pattern:      none;
+  --dot-color:           rgba(255, 255, 255, 0.45);
+  --logo-ext-color:      rgba(255, 255, 255, 0.45);
+  --footer-ground:       #2D2D2D;
+  --footer-mid:          #6B5B4F;
+  --accent-bar-display:  block;
+  --accent-line-display: none;
+  --card-left-accent:    3px solid #B87333;
+  --dead-opacity:        0.55;
+  --badge-radius:        3px;
+  --pill-radius:         4px;
+
+  /* Shadows */
+  --bt-shadow-sm:        0 1px 3px rgba(0, 0, 0, 0.06);
+  --bt-shadow:           0 2px 8px rgba(0, 0, 0, 0.08);
+  --bt-shadow-lg:        0 8px 30px rgba(0, 0, 0, 0.12);
+  --bt-shadow-card:      0 2px 6px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* Copper: card radius override */
+[data-theme="copper"] .bt-bill-card,
+[data-theme="copper"] .bt-list-card,
+[data-theme="copper"] .bt-list-popover,
+[data-theme="copper"] .bt-rts-agenda-card {
+  border-radius: 0;
+}
+
+/* Copper: card left-border accent */
+[data-theme="copper"] .bt-bill-card {
+  border-left: var(--card-left-accent);
+}
+
+/* Copper: intensify card left border on hover */
+[data-theme="copper"] .bt-bill-card:hover {
+  border-left-color: #7A4A1E;
+  border-left-width: 4px;
+}
+
+/* Copper: accent bar below header */
+[data-theme="copper"] .bt-header::after {
+  content: '';
+  display: var(--accent-bar-display);
+  height: 4px;
+  background: var(--bt-terracotta);
+  position: relative;
+  z-index: 5;
+  transition: background 0.4s ease;
+}
+
+/* Copper: no mesa silhouette */
+[data-theme="copper"] .bt-header-bg::after {
+  height: 0;
+}
+
+/* Copper: filter pills rectangular */
+[data-theme="copper"] .bt-select {
+  border-radius: 4px;
+}
+
+/* Copper: nav active border */
+[data-theme="copper"] .bt-nav-tab--active {
+  border-bottom: 2px solid #B87333;
+}
+
+/* ============================================================
+   Theme: Prickly Pear
+   Vivid, optimistic, playful — blooming prickly pear energy
+   ============================================================ */
+[data-theme="prickly"] {
+  /* Palette */
+  --bt-mesa:             #3B1F2B;
+  --bt-mesa-warm:        #5C3347;
+  --bt-terracotta:       #C43F6E;
+  --bt-terracotta-light: #D4577F;
+  --bt-copper:           #C43F6E;
+  --bt-gold:             #BFA44E;
+  --bt-gold-light:       #D4BC6A;
+  --bt-sage:             #3D7A4A;
+  --bt-sage-deep:        #2D6339;
+  --bt-sage-light:       #5A9B67;
+  --bt-sand:             #FDF8F0;
+  --bt-sand-dark:        #F0E8DC;
+  --bt-cream:            #FFFFFF;
+  --bt-earth:            #4A4043;
+  --bt-earth-light:      #6B5F62;
+  --bt-stone:            #B0A5A8;
+  --bt-red:              #B91C1C;
+  --bt-red-light:        #DC2626;
+
+  /* Functional */
+  --bt-bg:               #FDF8F0;
+  --bt-card-bg:          #FFFFFF;
+  --bt-text:             #3B1F2B;
+  --bt-text-muted:       #4A4043;
+  --bt-text-light:       #B0A5A8;
+  --bt-border:           rgba(59, 31, 43, 0.12);
+  --bt-border-light:     rgba(59, 31, 43, 0.06);
+  --bt-focus:            #C43F6E;
+
+  /* Status colors */
+  --bt-status-introduced:       #7C6D71;
+  --bt-status-in-committee:     #C43F6E;
+  --bt-status-passed-committee: #BFA44E;
+  --bt-status-on-floor:         #9B59B6;
+  --bt-status-passed-house:     #3D7A4A;
+  --bt-status-passed-senate:    #3D7A4A;
+  --bt-status-passed-both:      #2D6339;
+  --bt-status-to-governor:      #0D9488;
+  --bt-status-signed:           #047857;
+  --bt-status-vetoed:           #B91C1C;
+  --bt-status-dead:             #6B7280;
+  --bt-status-held:             #92400E;
+
+  /* Typography */
+  --bt-font-display:     'Fraunces', 'Georgia', serif;
+  --bt-font-body:        'Source Sans 3', system-ui, sans-serif;
+
+  /* Theme-specific */
+  --header-gradient:     #3B1F2B;
+  --header-pattern:      radial-gradient(circle 2px at 12px 12px, rgba(196, 63, 110, 0.12) 1px, transparent 1px),
+                         radial-gradient(circle 1.5px at 28px 6px, rgba(196, 63, 110, 0.08) 1px, transparent 1px);
+  --dot-color:           #C43F6E;
+  --logo-ext-color:      #FDF8F0;
+  --footer-ground:       #3B1F2B;
+  --footer-mid:          #7A3A55;
+  --accent-bar-display:  none;
+  --accent-line-display: block;
+  --card-left-accent:    none;
+  --dead-opacity:        0.5;
+  --badge-radius:        20px;
+  --pill-radius:         20px;
+
+  /* Shadows */
+  --bt-shadow-sm:        0 1px 3px rgba(59, 31, 43, 0.06);
+  --bt-shadow:           0 2px 8px rgba(59, 31, 43, 0.08);
+  --bt-shadow-lg:        0 8px 30px rgba(59, 31, 43, 0.12);
+  --bt-shadow-card:      0 2px 6px rgba(59, 31, 43, 0.04), 0 1px 2px rgba(59, 31, 43, 0.03);
+}
+
+/* Prickly: rounded card radius */
+[data-theme="prickly"] .bt-bill-card,
+[data-theme="prickly"] .bt-list-card {
+  border-radius: 10px;
+}
+
+/* Prickly: badge full pill */
+[data-theme="prickly"] .bt-status {
+  border-radius: 20px;
+}
+
+/* Prickly: no mesa silhouette */
+[data-theme="prickly"] .bt-header-bg::after {
+  height: 0;
+}
+
+/* Prickly: accent line below header */
+[data-theme="prickly"] .bt-header::after {
+  content: '';
+  display: var(--accent-line-display);
+  height: 2px;
+  background: var(--bt-terracotta);
+  position: relative;
+  z-index: 5;
+  transition: background 0.4s ease;
+}
+
+/* ============================================================
+   Header Skyline & Footer Scene (sticker placements)
+   ============================================================ */
+.header-skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 3;
+}
+.header-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: var(--bt-bg);
+  z-index: 2;
+  transition: background 0.45s ease;
+}
+.skyline-img {
+  position: absolute;
+  z-index: 3;
+  bottom: 6px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+}
+
+/* Footer sticker scene */
+.footer-scene {
+  position: relative;
+  height: 140px;
+  background: linear-gradient(180deg, var(--bt-bg) 0%, var(--footer-mid) 55%, var(--footer-ground) 100%);
+  transition: background 0.45s ease;
+}
+.footer-ground-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: var(--footer-ground);
+  z-index: 2;
+  transition: background 0.45s ease;
+}
+.footer-img {
+  position: absolute;
+  z-index: 3;
+  bottom: 10px;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.15));
+}
+
+/* Card watermark stickers */
+.card-wm {
+  position: absolute;
+  right: -2px;
+  bottom: -4px;
+  opacity: 0.045;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.bt-bill-card:hover .card-wm { opacity: 0.09; }
+
+/* Section divider sticker */
+.cactus-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px 24px;
+  max-width: var(--bt-max-width);
+  margin: 0 auto;
+}
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--bt-border);
+  max-width: 200px;
+  transition: background 0.4s;
+}
+.divider-img {
+  height: 38px;
+  opacity: 0.4;
+}
+
+/* Empty state stickers */
+.empty-scene {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+  min-height: 150px;
+}
+.empty-main { height: 145px; }
+.empty-tw { height: 55px; opacity: 0.35; }
+
+/* ============================================================
+   Responsive sticker scaling
+   ============================================================ */
+@media (max-width: 520px) {
+  .skyline-img,
+  .footer-img {
+    transform: scale(0.7);
+    transform-origin: bottom center;
+  }
+}
