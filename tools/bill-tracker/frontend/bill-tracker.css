@@ -3221,7 +3221,7 @@ a:hover { color: var(--bt-mesa-warm); }
    ============================================================ */
 .bt-theme-btn {
   position: fixed;
-  bottom: 72px;
+  bottom: 24px;
   right: 24px;
   background: var(--bt-terracotta);
   color: #FFF;
@@ -3245,6 +3245,16 @@ a:hover { color: var(--bt-mesa-warm); }
 }
 .bt-theme-btn:active { transform: translateY(0); }
 .bt-theme-btn svg { flex-shrink: 0; }
+
+/* Scroll-fade: both FABs visible only at top/bottom of page */
+.bt-feedback-fab,
+.bt-theme-btn {
+  transition: transform 0.2s, box-shadow 0.2s, background 0.4s, opacity 0.4s ease;
+}
+.bt-fab-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 
 .bt-theme-overlay {
   position: fixed;

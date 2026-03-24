@@ -426,13 +426,45 @@
 .empty-main { height: 145px; }
 .empty-tw { height: 55px; opacity: 0.35; }
 
+/* Subtle sticker angles for a hand-placed feel */
+.skyline-img:nth-child(3n+1) { transform: rotate(-2deg); transform-origin: bottom center; }
+.skyline-img:nth-child(3n+2) { transform: rotate(1.5deg); transform-origin: bottom center; }
+.skyline-img:nth-child(3n)   { transform: rotate(-1deg); transform-origin: bottom center; }
+.footer-img:nth-child(3n+1)  { transform: rotate(1deg); transform-origin: bottom center; }
+.footer-img:nth-child(3n+2)  { transform: rotate(-2deg); transform-origin: bottom center; }
+.footer-img:nth-child(3n)    { transform: rotate(1.5deg); transform-origin: bottom center; }
+
 /* ============================================================
    Responsive sticker scaling
    ============================================================ */
+@media (max-width: 900px) {
+  /* Hide some cacti on medium screens to avoid overlap */
+  .skyline-img:nth-child(n+16),
+  .footer-img:nth-child(n+16) {
+    display: none !important;
+  }
+}
+@media (max-width: 680px) {
+  .skyline-img,
+  .footer-img {
+    transform: scale(0.75);
+    transform-origin: bottom center;
+  }
+  /* Keep only 4 cacti on small screens */
+  .skyline-img:nth-child(n+10),
+  .footer-img:nth-child(n+10) {
+    display: none !important;
+  }
+}
 @media (max-width: 520px) {
   .skyline-img,
   .footer-img {
-    transform: scale(0.7);
+    transform: scale(0.6);
     transform-origin: bottom center;
+  }
+  /* Keep only 3 cacti on tiny screens */
+  .skyline-img:nth-child(n+7),
+  .footer-img:nth-child(n+7) {
+    display: none !important;
   }
 }

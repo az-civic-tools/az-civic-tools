@@ -169,4 +169,33 @@
       closeModal();
     }
   });
+
+  // Scroll-fade: show FABs only when near top or bottom of page
+  function updateFabVisibility() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    const distFromBottom = scrollHeight - scrollTop - clientHeight;
+    const threshold = 200; // px from top/bottom to start showing
+
+    const nearEdge = scrollTop < threshold || distFromBottom < threshold;
+    const fabs = document.querySelectorAll('.bt-feedback-fab, .bt-theme-btn');
+    fabs.forEach(function (fab) {
+      fab.classList.toggle('bt-fab-hidden', !nearEdge);
+    });
+  }
+
+  let scrollTick = false;
+  window.addEventListener('scroll', function () {
+    if (!scrollTick) {
+      requestAnimationFrame(function () {
+        updateFabVisibility();
+        scrollTick = false;
+      });
+      scrollTick = true;
+    }
+  }, { passive: true });
+
+  // Initial check
+  updateFabVisibility();
 })();
