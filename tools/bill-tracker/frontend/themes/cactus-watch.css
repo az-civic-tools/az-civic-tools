@@ -199,7 +199,7 @@
   border-left-width: 4px;
 }
 
-/* Copper: accent bar below header */
+/* Copper: accent bar below header — z-index 1 so stickers sit on top */
 [data-theme="copper"] .bt-header::after {
   content: '';
   display: var(--accent-bar-display);
@@ -207,7 +207,7 @@
   background: var(--bt-terracotta);
   position: relative;
   top: 5px;
-  z-index: 5;
+  z-index: 1;
   transition: background 0.4s ease;
 }
 
@@ -317,7 +317,7 @@
   height: 0;
 }
 
-/* Prickly: accent line below header */
+/* Prickly: accent line below header — z-index 1 so stickers sit on top */
 [data-theme="prickly"] .bt-header::after {
   content: '';
   display: var(--accent-line-display);
@@ -325,7 +325,7 @@
   background: var(--bt-terracotta);
   position: relative;
   top: 5px;
-  z-index: 5;
+  z-index: 1;
   transition: background 0.4s ease;
 }
 
@@ -339,7 +339,7 @@
   right: 0;
   height: 120px;
   pointer-events: none;
-  z-index: 3;
+  z-index: 10;
 }
 .header-ground {
   position: absolute;
@@ -353,7 +353,7 @@
 }
 .skyline-img {
   position: absolute;
-  z-index: 3;
+  z-index: 10;
   bottom: 6px;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
 }
