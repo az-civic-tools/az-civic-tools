@@ -164,7 +164,13 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(runScheduledScrape(env));
+    // Route based on which cron fired: :00 = bills, :30 = RTS/overviews/deadlines
+    const minute = new Date(event.scheduledTime).getUTCMinutes();
+    if (minute >= 30) {
+      ctx.waitUntil(runScheduledPostProcess(env));
+    } else {
+      ctx.waitUntil(runScheduledScrape(env));
+    }
   },
 };
 
@@ -182,6 +188,9 @@ const SESSION_WINDOW = {
  * Cron-triggered scrape: run each prefix sequentially.
  * Skips scraping entirely outside the legislative session window.
  */
+/**
+ * Cron :00 — Scrape bill data from azleg API (all prefixes).
+ */
 async function runScheduledScrape(env) {
   const today = new Date().toISOString().slice(0, 10);
   if (today < SESSION_WINDOW.start || today > SESSION_WINDOW.end) {
@@ -189,7 +198,7 @@ async function runScheduledScrape(env) {
     return;
   }
 
-  console.log('Cron-triggered scrape starting...');
+  console.log('Cron :00 — bill scraper starting...');
 
   for (const { prefix } of BILL_PREFIXES) {
     try {
@@ -201,7 +210,22 @@ async function runScheduledScrape(env) {
     }
   }
 
-  // Scrape RTS agendas after bill data
+  console.log('Cron :00 — bill scraper complete');
+}
+
+/**
+ * Cron :30 — RTS agendas, overviews, deadline checker.
+ * Runs separately so it completes even if the bill scraper times out.
+ */
+async function runScheduledPostProcess(env) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today < SESSION_WINDOW.start || today > SESSION_WINDOW.end) {
+    console.log(`Cron: session not active (${today} outside ${SESSION_WINDOW.start}–${SESSION_WINDOW.end}). Skipping.`);
+    return;
+  }
+
+  console.log('Cron :30 — post-processing starting...');
+
   try {
     console.log('Cron: scraping RTS agendas...');
     const rtsResult = await runRtsScraper(env);
@@ -210,7 +234,6 @@ async function runScheduledScrape(env) {
     console.error('Cron: RTS scrape failed:', err);
   }
 
-  // Scrape bill overviews for bills with upcoming hearings
   try {
     console.log('Cron: scraping bill overviews...');
     const overviewResult = await runOverviewScraper(env);
@@ -219,7 +242,6 @@ async function runScheduledScrape(env) {
     console.error('Cron: overview scrape failed:', err);
   }
 
-  // Run deadline checker — mark missed-deadline bills as dead, detect strikers
   try {
     console.log('Cron: running deadline checker...');
     const deadlineResult = await runDeadlineChecker(env);
@@ -228,7 +250,7 @@ async function runScheduledScrape(env) {
     console.error('Cron: deadline checker failed:', err);
   }
 
-  console.log('Cron scrape complete');
+  console.log('Cron :30 — post-processing complete');
 }
 
 /**

@@ -2,9 +2,11 @@ name = "cactus-watch-central"
 main = "src/index.js"
 compatibility_date = "2024-12-01"
 
-# Cron trigger — scrape daily at 6 AM AZ time (1 PM UTC)
+# Cron triggers:
+#   6:00 AM AZ (1 PM UTC) — bill scraper (all prefixes)
+#   6:30 AM AZ (1:30 PM UTC) — RTS agendas, overviews, deadline checker
 [triggers]
-crons = ["0 13 * * *"]
+crons = ["0 13 * * *", "30 13 * * *"]
 
 [[d1_databases]]
 binding = "DB"
