@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS bills (
   dead_reason TEXT,
   deadline_dead_at TEXT,
   original_short_title TEXT,
+  has_striker INTEGER DEFAULT 0,
+  striker_detail TEXT,
   scraped_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   UNIQUE(session_id, number)

@@ -121,6 +121,7 @@ export async function handleListBills(request, env) {
       b.status, b.final_disposition, b.dead_reason,
       b.governor_action, b.governor_action_date,
       b.azleg_url, b.keywords, b.overview, b.updated_at,
+      b.has_striker, b.striker_detail,
       s.session_id as azleg_session_id, s.name as session_name,
       (SELECT COUNT(*) FROM rts_agendas ra WHERE ra.bill_number = b.number AND ra.is_past = 0) as hearing_count
     FROM bills b
@@ -283,6 +284,7 @@ export async function handleSyncBills(request, env) {
       b.status, b.final_disposition,
       b.governor_action, b.governor_action_date,
       b.azleg_url, b.keywords, b.updated_at,
+      b.has_striker, b.striker_detail,
       s.session_id as azleg_session_id, s.name as session_name
     FROM bills b
     JOIN sessions s ON b.session_id = s.id
@@ -324,5 +326,7 @@ function formatBillRow(row) {
     overview: row.overview || null,
     updated_at: row.updated_at,
     has_hearing: row.hearing_count != null ? row.hearing_count > 0 : false,
+    has_striker: !!row.has_striker,
+    striker_detail: row.striker_detail ? JSON.parse(row.striker_detail) : null,
   };
 }

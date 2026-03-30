@@ -725,6 +725,16 @@
     }).join('');
   }
 
+  function renderStrikerAlert(detail) {
+    if (!detail) return '<div class="bt-striker-alert"><span class="bt-striker-alert-icon">&#9888;</span><div><strong>Strike-Everything Amendment</strong> detected on this bill. The original content may have been replaced.</div></div>';
+    const statusText = detail.status === 'adopted' ? 'adopted' : 'proposed';
+    const committee = detail.committee ? ` by <strong>${esc(detail.committee)}</strong>` : '';
+    const chamber = detail.chamber === 'H' ? 'House' : detail.chamber === 'S' ? 'Senate' : '';
+    const chamberText = chamber ? `${chamber} ` : '';
+    const pdfLink = detail.doc_id ? ` <a href="https://apps.azleg.gov/BillStatus/GetDocumentPdf/${detail.doc_id}" target="_blank" rel="noopener">View amendment &#8599;</a>` : '';
+    return `<div class="bt-striker-alert"><span class="bt-striker-alert-icon">&#9888;</span><div><strong>Strike-Everything Amendment</strong> ${statusText}${committee} (${chamberText}committee). The original bill content may have been replaced with entirely new language.${pdfLink}</div></div>`;
+  }
+
   function statusLabel(s) { return STATUS_LABELS[s] || s; }
   function typeLabel(t) { return TYPE_LABELS[t] || t; }
   function actionLabel(a) { return COMMITTEE_ACTIONS[a] || a; }
@@ -809,6 +819,7 @@
           ${bill.last_action_date ? `<span>${formatDate(bill.last_action_date)}</span>` : ''}
         </div>
         <div class="bt-card-actions">
+          ${bill.has_striker ? '<span class="bt-striker-badge">Striker</span>' : ''}
           ${bill.has_hearing ? '<span class="bt-hearing-badge">Hearing</span>' : ''}
           <span class="bt-status bt-status--${esc(bill.status)}">${statusLabel(bill.status)}</span>
           ${isLoggedIn() ? `<button class="bt-card-add ${isTracked ? 'bt-card-add--tracked' : ''}" data-number="${esc(bill.number)}" aria-label="Add ${esc(bill.number)} to list" title="${isTracked ? 'On a list' : 'Add to list'}">
@@ -887,6 +898,7 @@
           <div class="bt-next-action-row"><dt>Next Action</dt><dd>${esc(nextAction.text)} <button class="bt-next-action-info" aria-label="About next action prediction" title="About this prediction">&#9432;</button></dd></div>
         </dl>
         ${bill.org_recommendations?.length ? `<div class="bt-detail-org-recs" style="margin-top: 10px;">${renderOrgBadges(bill.org_recommendations)}</div>` : ''}
+        ${bill.has_striker ? renderStrikerAlert(bill.striker_detail) : ''}
         <div class="bt-detail-action-row">
           <button class="bt-btn bt-btn--small bt-lifecycle-toggle" id="bt-lifecycle-toggle">&#8592; Show Bill Lifecycle</button>
           ${bill.azleg_url ? `<a href="${esc(bill.azleg_url)}" target="_blank" rel="noopener" class="bt-btn bt-btn--small bt-detail-azleg">&#127963; View on AZLeg.gov &#8599;</a>` : ''}

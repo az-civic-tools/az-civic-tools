@@ -224,6 +224,62 @@ async function fetchSponsors(billId) {
 }
 
 /**
+ * Fetch document types for a bill to detect strike-everything amendments.
+ * Returns array of document groups from the azleg DocType endpoint.
+ */
+async function fetchDocTypes(billId, sessionId) {
+  const url = `${AZLEG_API}/DocType/?billStatusId=${billId}&sessionId=${sessionId}`;
+  try {
+    const resp = await fetch(url, {
+      headers: { 'Accept': 'application/json' },
+    });
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    if (data && data.ListItems) return data.ListItems;
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Check document types for strike-everything amendments.
+ * Returns { hasStriker, detail } where detail is a JSON-serializable object.
+ */
+function detectStriker(docGroups) {
+  const strikers = [];
+
+  for (const group of docGroups) {
+    const code = group.DocumentGroupCode || '';
+    if (code !== 'AdoptedAmendments' && code !== 'ProposedAmendments') continue;
+
+    for (const doc of (group.Documents || [])) {
+      const name = doc.DocumentName || '';
+      if (!name.toLowerCase().includes('strike everything')) continue;
+
+      // Parse committee from pattern: "CHAMBER - Committee Name - Strike Everything"
+      const parts = name.split(' - ');
+      const committee = parts.length >= 3 ? parts.slice(1, -1).join(' - ') : null;
+      const chamber = parts[0]?.trim().toUpperCase() || null;
+
+      strikers.push({
+        status: code === 'AdoptedAmendments' ? 'adopted' : 'proposed',
+        committee,
+        chamber: chamber === 'HOUSE' ? 'H' : chamber === 'SENATE' ? 'S' : null,
+        doc_id: doc.Id || null,
+        pdf_path: doc.PdfPath || null,
+      });
+    }
+  }
+
+  if (strikers.length === 0) return { hasStriker: false, detail: null };
+
+  // Prefer adopted over proposed
+  const adopted = strikers.find(s => s.status === 'adopted');
+  return { hasStriker: true, detail: adopted || strikers[0] };
+}
+
+/**
  * Fetch floor vote details with individual records.
  */
 async function fetchFloorVote(billId, actionId) {
@@ -340,6 +396,30 @@ async function processBill(env, dbSessionId, azlegSessionId, bill) {
 
   // Process floor votes (requires extra fetch per vote)
   await processFloorVotes(env, billDbId, bill);
+
+  // Check for strike-everything amendments (skip if already flagged)
+  const existingStriker = existing ? await env.DB.prepare(
+    'SELECT has_striker FROM bills WHERE id = ?'
+  ).bind(billDbId).first() : null;
+
+  if (!existingStriker || !existingStriker.has_striker) {
+    await sleep(SCRAPE_RATE_LIMIT_MS);
+    const docGroups = await fetchDocTypes(bill.BillId, azlegSessionId);
+    const { hasStriker, detail } = detectStriker(docGroups);
+
+    await env.DB.prepare(
+      'UPDATE bills SET has_striker = ?, striker_detail = ?, updated_at = ? WHERE id = ?'
+    ).bind(
+      hasStriker ? 1 : 0,
+      detail ? JSON.stringify(detail) : null,
+      new Date().toISOString(),
+      billDbId
+    ).run();
+
+    if (hasStriker) {
+      console.log(`Striker detected: ${number} — ${detail.status} by ${detail.committee || 'unknown'}`);
+    }
+  }
 
   return result;
 }

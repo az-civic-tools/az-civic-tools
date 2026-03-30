@@ -475,6 +475,44 @@ a:hover { color: var(--bt-mesa-warm); }
   border: 1px solid #F59E0B;
 }
 
+/* --- Striker badge on bill cards --- */
+.bt-striker-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #F87171;
+}
+
+/* --- Striker detail in bill detail view --- */
+.bt-striker-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  border-radius: var(--bt-radius);
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.bt-striker-alert-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+.bt-striker-alert a {
+  color: #991B1B;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 /* --- Hearing filter toggle --- */
 .bt-hearing-filter {
   display: inline-flex;

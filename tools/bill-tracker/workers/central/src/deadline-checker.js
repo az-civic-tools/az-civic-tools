@@ -160,9 +160,9 @@ export async function runDeadlineChecker(env) {
   const titlesBackfilled = titleResult.meta?.changes || 0;
   if (titlesBackfilled > 0) console.log(`Deadline checker: backfilled ${titlesBackfilled} original titles`);
 
-  // --- 6. Striker detection: flag bills whose title changed ---
+  // --- 6. Striker detection: flag bills whose title changed (supplemental to DocType scraping) ---
   const strikerResult = await env.DB.prepare(`
-    SELECT number, short_title, original_short_title
+    SELECT id, number, short_title, original_short_title, has_striker
     FROM bills
     WHERE session_id = ?
       AND original_short_title IS NOT NULL
@@ -171,10 +171,26 @@ export async function runDeadlineChecker(env) {
   `).bind(sessionId).all();
 
   const strikers = strikerResult.results || [];
+  let strikersFromTitle = 0;
   if (strikers.length > 0) {
     console.log(`Deadline checker: ${strikers.length} bills have changed titles (potential strikers):`);
     for (const s of strikers.slice(0, 10)) {
       console.log(`  ${s.number}: "${s.original_short_title}" → "${s.short_title}"`);
+    }
+    // Flag any title-changed bills that weren't caught by DocType scraping
+    for (const s of strikers) {
+      if (!s.has_striker) {
+        await env.DB.prepare(
+          'UPDATE bills SET has_striker = 1, striker_detail = ?, updated_at = ? WHERE id = ?'
+        ).bind(
+          JSON.stringify({ status: 'adopted', committee: null, chamber: null, doc_id: null, pdf_path: null, detected_by: 'title_change' }),
+          now, s.id
+        ).run();
+        strikersFromTitle++;
+      }
+    }
+    if (strikersFromTitle > 0) {
+      console.log(`Deadline checker: flagged ${strikersFromTitle} additional strikers from title changes`);
     }
   }
 
@@ -184,6 +200,7 @@ export async function runDeadlineChecker(env) {
     deadByReason,
     backfilled,
     strikers: strikers.length,
+    strikersFromTitle,
   };
 }
 
