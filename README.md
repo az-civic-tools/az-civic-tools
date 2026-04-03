@@ -24,7 +24,12 @@ Cactus Watch tracks every bill in the Arizona Legislature and serves the data th
 - **Committee votes** — which committees acted, how they voted
 - **Floor votes** — how every individual legislator voted on every bill
 - **Bill status** — from introduction through committee, floor votes, and governor action
-- **Search and filter** — by chamber, status, sponsor, bill type, or keyword
+- **Deadline-based dead bill detection** — bills that miss procedural deadlines are automatically marked dead, with resurrection when activity resumes
+- **Strike-everything amendments** — flags bills whose content has been replaced via striker amendments
+- **Plain-language overviews** — scraped from azleg.gov fact sheets for bills with upcoming hearings
+- **RTS (Request to Speak) agendas** — upcoming committee hearings with direct links to submit testimony
+- **Organization recommendations** — curated positions from advocacy orgs (CEBV, Secular AZ, SOS Arizona)
+- **Search and filter** — by chamber, status, sponsor, bill type, keyword, active/inactive, or upcoming hearing
 
 ### Use the API
 
@@ -40,8 +45,23 @@ curl "https://cactus.watch/api/bills?search=education"
 # House bills that passed committee
 curl "https://cactus.watch/api/bills?chamber=H&status=passed_committee"
 
-# Full detail on a specific bill (sponsors, committee actions, individual votes)
+# Only active bills (excludes dead, vetoed, signed, held)
+curl "https://cactus.watch/api/bills?status=__active__"
+
+# Bills with upcoming hearings
+curl "https://cactus.watch/api/bills?hearing=1"
+
+# Full detail on a specific bill (sponsors, votes, RTS agendas, org recommendations)
 curl "https://cactus.watch/api/bills/HB2839"
+
+# Upcoming committee hearings with bill data
+curl "https://cactus.watch/api/hearings"
+
+# RTS agenda items for a specific bill
+curl "https://cactus.watch/api/rts/HB2839"
+
+# Organization bill recommendations
+curl "https://cactus.watch/api/orgs"
 
 # Session metadata and bill count summary
 curl "https://cactus.watch/api/meta"
@@ -55,10 +75,11 @@ curl "https://cactus.watch/api/bills/sync?since=2026-03-01"
 | Filter | Values | Example |
 |--------|--------|---------|
 | Chamber | `H` (House), `S` (Senate) | `?chamber=H` |
-| Status | `introduced`, `in_committee`, `passed_committee`, `on_floor`, `passed_house`, `passed_senate`, `passed_both`, `to_governor`, `signed`, `vetoed`, `dead`, `held` | `?status=signed` |
+| Status | `introduced`, `in_committee`, `passed_committee`, `on_floor`, `passed_house`, `passed_senate`, `passed_both`, `to_governor`, `signed`, `vetoed`, `dead`, `held`, `__active__`, `__inactive__` | `?status=signed` |
 | Type | `bill`, `memorial`, `resolution`, `concurrent_resolution`, `joint_resolution` | `?type=bill` |
 | Sponsor | Any name (partial match) | `?sponsor=Smith` |
 | Search | Keywords in title, number, or description | `?search=water+rights` |
+| Hearing | `1` to show only bills with upcoming hearings | `?hearing=1` |
 | Sort | `number`, `updated_at`, `date_introduced`, `status`, `sponsor` | `?sort=date_introduced&order=asc` |
 | Pagination | `page` (default 1), `limit` (default 50, max 200) | `?page=2&limit=100` |
 
