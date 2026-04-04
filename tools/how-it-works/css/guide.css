@@ -1412,7 +1412,188 @@ blockquote p:last-child {
 }
 
 /* --------------------------------------------------------------------------
-   20. Print Styles
+   20. Index Page & Shared Components
+   -------------------------------------------------------------------------- */
+
+/* ── Index page: Hero section ──────────────────────────────── */
+.hero {
+  margin-bottom: var(--space-2xl);
+}
+
+.cta-button {
+  display: inline-block;
+  background: var(--sunset);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-weight: 700;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  text-decoration: none;
+}
+
+/* ── Index page: Card grid ─────────────────────────────────── */
+.card-grid {
+  margin-bottom: var(--space-2xl);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+a.card {
+  text-decoration: none;
+  color: var(--ink);
+  display: block;
+}
+
+a.card:hover {
+  text-decoration: none;
+}
+
+a.card h3 {
+  color: var(--ink);
+  margin-top: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+a.card p {
+  color: var(--ash);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--sunset);
+  opacity: 0.15;
+}
+
+.card-link {
+  display: inline-block;
+  margin-top: var(--space-sm);
+  color: var(--sunset);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* ── Index page: Section headings ──────────────────────────── */
+.section-heading {
+  /* Uses existing h2 styles */
+}
+
+/* ── Index page: Quick facts ───────────────────────────────── */
+.quick-facts {
+  margin-bottom: var(--space-2xl);
+}
+
+.fact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.fact {
+  background: var(--sand);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  border-left: 3px solid var(--sunset);
+}
+
+.fact p {
+  margin: 0;
+}
+
+.fact-source {
+  font-size: 0.85rem;
+  color: var(--ash);
+  margin-top: var(--space-md);
+}
+
+/* ── Index page: Project info ──────────────────────────────── */
+.project-info {
+  margin-bottom: var(--space-2xl);
+}
+
+.project-links {
+  list-style: none;
+  padding: 0;
+  margin-top: var(--space-md);
+}
+
+.project-links li {
+  padding: var(--space-xs) 0;
+}
+
+/* ── Footer (additional) ──────────────────────────────────── */
+.footer-links {
+  display: flex;
+  gap: var(--space-lg);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+
+.footer-tagline {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ash);
+  text-align: center;
+}
+
+.footer-attribution {
+  font-size: 0.8rem;
+  color: var(--ash);
+  text-align: center;
+  margin-top: var(--space-xs);
+}
+
+/* ── Referral/Initiative card extras ──────────────────────── */
+.card .card-result {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.card--passed .card-result {
+  color: var(--sage);
+}
+
+.card--failed .card-result {
+  color: var(--terracotta);
+}
+
+/* ── Guide content list styling ────────────────────────────── */
+.guide-content ol,
+.guide-content ul {
+  padding-left: 1.5rem;
+  margin: var(--space-md) 0;
+}
+
+.guide-content li {
+  margin-bottom: var(--space-xs);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   21. Print Styles
    -------------------------------------------------------------------------- */
 
 @media print {

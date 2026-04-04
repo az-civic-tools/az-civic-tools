@@ -339,12 +339,14 @@
     // Use event delegation on document for efficiency
     document.addEventListener('mouseenter', function (e) {
       if (isTouchDevice) return;
+      if (!e.target || !e.target.closest) return;
       var termEl = e.target.closest('.term-highlight');
       if (termEl) showTooltip(termEl);
     }, true); // useCapture for mouseenter delegation
 
     document.addEventListener('mouseleave', function (e) {
       if (isTouchDevice) return;
+      if (!e.target || !e.target.closest) return;
       var termEl = e.target.closest('.term-highlight');
       if (!termEl) return;
 
@@ -364,6 +366,7 @@
 
     // Mobile: tap to toggle
     document.addEventListener('click', function (e) {
+      if (!e.target || !e.target.closest) return;
       var termEl = e.target.closest('.term-highlight');
 
       // Clicking inside tooltip (e.g. the link) — let it through
