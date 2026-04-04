@@ -945,32 +945,20 @@ blockquote p:last-child {
   color: var(--ink);
 }
 
-/* "Game Over" branch fork */
-.lifecycle-step.is-failed::after {
-  content: 'Game Over';
+/* "Game Over" badge inside failed cards */
+.lifecycle-step.is-failed .lifecycle-card-title::before {
+  content: 'GAME OVER';
+  display: inline-block;
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font-size: 0.65rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--terracotta);
-  position: absolute;
-  top: 6px;
-  left: 40px;
-}
-
-@media (min-width: 768px) {
-  .lifecycle-step.is-failed::after {
-    left: auto;
-  }
-
-  .lifecycle-step:nth-child(odd).is-failed::after {
-    right: calc(-1 * var(--space-2xl) + 28px);
-  }
-
-  .lifecycle-step:nth-child(even).is-failed::after {
-    left: calc(-1 * var(--space-2xl) + 28px);
-  }
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: var(--terracotta);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  margin-right: var(--space-sm);
+  vertical-align: middle;
 }
 
 /* --------------------------------------------------------------------------
