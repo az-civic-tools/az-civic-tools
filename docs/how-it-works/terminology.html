@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="glossary-base" content=".">
+  <title>Terminology — How the Sausage Gets Made</title>
+  <meta name="description" content="Every confusing word the Arizona Legislature uses, translated into English. Your cheat sheet for legislative jargon.">
+  <link rel="stylesheet" href="css/guide.css">
+  <style>
+    /* ---- Glossary-specific styles ---- */
+
+    .glossary-search {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .glossary-search-input {
+      width: 100%;
+      padding: var(--space-md) var(--space-lg);
+      font-family: var(--font-body);
+      font-size: var(--text-lg);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: #fff;
+      color: var(--color-text);
+      transition: border-color var(--transition-fast);
+    }
+
+    .glossary-search-input:focus {
+      outline: none;
+      border-color: var(--color-accent);
+    }
+
+    .glossary-search-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .glossary-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .glossary-filter-pill {
+      padding: var(--space-xs) var(--space-md);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      border: 2px solid var(--color-border);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .glossary-filter-pill:hover {
+      border-color: var(--color-accent);
+      color: var(--color-text);
+    }
+
+    .glossary-filter-pill.active {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: #fff;
+    }
+
+    .glossary-category-heading {
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      color: var(--color-accent);
+      margin-top: var(--space-2xl);
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-sm);
+      border-bottom: 2px solid var(--color-border);
+    }
+
+    .glossary-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .glossary-card {
+      background: var(--color-card-bg);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+    }
+
+    .glossary-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .glossary-card.hidden {
+      display: none;
+    }
+
+    .glossary-card-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .glossary-term {
+      font-family: var(--font-heading);
+      font-size: var(--text-xl);
+      color: var(--color-text);
+      margin: 0;
+    }
+
+    .glossary-category-badge {
+      display: inline-block;
+      padding: 2px var(--space-sm);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: var(--radius-sm);
+      background: var(--ink);
+      color: var(--bone);
+      white-space: nowrap;
+    }
+
+    .glossary-definition {
+      font-size: var(--text-base);
+      line-height: 1.7;
+      color: var(--color-text);
+      margin-bottom: var(--space-sm);
+    }
+
+    .glossary-related {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-xs);
+    }
+
+    .glossary-related-label {
+      font-weight: 700;
+    }
+
+    .glossary-related a {
+      color: var(--color-link);
+      text-decoration: none;
+    }
+
+    .glossary-related a:hover {
+      text-decoration: underline;
+    }
+
+    .glossary-source {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .glossary-source a {
+      color: var(--color-link);
+      text-decoration: none;
+    }
+
+    .glossary-source a:hover {
+      text-decoration: underline;
+    }
+
+    .glossary-no-results {
+      display: none;
+      text-align: center;
+      padding: var(--space-3xl) var(--space-lg);
+      color: var(--color-text-muted);
+      font-size: var(--text-lg);
+    }
+
+    .glossary-no-results.visible {
+      display: block;
+    }
+
+    /* Pro Tips */
+    .pro-tips {
+      margin-top: var(--space-3xl);
+    }
+
+    .pro-tips .tip-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .pro-tips .tip-list li {
+      background: var(--color-card-bg);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--color-accent);
+      font-size: var(--text-base);
+      line-height: 1.6;
+    }
+
+    .pro-tips .tip-list li strong {
+      color: var(--color-accent);
+    }
+
+    @media (max-width: 640px) {
+      .glossary-card-header {
+        flex-direction: column;
+        gap: var(--space-xs);
+      }
+      .glossary-category-badge {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ HEADER / NAV ============ -->
+  <header class="guide-header">
+    <div class="header-content">
+      <h1 class="site-title">How the Sausage Gets Made</h1>
+      <p class="site-subtitle">A regular person's guide to the Arizona Legislature</p>
+    </div>
+    <nav class="guide-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="terminology.html" class="active">Terminology</a></li>
+        <li><a href="lifecycle.html">How a Bill Works</a></li>
+        <li><a href="ballot-referrals.html">Ballot Referrals</a></li>
+        <li><a href="initiatives.html">Citizen Initiatives</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <main class="guide-content">
+    <section class="hero">
+      <h2>The Dictionary</h2>
+      <p>Every confusing word the legislature uses, translated into English.</p>
+      <p>
+        The Arizona Legislature loves its jargon. COW, striker, sine die ... it sounds
+        like a different language. That's by design. Here's your cheat sheet.
+      </p>
+    </section>
+
+    <!-- ============ SEARCH & FILTER ============ -->
+    <section class="glossary-search">
+      <input
+        type="text"
+        class="glossary-search-input"
+        id="glossary-search"
+        placeholder="Search terms..."
+        autocomplete="off"
+      >
+      <div class="glossary-filters" id="glossary-filters">
+        <button class="glossary-filter-pill active" data-filter="all">All</button>
+        <button class="glossary-filter-pill" data-filter="process">Process</button>
+        <button class="glossary-filter-pill" data-filter="committees">Committees</button>
+        <button class="glossary-filter-pill" data-filter="voting">Voting</button>
+        <button class="glossary-filter-pill" data-filter="documents">Documents</button>
+        <button class="glossary-filter-pill" data-filter="people">People</button>
+        <button class="glossary-filter-pill" data-filter="calendar">Calendar</button>
+      </div>
+    </section>
+
+    <!-- ============ NO RESULTS MESSAGE ============ -->
+    <div class="glossary-no-results" id="glossary-no-results">
+      No terms match your search. Try a different keyword or clear the filter.
+    </div>
+
+    <!-- ============ GLOSSARY GRID ============ -->
+
+    <!-- ===== PROCESS TERMS ===== -->
+    <h2 class="glossary-category-heading" data-category-heading="process">Process</h2>
+    <div class="glossary-grid">
+
+      <div class="glossary-card" data-category="process" data-term="1st-read" id="term-1st-read">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">1st Read</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">When new bills are introduced and read into the record for the first time. In the House, bills get assigned to a committee right away. In the Senate, committee assignments wait until 2nd Read.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-2nd-read">2nd Read</a>, <a href="#term-introduced">Introduced</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="2nd-read" id="term-2nd-read">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">2nd Read</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The second time a bill is read on the floor. In the Senate, this is when committee assignments happen. Think of it as the bill officially entering the pipeline.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-1st-read">1st Read</a>, <a href="#term-3rd-read">3rd Read</a>, <a href="#term-assigned">Assigned</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="3rd-read" id="term-3rd-read">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">3rd Read</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The final reading ... this is the big vote. The entire chamber votes on the bill. If it passes, it moves to the other chamber (or to the governor if it already passed both).</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-committee-of-the-whole">Committee of the Whole</a>, <a href="#term-passed">Passed</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="assigned" id="term-assigned">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Assigned</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">A bill has been sent to a committee. This is where the committee chair decides if your bill lives or dies ... they can simply never schedule a hearing and the bill just disappears.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-standing-committee">Standing Committee</a>, <a href="#term-hearing">Hearing</a>, <a href="#term-held">Held</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="crossover-week" id="term-crossover-week">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Crossover Week</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The week when bills that passed one chamber on 3rd Read get submitted to the other chamber. It's like halftime in the legislative session. If your bill hasn't crossed over, its chances are slim.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-3rd-read">3rd Read</a>, <a href="#term-transmit-to-house-senate">Transmit to House/Senate</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="do-pass" id="term-do-pass">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Do Pass (DP)</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The committee voted to approve the bill as-is. Green light. The bill moves forward to the next step without any changes.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-do-pass-amended">Do Pass Amended</a>, <a href="#term-hearing">Hearing</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="do-pass-amended" id="term-do-pass-amended">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Do Pass Amended (DPA)</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The committee approved the bill, but they changed some things first. The bill moves forward with those amendments baked in.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-do-pass">Do Pass</a>, <a href="#term-do-pass-amended-se">Do Pass Amended/SE</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="do-pass-amended-se" id="term-do-pass-amended-se">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Do Pass Amended/SE (Strike Everything)</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The committee approved a completely rewritten version of the bill. The original text is gone ... replaced with something entirely new. This is the famous "striker." A bill about parks could become a bill about taxes. Welcome to Arizona.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-striker">Striker</a>, <a href="#term-do-pass-amended">Do Pass Amended</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="failed" id="term-failed">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Failed</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The bill didn't get enough votes to pass, either in committee or on the floor. Game over (usually). A motion to reconsider can sometimes bring it back, but don't hold your breath.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-motion-to-reconsider">Motion to Reconsider</a>, <a href="#term-passed">Passed</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="final-read" id="term-final-read">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Final Read</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">When the opposite chamber amends a bill, it comes back to the original chamber for one more vote on the amended version. Think of it as the last chance to approve or reject the changes the other side made.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-returned-to-original-chamber">Returned to Original Chamber</a>, <a href="#term-passed-amended">Passed Amended</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="hearing" id="term-hearing">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Hearing</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">A committee meeting where lawmakers discuss and vote on bills. Open to the public ... you can show up and testify. This is one of the best ways to make your voice heard.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-request-to-speak">Request to Speak</a>, <a href="#term-agenda">Agenda</a>, <a href="#term-standing-committee">Standing Committee</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="held" id="term-held">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Held</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">A bill on a committee agenda that the chair decided not to move forward. It just ... sits there. Not dead on paper, but not going anywhere either. Legislative limbo.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-assigned">Assigned</a>, <a href="#term-hearing">Hearing</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="introduced" id="term-introduced">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Introduced</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">A bill has been officially filed and read into the record. Also called "dropped in the hopper." This is day one of a bill's life. It exists now.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-1st-read">1st Read</a>, <a href="#term-prefiled">Prefiled</a>, <a href="#term-sponsor">Sponsor</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="motion-to-reconsider" id="term-motion-to-reconsider">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Motion to Reconsider</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">A do-over request. A lawmaker asks to re-examine a previous vote or committee action. It's a procedural tool to bring something back from the dead, but it requires enough votes to succeed.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-failed">Failed</a>, <a href="#term-3rd-read">3rd Read</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="passed" id="term-passed">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Passed</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The bill got enough votes. In the House, that's 31 out of 60. In the Senate, 16 out of 30. Simple majority wins. The bill moves on to the next stage.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-3rd-read">3rd Read</a>, <a href="#term-failed">Failed</a>, <a href="#term-transmit-to-governor">Transmit to Governor</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>, <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="passed-amended" id="term-passed-amended">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Passed Amended</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The bill passed, but with changes made during debate. It's still moving forward, but the version that passed isn't the same as the version that was introduced.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-passed">Passed</a>, <a href="#term-final-read">Final Read</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="prefiled" id="term-prefiled">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Prefiled</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">Bills introduced before the session officially starts. Lawmakers are planners sometimes. Prefiling lets them hit the ground running on day one.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-introduced">Introduced</a>, <a href="#term-regular-session">Regular Session</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="retained-on-calendar" id="term-retained-on-calendar">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Retained on Calendar</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">A motion to skip voting on a bill during COW and put it back on the calendar for later. Basically, "we're not ready to vote on this yet." It keeps the bill alive but kicks the can down the road.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-committee-of-the-whole">Committee of the Whole</a>, <a href="#term-calendar">Calendar</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="returned-to-original-chamber" id="term-returned-to-original-chamber">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Returned to Original Chamber</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">A bill passed both chambers but was amended by the second chamber. Now the first chamber has to approve those changes. If they don't like the amendments, it might go to a conference committee.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-final-read">Final Read</a>, <a href="#term-conference-committee">Conference Committee</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="signed" id="term-signed">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Signed</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The governor signed the bill. It's law now. Most laws take effect 90 days after the session ends, unless the bill has an emergency clause (which requires a 2/3 vote).</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-transmit-to-governor">Transmit to Governor</a>, <a href="#term-vetoed">Vetoed</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article V, Section 7</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="sine-die" id="term-sine-die">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Sine Die</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">Latin for "without a day." When the legislature officially closes up shop for the session. Everyone goes home. Any bills that didn't pass are dead ... they'd need to be reintroduced next session to try again.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-regular-session">Regular Session</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="striker" id="term-striker">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Striker (Strike Everything Amendment)</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">An amendment that deletes every word of the original bill and replaces it with completely new text. Often used to revive dead bills by hijacking a living bill's "vehicle." The Trojan Horse of Arizona politics. A bill about road signs could suddenly become a bill about election law. Pay attention to these.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-do-pass-amended-se">Do Pass Amended/SE</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="substitute-bill" id="term-substitute-bill">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Substitute Bill</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">A bill that replaces another bill with the same language in the other chamber. If the Senate passes SB1234 and the House has HB5678 with identical text, one becomes a substitute for the other. It's a procedural shortcut to avoid duplicating work.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-crossover-week">Crossover Week</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="transmit-to-governor" id="term-transmit-to-governor">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Transmit to Governor</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The bill passed both chambers and is on its way to the governor's desk. The finish line is in sight. The governor has 5 days to sign it, veto it, or let it become law without a signature.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-signed">Signed</a>, <a href="#term-vetoed">Vetoed</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article V, Section 7</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="transmit-to-house-senate" id="term-transmit-to-house-senate">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Transmit to House/Senate</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The bill passed one chamber and is being sent to the other chamber. Halfway there. The bill now starts the committee process all over again in the second chamber.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-crossover-week">Crossover Week</a>, <a href="#term-3rd-read">3rd Read</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="transmit-to-secretary-of-state" id="term-transmit-to-secretary-of-state">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Transmit to Secretary of State</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">For concurrent resolutions (ballot referrals) ... they skip the governor entirely and go straight to the Secretary of State to be placed on the ballot. The voters get the final say, not the governor.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-concurrent-resolution">Concurrent Resolution</a>, <a href="#term-referendum">Referendum</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="vetoed" id="term-vetoed">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Vetoed</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The governor said no. The bill is dead unless the legislature overrides with a 2/3 vote in each chamber (which almost never happens in Arizona). Governor Hobbs vetoed over 170 bills in the 2025 session alone.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-signed">Signed</a>, <a href="#term-transmit-to-governor">Transmit to Governor</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article V, Section 7</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="process" data-term="withdrawn" id="term-withdrawn">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">W/D (Withdrawn)</h3>
+          <span class="glossary-category-badge">Process</span>
+        </div>
+        <p class="glossary-definition">The sponsor pulled their own bill. Maybe they realized it was a bad idea, or maybe they're saving it for another day. Either way, the bill is voluntarily removed from consideration.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-sponsor">Sponsor</a>, <a href="#term-failed">Failed</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== COMMITTEE TERMS ===== -->
+    <h2 class="glossary-category-heading" data-category-heading="committees">Committees</h2>
+    <div class="glossary-grid">
+
+      <div class="glossary-card" data-category="committees" data-term="committee-of-the-whole" id="term-committee-of-the-whole">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Committee of the Whole (COW)</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">The entire chamber (all 60 House members or all 30 Senators) meets as one big committee. This is where floor amendments happen and bills get debated before the final vote. Think of it as the dress rehearsal before the real show.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-3rd-read">3rd Read</a>, <a href="#term-retained-on-calendar">Retained on Calendar</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="standing-committee" id="term-standing-committee">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Standing Committee</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">Permanent committees that handle specific policy areas ... Education, Judiciary, Appropriations, etc. Most bills live or die in these rooms. The committee chair has enormous power over what gets heard.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-assigned">Assigned</a>, <a href="#term-hearing">Hearing</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="interim-committee" id="term-interim-committee">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Interim Committee</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">Committees that meet between sessions to study issues. No voting power ... just research and recommendations. Think of them as study groups that report back when the legislature reconvenes.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-standing-committee">Standing Committee</a>, <a href="#term-sine-die">Sine Die</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="conference-committee" id="term-conference-committee">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Conference Committee</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">When the House and Senate pass different versions of the same bill, a small group from each chamber meets to work out the differences. Like couples therapy for lawmakers. The compromise they reach goes back to both chambers for a final vote.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-returned-to-original-chamber">Returned to Original Chamber</a>, <a href="#term-passed-amended">Passed Amended</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="rules-committee" id="term-rules-committee">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Rules Committee</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">Every bill must pass through Rules before it hits the floor. In the House it's called PFC (Proper for Consideration). In the Senate it's called C&amp;P (Constitution and Proper Form). They check that the bill is constitutional and formatted correctly.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-cp">C&amp;P</a>, <a href="#term-pfc">PFC</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="cp" id="term-cp">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">C&amp;P (Constitution and Proper Form)</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">The Senate Rules Committee review. Makes sure the bill doesn't violate the Arizona or U.S. Constitution and is properly formatted. It's a technical checkpoint, not a policy debate.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-rules-committee">Rules Committee</a>, <a href="#term-pfc">PFC</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="pfc" id="term-pfc">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">PFC (Proper for Consideration)</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">The House Rules Committee review. Same job as C&amp;P but on the House side. A bill can't go to the House floor without passing PFC first.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-rules-committee">Rules Committee</a>, <a href="#term-cp">C&amp;P</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="consent-calendar" id="term-consent-calendar">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Consent Calendar</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">A list of non-controversial bills that get voted on as a group. If no one objects, they all pass at once. It's the express lane. You'll see things like renaming a highway or updating a technical definition here.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-consent-calendar-objected">Consent Calendar Objected</a>, <a href="#term-calendar">Calendar</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="consent-calendar-objected" id="term-consent-calendar-objected">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Consent Calendar Objected</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">A committee member objected to a bill on the consent calendar, so it gets removed and has to go through the regular process. One objection is all it takes to bump a bill out of the express lane.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-consent-calendar">Consent Calendar</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="disc-only" id="term-disc-only">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Disc/Only (Discussion Only)</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">A bill is discussed in committee but no vote is taken. Sometimes used to feel out support before a real hearing. Think of it as a test run ... the sponsor wants to see how the committee reacts before putting it to a vote.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-hearing">Hearing</a>, <a href="#term-agenda">Agenda</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="agenda" id="term-agenda">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Agenda</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">The list of bills a committee plans to hear at a particular meeting. If your bill isn't on the agenda, it's not getting discussed. Committee chairs set the agenda, which gives them enormous power over what bills move forward.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-hearing">Hearing</a>, <a href="#term-standing-committee">Standing Committee</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="committees" data-term="calendar" id="term-calendar">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Calendar</h3>
+          <span class="glossary-category-badge">Committees</span>
+        </div>
+        <p class="glossary-definition">The schedule of upcoming COW debates and floor votes. If your bill makes it here, it's getting close to a vote. The calendar is set by leadership, so being on it means the party in charge is ready to move your bill.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-committee-of-the-whole">Committee of the Whole</a>, <a href="#term-3rd-read">3rd Read</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== VOTING TERMS ===== -->
+    <h2 class="glossary-category-heading" data-category-heading="voting">Voting</h2>
+    <div class="glossary-grid">
+
+      <div class="glossary-card" data-category="voting" data-term="request-to-speak" id="term-request-to-speak">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Request to Speak (RTS)</h3>
+          <span class="glossary-category-badge">Voting</span>
+        </div>
+        <p class="glossary-definition">An online system that lets any Arizonan register their support or opposition to a bill being heard in committee. You can even sign up to testify ... all from your phone. It's one of the most powerful civic tools in Arizona that most people don't know about.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-hearing">Hearing</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/requesttospeak/" target="_blank" rel="noopener">azleg.gov/requesttospeak</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="voting" data-term="caucus" id="term-caucus">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Caucus</h3>
+          <span class="glossary-category-badge">Voting</span>
+        </div>
+        <p class="glossary-definition">A closed-door meeting of the majority or minority party to discuss strategy and bills. No votes are taken, but this is where a lot of the real decisions get made. When you hear "they worked it out in caucus," it means the deal was done behind closed doors.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-majority-leaders">Majority Leaders</a>, <a href="#term-minority-leaders">Minority Leaders</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== DOCUMENT TERMS ===== -->
+    <h2 class="glossary-category-heading" data-category-heading="documents">Documents</h2>
+    <div class="glossary-grid">
+
+      <div class="glossary-card" data-category="documents" data-term="arizona-revised-statutes" id="term-arizona-revised-statutes">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Arizona Revised Statutes (ARS)</h3>
+          <span class="glossary-category-badge">Documents</span>
+        </div>
+        <p class="glossary-definition">The big book of Arizona law, organized by topic (called "titles"). When a bill is signed, it becomes part of the ARS. You'll see citations like "A.R.S. 13-1204" ... that's Title 13, Section 1204. You can look up any statute at azleg.gov.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-signed">Signed</a>, <a href="#term-bills-status-inquiry">Bills Status Inquiry</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/arstitle/" target="_blank" rel="noopener">azleg.gov/arstitle</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="documents" data-term="bills-status-inquiry" id="term-bills-status-inquiry">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Bills Status Inquiry (BTS)</h3>
+          <span class="glossary-category-badge">Documents</span>
+        </div>
+        <p class="glossary-definition">The online system on azleg.gov where you can track any bill's progress. Think of it as the bill's GPS tracker. You can see where it is in the process, who voted on it, what amendments were made, and when hearings are scheduled.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-arizona-revised-statutes">Arizona Revised Statutes</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/bills/" target="_blank" rel="noopener">azleg.gov/bills</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="documents" data-term="initiative" id="term-initiative">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Initiative</h3>
+          <span class="glossary-category-badge">Documents</span>
+        </div>
+        <p class="glossary-definition">A way for voters to propose new laws or constitutional amendments by gathering signatures. If enough people sign, it goes on the ballot. The legislature can't veto it ... and thanks to the Voter Protection Act, they can't easily change it after it passes, either.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-referendum">Referendum</a>, <a href="#term-concurrent-resolution">Concurrent Resolution</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article IV, Part 1</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="documents" data-term="referendum" id="term-referendum">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Referendum</h3>
+          <span class="glossary-category-badge">Documents</span>
+        </div>
+        <p class="glossary-definition">A way for voters to veto a law the legislature already passed. Gather enough signatures and the law gets put on hold until voters decide. It's the people's check on the legislature ... "we'll decide this one ourselves, thanks."</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-initiative">Initiative</a>, <a href="#term-transmit-to-secretary-of-state">Transmit to Secretary of State</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article IV, Part 1</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="documents" data-term="concurrent-resolution" id="term-concurrent-resolution">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Concurrent Resolution</h3>
+          <span class="glossary-category-badge">Documents</span>
+        </div>
+        <p class="glossary-definition">A resolution that must pass both the House and Senate. Used for things like ballot referrals, memorials to Congress, and internal rules. The governor cannot veto these ... they go directly to the Secretary of State or take effect on their own.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-transmit-to-secretary-of-state">Transmit to Secretary of State</a>, <a href="#term-referendum">Referendum</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== PEOPLE TERMS ===== -->
+    <h2 class="glossary-category-heading" data-category-heading="people">People</h2>
+    <div class="glossary-grid">
+
+      <div class="glossary-card" data-category="people" data-term="speaker" id="term-speaker">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Speaker</h3>
+          <span class="glossary-category-badge">People</span>
+        </div>
+        <p class="glossary-definition">The highest-ranking member of the House. Controls which bills get heard, assigns committee chairs, and runs floor proceedings. Arguably the most powerful person in the building. Elected by the House members at the start of each session.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-president">President</a>, <a href="#term-majority-leaders">Majority Leaders</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article IV, Part 2, Section 8</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="people" data-term="president" id="term-president">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">President</h3>
+          <span class="glossary-category-badge">People</span>
+        </div>
+        <p class="glossary-definition">The highest-ranking member of the Senate. Same power as the Speaker but on the Senate side. Sets the agenda, assigns committees, and controls the flow of legislation through the upper chamber.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-speaker">Speaker</a>, <a href="#term-majority-leaders">Majority Leaders</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article IV, Part 2, Section 8</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="people" data-term="majority-leaders" id="term-majority-leaders">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Majority Leaders</h3>
+          <span class="glossary-category-badge">People</span>
+        </div>
+        <p class="glossary-definition">The top lieutenants of the party in power. They wrangle votes, manage the floor schedule, and keep their members in line. When a close vote is coming, these are the people working the phones.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-minority-leaders">Minority Leaders</a>, <a href="#term-caucus">Caucus</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="people" data-term="minority-leaders" id="term-minority-leaders">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Minority Leaders</h3>
+          <span class="glossary-category-badge">People</span>
+        </div>
+        <p class="glossary-definition">The top members of the party NOT in power. They lead the opposition, negotiate with the majority, and try to block or amend bills they don't like. In a closely divided legislature, their leverage goes up significantly.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-majority-leaders">Majority Leaders</a>, <a href="#term-caucus">Caucus</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="people" data-term="sponsor" id="term-sponsor">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Sponsor</h3>
+          <span class="glossary-category-badge">People</span>
+        </div>
+        <p class="glossary-definition">The lawmaker who introduces a bill. Their name goes on it, and they're responsible for shepherding it through the process. Bills can also have co-sponsors who support it but aren't the primary driver.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-introduced">Introduced</a>, <a href="#term-withdrawn">W/D (Withdrawn)</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== CALENDAR TERMS ===== -->
+    <h2 class="glossary-category-heading" data-category-heading="calendar">Calendar</h2>
+    <div class="glossary-grid">
+
+      <div class="glossary-card" data-category="calendar" data-term="regular-session" id="term-regular-session">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Regular Session</h3>
+          <span class="glossary-category-badge">Calendar</span>
+        </div>
+        <p class="glossary-definition">The 100-day session prescribed by the Arizona Constitution. Starts on the second Monday in January. In practice, sessions often run longer ... sometimes much longer. Lawmakers get a per diem for the first 120 days, which was supposed to be an incentive to wrap up on time.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-sine-die">Sine Die</a>, <a href="#term-special-session">Special Session</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article IV, Part 2, Section 1</a>
+        </div>
+      </div>
+
+      <div class="glossary-card" data-category="calendar" data-term="special-session" id="term-special-session">
+        <div class="glossary-card-header">
+          <h3 class="glossary-term">Special Session</h3>
+          <span class="glossary-category-badge">Calendar</span>
+        </div>
+        <p class="glossary-definition">An emergency session called by the Governor to deal with a specific issue (like a pandemic or budget crisis). The legislature can only work on the topic the Governor specifies. No sneaking other bills in through the back door.</p>
+        <div class="glossary-related">
+          <span class="glossary-related-label">Related:</span>
+          <a href="#term-regular-session">Regular Session</a>
+        </div>
+        <div class="glossary-source">
+          <span>Source:</span> <a href="https://www.azleg.gov/constitution/" target="_blank" rel="noopener">Arizona Constitution, Article V, Section 4</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ PRO TIPS ============ -->
+    <section class="pro-tips">
+      <h2 class="section-heading">Pro Tips for Citizens</h2>
+      <ul class="tip-list">
+        <li>
+          <strong>Use RTS!</strong> It's free, it takes 2 minutes, and lawmakers actually read these. Sign up at
+          <a href="https://www.azleg.gov/requesttospeak/" target="_blank" rel="noopener">azleg.gov/requesttospeak</a>.
+        </li>
+        <li>
+          <strong>Committee chairs are the most powerful gatekeepers.</strong> If they don't schedule your bill for a hearing, it's dead. Knowing who your committee chairs are matters more than most people realize.
+        </li>
+        <li>
+          <strong>Watch for strikers.</strong> A bill about "road maintenance" might suddenly become about immigration. Always check what a bill actually says, not just its title.
+        </li>
+        <li>
+          <strong>azleg.gov is your best friend.</strong> Every bill, every vote, every committee hearing is recorded there. Bookmark it. Use it. Share it.
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="guide-footer">
+    <nav class="footer-links">
+      <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>
+      <a href="https://azsos.gov/" target="_blank" rel="noopener">azsos.gov</a>
+      <a href="https://cactus.watch" target="_blank" rel="noopener">Cactus Watch</a>
+      <a href="https://github.com/alexlogvin/az-civic-tools" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <p class="footer-tagline">Built with caffeine and civic rage in Phoenix, AZ.</p>
+    <p class="footer-attribution">
+      Facts sourced from the Arizona Constitution,
+      <a href="https://www.azleg.gov/" target="_blank" rel="noopener">azleg.gov</a>, and the
+      <a href="https://azsos.gov/" target="_blank" rel="noopener">AZ Secretary of State</a>.
+    </p>
+  </footer>
+
+  <!-- ============ SEARCH & FILTER SCRIPT ============ -->
+  <script>
+    (function () {
+      var searchInput = document.getElementById('glossary-search');
+      var filtersContainer = document.getElementById('glossary-filters');
+      var noResults = document.getElementById('glossary-no-results');
+      var cards = document.querySelectorAll('.glossary-card');
+      var categoryHeadings = document.querySelectorAll('.glossary-category-heading');
+      var pills = filtersContainer.querySelectorAll('.glossary-filter-pill');
+      var activeFilter = 'all';
+
+      function applyFilters() {
+        var query = searchInput.value.toLowerCase().trim();
+        var visibleCount = 0;
+
+        cards.forEach(function (card) {
+          var category = card.getAttribute('data-category');
+          var term = card.querySelector('.glossary-term').textContent.toLowerCase();
+          var definition = card.querySelector('.glossary-definition').textContent.toLowerCase();
+
+          var matchesCategory = activeFilter === 'all' || category === activeFilter;
+          var matchesSearch = !query || term.indexOf(query) !== -1 || definition.indexOf(query) !== -1;
+
+          if (matchesCategory && matchesSearch) {
+            card.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+
+        // Show/hide category headings based on whether they have visible cards
+        categoryHeadings.forEach(function (heading) {
+          var cat = heading.getAttribute('data-category-heading');
+          var grid = heading.nextElementSibling;
+          if (!grid) return;
+
+          var visibleCards = grid.querySelectorAll('.glossary-card:not(.hidden)');
+          heading.style.display = visibleCards.length > 0 ? '' : 'none';
+          grid.style.display = visibleCards.length > 0 ? '' : 'none';
+        });
+
+        // No results message
+        if (visibleCount === 0) {
+          noResults.classList.add('visible');
+        } else {
+          noResults.classList.remove('visible');
+        }
+      }
+
+      // Search input handler
+      searchInput.addEventListener('input', applyFilters);
+
+      // Filter pill click handler
+      pills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          pills.forEach(function (p) { p.classList.remove('active'); });
+          pill.classList.add('active');
+          activeFilter = pill.getAttribute('data-filter');
+          applyFilters();
+        });
+      });
+    })();
+  </script>
+
+  <script src="js/glossary.js"></script>
+</body>
+</html>

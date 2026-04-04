@@ -1,0 +1,380 @@
+[
+  {
+    "term": "1st Read",
+    "definition": "The first time a bill is formally read on the floor. In Arizona, this is basically just the bill's title being announced out loud. It's a constitutional requirement, not a debate — think of it as the bill saying 'hey, I exist now.'",
+    "category": "Process",
+    "related": ["2nd Read", "3rd Read", "Introduced"],
+    "source": "AZ Constitution Article IV, Part 2, §13"
+  },
+  {
+    "term": "2nd Read",
+    "definition": "The second formal reading of a bill. This usually happens after the bill has been assigned to committees and reported back. Still mostly procedural — the real action comes at 3rd Read.",
+    "category": "Process",
+    "related": ["1st Read", "3rd Read", "Committee of the Whole (COW)"],
+    "source": "AZ Constitution Article IV, Part 2, §13"
+  },
+  {
+    "term": "3rd Read",
+    "definition": "The third and final reading of a bill, where the full chamber votes on whether to pass it. This is the big one. If it passes 3rd Read, it moves to the other chamber (or to the Governor if both chambers have already approved it).",
+    "category": "Process",
+    "related": ["1st Read", "2nd Read", "Final Read", "Passed"],
+    "source": "AZ Constitution Article IV, Part 2, §13"
+  },
+  {
+    "term": "Assigned",
+    "definition": "When a bill gets sent to one or more committees for review. The Speaker (House) or President (Senate) decides which committees a bill goes to, and this choice can make or break a bill's chances. A tough assignment can quietly kill it.",
+    "category": "Process",
+    "related": ["Standing Committee", "Speaker", "President"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Crossover Week",
+    "definition": "The deadline (usually around mid-session) by which bills must pass their original chamber and 'cross over' to the other one. If your bill hasn't passed the House by crossover week, it's probably dead for the session. It creates a rush of floor votes right before the deadline.",
+    "category": "Process",
+    "related": ["Transmit to House/Senate", "Regular Session"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Do Pass (DP)",
+    "definition": "A committee recommendation that says 'we think this bill is good, pass it as-is.' When a committee votes Do Pass, the bill moves forward to the next step without any changes.",
+    "category": "Process",
+    "related": ["Do Pass Amended (DPA)", "Do Pass Amended with Strike Everything (DPA/SE)", "Standing Committee"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Do Pass Amended (DPA)",
+    "definition": "A committee recommendation that says 'we like this bill, but we made some changes first.' The committee approved amendments before sending it forward. The amended version is what moves ahead.",
+    "category": "Process",
+    "related": ["Do Pass (DP)", "Do Pass Amended with Strike Everything (DPA/SE)"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Do Pass Amended with Strike Everything (DPA/SE)",
+    "definition": "The committee gutted the original bill and replaced it with entirely new language, then recommended it pass. This is the 'striker' move — the bill number stays the same, but the content is completely different. It's a common and controversial tactic.",
+    "category": "Process",
+    "related": ["Striker (Strike Everything Amendment)", "Do Pass (DP)", "Do Pass Amended (DPA)"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Failed",
+    "definition": "The bill didn't get enough votes to pass, either in committee or on the floor. In Arizona, a bill needs a simple majority to pass (16 in the Senate, 31 in the House). Failed bills are usually done for the session unless someone files a Motion to Reconsider.",
+    "category": "Process",
+    "related": ["Motion to Reconsider", "Passed"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Final Read",
+    "definition": "The last opportunity for the full chamber to vote on a bill. Essentially the same as 3rd Read — it's the final up-or-down vote before the bill leaves that chamber.",
+    "category": "Process",
+    "related": ["3rd Read", "Passed"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Hearing",
+    "definition": "When a committee actually discusses a bill. This is where sponsors present their case, the public can testify (if allowed), and committee members ask questions. Not every assigned bill gets a hearing — the committee chair decides which bills get heard, and skipping a hearing is another quiet way to kill a bill.",
+    "category": "Process",
+    "related": ["Standing Committee", "Request to Speak (RTS)", "Agenda"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Held",
+    "definition": "When a committee chair decides not to schedule a bill for a hearing, effectively putting it on ice. The bill isn't officially dead, but it's not going anywhere either. This is one of the most common ways bills die — they just never get heard.",
+    "category": "Process",
+    "related": ["Hearing", "Standing Committee"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Introduced",
+    "definition": "When a bill is formally filed and given a number. This is the very first step in the process. Any legislator can introduce a bill, and it gets assigned a number like HB2001 (House Bill) or SB1001 (Senate Bill).",
+    "category": "Process",
+    "related": ["1st Read", "Prefiled", "Sponsor"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Motion to Reconsider",
+    "definition": "A request to re-vote on a bill that already passed or failed. Only someone who voted on the winning side can make this motion. It's relatively rare but can be used strategically — sometimes a legislator votes against their preference specifically to preserve the option to reconsider later.",
+    "category": "Process",
+    "related": ["Failed", "Passed"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Passed",
+    "definition": "The bill got enough votes to clear either a committee or the full chamber. In the full chamber, that means a simple majority (16 Senate, 31 House). Passing one chamber is a big milestone, but the bill still has to pass the other chamber and get signed by the Governor.",
+    "category": "Process",
+    "related": ["Failed", "Passed Amended", "3rd Read"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Passed Amended",
+    "definition": "The bill passed, but with changes made on the floor during debate. When a bill passes amended, the other chamber gets the modified version, not the original. If they don't like the amendments, it can end up in a Conference Committee.",
+    "category": "Process",
+    "related": ["Passed", "Conference Committee"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Prefiled",
+    "definition": "When a legislator submits a bill before the session officially starts. It's like getting in line early. Prefiled bills get numbers and are ready to go on day one, giving them a head start in the process.",
+    "category": "Process",
+    "related": ["Introduced", "Regular Session"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Retained on Calendar",
+    "definition": "When a bill stays on the daily calendar even though it wasn't voted on that day. Instead of falling off the schedule, it gets carried over to the next day. This keeps it alive and in the queue for a floor vote.",
+    "category": "Process",
+    "related": ["Calendar", "3rd Read"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Returned to Original Chamber",
+    "definition": "After the second chamber passes a bill (especially with amendments), it goes back to the chamber where it started. The original chamber then decides whether to accept the changes, reject them, or send the bill to a Conference Committee to hash out the differences.",
+    "category": "Process",
+    "related": ["Crossover Week", "Conference Committee", "Passed Amended"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Signed",
+    "definition": "The Governor has signed the bill into law. Once signed, the bill becomes an act and will take effect on a specific date (usually 90 days after the session ends, unless it has an emergency clause).",
+    "category": "Process",
+    "related": ["Transmit to Governor", "Vetoed"],
+    "source": "AZ Constitution Article V, §7"
+  },
+  {
+    "term": "Sine Die",
+    "definition": "Latin for 'without day' — it means the legislature has adjourned for good and the session is officially over. No more votes, no more hearings, everyone go home. Any bills that didn't make it through the full process are dead and would need to be reintroduced next session.",
+    "category": "Process",
+    "related": ["Regular Session", "Special Session"],
+    "source": "AZ Constitution Article IV, Part 2, §1"
+  },
+  {
+    "term": "Striker (Strike Everything Amendment)",
+    "definition": "An amendment that deletes the entire text of a bill and replaces it with something completely different. The bill keeps its number but becomes a totally new bill in disguise. This is used for all sorts of strategic reasons — sometimes to revive a dead idea, sometimes to bypass committee assignments. It's controversial because it can catch people off guard.",
+    "category": "Process",
+    "related": ["Do Pass Amended with Strike Everything (DPA/SE)", "Substitute Bill"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Substitute Bill",
+    "definition": "A new version of a bill that replaces the original, usually written by a committee. It's similar to a striker but done through the committee process rather than as a floor amendment. The committee essentially says 'we rewrote this from scratch.'",
+    "category": "Process",
+    "related": ["Striker (Strike Everything Amendment)", "Standing Committee"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Transmit to Governor",
+    "definition": "The bill has passed both chambers and is being sent to the Governor's desk. The Governor then has five days (Sundays excluded) to sign it, veto it, or do nothing. If they do nothing, it becomes law without a signature.",
+    "category": "Process",
+    "related": ["Signed", "Vetoed"],
+    "source": "AZ Constitution Article V, §7"
+  },
+  {
+    "term": "Transmit to House/Senate",
+    "definition": "The bill has passed one chamber and is being sent to the other one. This is the 'crossover' moment. The receiving chamber starts the process over — committee assignments, hearings, floor votes — the whole thing again.",
+    "category": "Process",
+    "related": ["Crossover Week", "Returned to Original Chamber"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Transmit to Secretary of State",
+    "definition": "After the Governor signs a bill (or it becomes law without signature), it gets sent to the Secretary of State to be officially recorded and assigned a chapter number. This is the final administrative step — it's officially on the books.",
+    "category": "Process",
+    "related": ["Signed", "Arizona Revised Statutes (ARS)"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Vetoed",
+    "definition": "The Governor rejected the bill. A veto can be overridden, but it takes a two-thirds vote in both chambers, which almost never happens in Arizona. When a bill is vetoed, the Governor usually issues a letter explaining why.",
+    "category": "Process",
+    "related": ["Signed", "Transmit to Governor"],
+    "source": "AZ Constitution Article V, §7"
+  },
+  {
+    "term": "W/D (Withdrawn)",
+    "definition": "The sponsor pulled the bill from consideration. This can happen at any point in the process. Sometimes a sponsor withdraws a bill because they know it won't pass, sometimes because they're reworking it, and sometimes as part of a deal.",
+    "category": "Process",
+    "related": ["Sponsor", "Introduced"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Committee of the Whole (COW)",
+    "definition": "When the entire chamber basically pretends to be one big committee so they can debate and amend bills more freely. The rules are looser in COW — members can speak more than once, amendments are easier to propose, and there's no formal roll call vote. It's where most of the real floor debate happens. After COW, the chamber goes back to regular session rules for the final vote.",
+    "category": "Committees",
+    "related": ["Standing Committee", "3rd Read"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Standing Committee",
+    "definition": "A permanent committee that exists every session to handle bills on a specific topic (like Education, Judiciary, or Appropriations). Members are assigned by leadership. This is where most of the real work on bills happens — hearings, amendments, and the first votes.",
+    "category": "Committees",
+    "related": ["Hearing", "Assigned", "Interim Committee"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Interim Committee",
+    "definition": "A temporary committee that meets between sessions to study a specific issue. They don't vote on bills — they research, hold hearings, and make recommendations for the next session. Think of it as the legislature doing its homework over the break.",
+    "category": "Committees",
+    "related": ["Standing Committee", "Regular Session"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Conference Committee",
+    "definition": "A temporary committee formed when the House and Senate pass different versions of the same bill and can't agree on the changes. Members from both chambers meet to negotiate a compromise version. If they reach a deal, both chambers vote on the compromise. If not, the bill dies.",
+    "category": "Committees",
+    "related": ["Returned to Original Chamber", "Passed Amended"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Rules Committee",
+    "definition": "A powerful committee that reviews bills before they go to the floor to make sure they're constitutional and follow proper legislative procedure. If Rules says a bill has problems, it can block the bill from getting a floor vote. It's one of the last gates a bill has to pass through.",
+    "category": "Committees",
+    "related": ["C&P (Constitution and Proper Form)", "PFC (Proper for Consideration)"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "C&P (Constitution and Proper Form)",
+    "definition": "A review to make sure a bill doesn't violate the Arizona or U.S. Constitution and is drafted correctly. This is done by legislative staff and the Rules Committee. Think of it as a legal spell-check — does this bill actually work as written?",
+    "category": "Committees",
+    "related": ["Rules Committee", "PFC (Proper for Consideration)"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "PFC (Proper for Consideration)",
+    "definition": "A check by the Rules Committee to make sure a bill followed all the right procedural steps before it hits the floor. Did it get the right hearings? Were notices given properly? It's the procedural checklist before a bill can get a floor vote.",
+    "category": "Committees",
+    "related": ["Rules Committee", "C&P (Constitution and Proper Form)"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Consent Calendar",
+    "definition": "A special list of non-controversial bills that the chamber votes on all at once without individual debate. If everyone agrees a bill is routine and uncontested, it goes on the consent calendar to save time. Any single member can object and pull a bill off the consent calendar for regular debate.",
+    "category": "Committees",
+    "related": ["Consent Calendar Objected", "Calendar"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Consent Calendar Objected",
+    "definition": "When a member objects to a bill being on the consent calendar, it gets pulled off and has to go through regular debate and a separate vote. It only takes one objection. This is sometimes used as a tactical move to slow things down or force a recorded vote.",
+    "category": "Committees",
+    "related": ["Consent Calendar", "Calendar"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Disc/Only",
+    "definition": "Short for 'Discussion Only.' When a bill is on the committee agenda as discussion only, the committee can talk about it but can't vote on it that day. It's basically a preview — the sponsor presents the bill and members ask questions, but action comes later (if at all).",
+    "category": "Committees",
+    "related": ["Hearing", "Agenda"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Agenda",
+    "definition": "The schedule of bills a committee will hear at its next meeting. The committee chair decides what goes on the agenda, which is a huge amount of power — if your bill never makes the agenda, it never gets heard. Agendas are posted in advance so the public knows what's coming up.",
+    "category": "Committees",
+    "related": ["Hearing", "Standing Committee", "Held"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Calendar",
+    "definition": "The schedule of bills that are ready for floor action in the full chamber. Once a bill clears its committees, it gets placed on the calendar for a vote. The calendar is set by leadership, so they control the timing of when bills actually get voted on.",
+    "category": "Committees",
+    "related": ["Consent Calendar", "Retained on Calendar", "Agenda"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Request to Speak (RTS)",
+    "definition": "Arizona's public comment system. Anyone can go to azleg.gov, create an account, and submit a position (for, against, or neutral) on any bill that has a hearing scheduled. Legislators actually see these, and a flood of RTS submissions can influence how they vote. It's one of the most powerful (and underused) tools regular people have.",
+    "category": "Voting",
+    "related": ["Hearing", "Standing Committee"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Caucus",
+    "definition": "When all the members of one party meet privately to discuss strategy, bills, and votes. Each party in each chamber has its own caucus. These meetings are closed to the public, and a lot of the real deal-making happens here before bills ever hit the floor.",
+    "category": "Voting",
+    "related": ["Majority Leaders", "Minority Leaders"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Arizona Revised Statutes (ARS)",
+    "definition": "The complete collection of all current Arizona laws, organized by title and section. When a bill passes and gets signed, it eventually becomes part of the ARS. When you see a citation like 'ARS §15-101,' that's pointing to a specific law in this collection.",
+    "category": "Documents",
+    "related": ["Signed", "Transmit to Secretary of State"],
+    "source": "ARS §1-101"
+  },
+  {
+    "term": "Bills Status Inquiry (BTS)",
+    "definition": "The online system on azleg.gov where you can look up the current status of any bill — where it is in the process, which committees it's been assigned to, how votes went, and the full text. It's your best friend for tracking legislation.",
+    "category": "Documents",
+    "related": ["Introduced", "Assigned"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Initiative",
+    "definition": "A way for regular citizens to propose new laws or constitutional amendments by collecting enough petition signatures to put a measure on the ballot. Arizona has a strong initiative tradition — voters have passed minimum wage increases, marijuana legalization, and redistricting reform this way. The legislature can't repeal voter-approved initiatives (thanks to the Voter Protection Act).",
+    "category": "Documents",
+    "related": ["Referendum"],
+    "source": "AZ Constitution Article IV, Part 1, §1"
+  },
+  {
+    "term": "Referendum",
+    "definition": "Two flavors here: a legislative referendum is when the legislature puts a question on the ballot for voters to decide (common for constitutional amendments). A popular referendum is when citizens collect signatures to challenge a law the legislature already passed, forcing a public vote on whether to keep it. Either way, the voters get the final say.",
+    "category": "Documents",
+    "related": ["Initiative"],
+    "source": "AZ Constitution Article IV, Part 1, §1"
+  },
+  {
+    "term": "Concurrent Resolution",
+    "definition": "A measure that must pass both the House and Senate but doesn't go to the Governor. These are used for things like proposing constitutional amendments (which go to the ballot), making memorials to Congress, or setting joint legislative rules. They express the will of both chambers without creating new law on their own.",
+    "category": "Documents",
+    "related": ["Initiative", "Referendum"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Speaker",
+    "definition": "The top dog in the House of Representatives. The Speaker is elected by House members at the start of each session and controls which committees bills go to, who chairs those committees, and what gets voted on. In Arizona's term-limited legislature, the Speaker has enormous power over what passes and what dies.",
+    "category": "People",
+    "related": ["President", "Majority Leaders", "Assigned"],
+    "source": "AZ Constitution Article IV, Part 2, §8"
+  },
+  {
+    "term": "President",
+    "definition": "The top leader in the Senate, equivalent to the Speaker in the House. The Senate President controls committee assignments, the floor calendar, and the general flow of legislation. Elected by Senate members at the start of each session.",
+    "category": "People",
+    "related": ["Speaker", "Majority Leaders", "Assigned"],
+    "source": "AZ Constitution Article IV, Part 2, §8"
+  },
+  {
+    "term": "Majority Leaders",
+    "definition": "The second-in-command for the party that holds the most seats in each chamber. They help the Speaker or President manage floor action, whip votes, and keep their caucus in line. Arizona has a Majority Leader and often a Majority Whip in each chamber.",
+    "category": "People",
+    "related": ["Minority Leaders", "Speaker", "President", "Caucus"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Minority Leaders",
+    "definition": "The top leaders of the party with fewer seats in each chamber. They advocate for their party's positions, try to influence debate, and organize opposition to bills they don't like. In a chamber where one party dominates, the Minority Leader's job is often about messaging and accountability rather than winning votes.",
+    "category": "People",
+    "related": ["Majority Leaders", "Caucus"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Sponsor",
+    "definition": "The legislator who introduces a bill and champions it through the process. The sponsor's name is on the bill, they present it in committee, and they're responsible for rounding up votes. Bills can also have co-sponsors who support it but aren't the primary driver. A bill's sponsor tells you a lot about its chances and intent.",
+    "category": "People",
+    "related": ["Introduced", "Hearing"],
+    "source": "azleg.gov"
+  },
+  {
+    "term": "Regular Session",
+    "definition": "The main annual session of the legislature, which starts on the second Monday of January each year. There's no fixed end date — it goes until the legislature finishes its work and adjourns sine die. In practice, sessions usually run from January through sometime in the spring or early summer, though they can drag into fall.",
+    "category": "Calendar",
+    "related": ["Special Session", "Sine Die"],
+    "source": "AZ Constitution Article IV, Part 2, §1"
+  },
+  {
+    "term": "Special Session",
+    "definition": "An extra session called by the Governor (or the legislature itself, with a two-thirds vote) to deal with a specific issue. The agenda is limited to whatever the Governor specifies in the proclamation. Special sessions can happen anytime and are usually reserved for emergencies or urgent matters that can't wait until the next regular session.",
+    "category": "Calendar",
+    "related": ["Regular Session", "Sine Die"],
+    "source": "AZ Constitution Article IV, Part 2, §1"
+  }
+]
