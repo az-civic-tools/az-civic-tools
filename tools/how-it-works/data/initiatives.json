@@ -1,0 +1,91 @@
+{
+  "elections": [
+    {
+      "year": 2024,
+      "label": "2024 General Election",
+      "initiatives": [
+        {
+          "prop": 139,
+          "title": "Right to Abortion",
+          "description": "Establishes fundamental right to abortion before fetal viability in AZ Constitution",
+          "type": "constitutional",
+          "result": "passed",
+          "yes_pct": 61.6,
+          "no_pct": 38.4,
+          "backers": "Arizona for Abortion Access coalition",
+          "signatures_gathered": null,
+          "signatures_required": 383923,
+          "blocked_by_court": false,
+          "notes": "Most expensive ballot measure campaign in AZ history"
+        },
+        {
+          "prop": 140,
+          "title": "Make Elections Fair Act",
+          "description": "Replaces partisan primaries with a single open primary where all candidates appear on one ballot regardless of party, top finishers advance to general election",
+          "type": "constitutional",
+          "result": "failed",
+          "yes_pct": 41.0,
+          "no_pct": 59.0,
+          "backers": "Make Elections Fair AZ / Chuck Coughlin",
+          "signatures_gathered": null,
+          "signatures_required": 383923,
+          "blocked_by_court": false,
+          "notes": "Legislature placed Prop 133 on the ballot specifically to block this measure"
+        }
+      ]
+    },
+    {
+      "year": 2022,
+      "label": "2022 General Election",
+      "initiatives": [
+        {
+          "prop": 209,
+          "title": "Predatory Debt Collection Protection Act",
+          "description": "Raises the property value exempt from creditor seizure and increases protected wages; caps medical debt interest at 3%",
+          "type": "statutory",
+          "result": "passed",
+          "yes_pct": 72.0,
+          "no_pct": 28.0,
+          "backers": "Healthcare Rising Arizona / SEIU",
+          "signatures_gathered": null,
+          "signatures_required": null,
+          "blocked_by_court": false,
+          "notes": null
+        },
+        {
+          "prop": 211,
+          "title": "Voters' Right to Know Act",
+          "description": "Requires disclosure of original sources of money for political ads and campaign spending over $5,000",
+          "type": "statutory",
+          "result": "passed",
+          "yes_pct": 72.0,
+          "no_pct": 28.0,
+          "backers": "Stop Dark Money coalition",
+          "signatures_gathered": null,
+          "signatures_required": null,
+          "blocked_by_court": false,
+          "notes": "Targeted dark money spending in Arizona elections"
+        }
+      ]
+    }
+  ],
+  "thresholds": {
+    "statutory": {
+      "pct": 10,
+      "description": "10% of votes cast for governor in most recent election"
+    },
+    "constitutional": {
+      "pct": 15,
+      "description": "15% of votes cast for governor in most recent election"
+    },
+    "2024_statutory": 255949,
+    "2024_constitutional": 383923,
+    "source": "ARS §19-102"
+  },
+  "summary": {
+    "total": 4,
+    "passed": 3,
+    "failed": 1,
+    "blocked": 0
+  }
+}
