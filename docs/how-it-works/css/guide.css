@@ -359,6 +359,7 @@ blockquote p:last-child {
   height: var(--nav-height);
 }
 
+.guide-nav ul,
 .guide-nav-inner {
   max-width: calc(var(--content-max) + var(--space-xl) * 2);
   margin: 0 auto;
@@ -370,8 +371,10 @@ blockquote p:last-child {
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  list-style: none;
 }
 
+.guide-nav ul::-webkit-scrollbar,
 .guide-nav-inner::-webkit-scrollbar {
   display: none;
 }
