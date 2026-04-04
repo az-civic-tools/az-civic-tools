@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Sync index.html from cactus-watch.html
         run: cp tools/bill-tracker/frontend/cactus-watch.html tools/bill-tracker/frontend/index.html
