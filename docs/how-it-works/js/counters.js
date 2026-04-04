@@ -129,43 +129,10 @@
     }
   }
 
-  // ── Scroll-reveal for cards, lifecycle steps, and hero counters ────────
-  function initScrollReveal() {
-    // Add js-animate class to enable CSS hidden-by-default
-    document.documentElement.classList.add('js-animate');
-
-    var revealTargets = document.querySelectorAll('.card, .lifecycle-step, .hero-counter');
-    if (!revealTargets.length || !('IntersectionObserver' in window)) {
-      // No observer support — show everything
-      for (var i = 0; i < revealTargets.length; i++) {
-        revealTargets[i].classList.add('is-visible');
-      }
-      return;
-    }
-
-    var revealObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: '0px 0px -40px 0px', threshold: 0.1 });
-
-    for (var j = 0; j < revealTargets.length; j++) {
-      revealObserver.observe(revealTargets[j]);
-    }
-  }
-
   // ── Initialize ─────────────────────────────────────────────────────────
-  function init() {
-    initObserver();
-    initScrollReveal();
-  }
-
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', initObserver);
   } else {
-    init();
+    initObserver();
   }
 })();

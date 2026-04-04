@@ -1317,33 +1317,7 @@ blockquote p:last-child {
   }
 }
 
-/* Animate cards on scroll (JS adds .is-visible) — visible by default for no-JS fallback */
-.card,
-.lifecycle-step,
-.hero-counter {
-  opacity: 1;
-  transform: none;
-}
-
-.js-animate .card,
-.js-animate .lifecycle-step,
-.js-animate .hero-counter {
-  opacity: 0;
-  transform: translateY(16px);
-}
-
-.js-animate .card.is-visible,
-.js-animate .lifecycle-step.is-visible,
-.js-animate .hero-counter.is-visible {
-  animation: slideIn 0.4s ease forwards;
-}
-
-/* Stagger children */
-.js-animate .hero-counters .hero-counter.is-visible:nth-child(1) { animation-delay: 0ms; }
-.js-animate .hero-counters .hero-counter.is-visible:nth-child(2) { animation-delay: 80ms; }
-.js-animate .hero-counters .hero-counter.is-visible:nth-child(3) { animation-delay: 160ms; }
-.js-animate .hero-counters .hero-counter.is-visible:nth-child(4) { animation-delay: 240ms; }
-.js-animate .hero-counters .hero-counter.is-visible:nth-child(5) { animation-delay: 320ms; }
+/* Cards, steps, and counters are always visible — no scroll-reveal animation */
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
