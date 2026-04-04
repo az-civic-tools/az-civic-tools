@@ -22,6 +22,7 @@ binding = "NOKINGS_IMAGES"
 bucket_name = "nokings-images"
 
 [limits]
+cpu_ms = 30000
 subrequests = 50000
 
 [vars]
