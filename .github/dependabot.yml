@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
+
+  # Central Worker (npm)
+  - package-ecosystem: "npm"
+    directory: "/tools/bill-tracker/workers/central"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"
+
+  # Auth Worker (npm)
+  - package-ecosystem: "npm"
+    directory: "/tools/auth"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore"

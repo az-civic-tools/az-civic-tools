@@ -1,0 +1,21 @@
+name: Deploy auth.cactus.watch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/auth/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Auth Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: tools/auth
+          command: deploy

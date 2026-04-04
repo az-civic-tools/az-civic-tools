@@ -1,0 +1,15 @@
+# Default owner for all files
+* @Logvin
+
+# Workers (auth and central API)
+tools/auth/ @Logvin
+tools/bill-tracker/workers/ @Logvin
+
+# Frontend
+tools/bill-tracker/frontend/ @Logvin
+
+# District Finder
+tools/district-finder/ @Logvin
+
+# CI/CD
+.github/ @Logvin

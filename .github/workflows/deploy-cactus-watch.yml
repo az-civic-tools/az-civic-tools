@@ -19,13 +19,13 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: cb42ef6355fdff56c319a847fa137f21
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy tools/bill-tracker/frontend --project-name=cactus-watch --branch=main --commit-dirty=true
 
       - name: Purge CDN cache
         run: |
           curl -s -X POST \
-            "https://api.cloudflare.com/client/v4/zones/dfc2bb1edf9fb1847988f6413a8ba8bf/purge_cache" \
+            "https://api.cloudflare.com/client/v4/zones/${{ vars.CLOUDFLARE_ZONE_ID_CACTUS_WATCH }}/purge_cache" \
             -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_CACHE_TOKEN }}" \
             -H "Content-Type: application/json" \
             --data '{"purge_everything": true}'

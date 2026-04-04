@@ -1,0 +1,22 @@
+name: Deploy cactus-watch-central
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/bill-tracker/workers/central/**"
+      - "tools/bill-tracker/shared/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Central Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: tools/bill-tracker/workers/central
+          command: deploy
