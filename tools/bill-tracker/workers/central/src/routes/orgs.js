@@ -18,6 +18,7 @@ export async function handleOrgs(request, env) {
   // Known org websites
   const ORG_WEBSITES = {
     CEBV: 'https://cebv.us',
+    LWVAZ: 'https://lwvaz.clubexpress.com',
     SecularAZ: 'https://secularaz.org',
     SOSAZ: 'https://sosarizona.org',
   };

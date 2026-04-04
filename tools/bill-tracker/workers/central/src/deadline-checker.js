@@ -113,6 +113,66 @@ export async function runDeadlineChecker(env) {
     if (crossoverDead > 0) console.log(`Deadline checker: ${crossoverDead} bills missed crossover deadline`);
   }
 
+  // --- 2b. Failed floor votes (past crossover deadline) ---
+  // Bills whose status shows passed_house/passed_senate because a THIRD reading
+  // FloorHeader exists, but the actual vote(s) all failed. The legislature can
+  // retain and revote, so we only mark dead after the crossover deadline passes.
+  if (today > deadlines.crossover_committee) {
+    const failedFloorResult = await env.DB.prepare(`
+      UPDATE bills SET
+        status = 'dead',
+        dead_reason = 'defeated',
+        deadline_dead_at = ?,
+        updated_at = ?
+      WHERE session_id = ?
+        AND status IN ('passed_house', 'passed_senate')
+        AND (dead_reason IS NULL OR dead_reason = '')
+        AND (deadline_dead_at IS NULL OR deadline_dead_at = '')
+        AND id IN (
+          SELECT b.id FROM bills b
+          JOIN votes v ON v.bill_id = b.id AND v.chamber = b.chamber
+          WHERE b.session_id = ?
+            AND b.status IN ('passed_house', 'passed_senate')
+          GROUP BY b.id
+          HAVING SUM(CASE WHEN v.result = 'Passed' OR v.result = 'Adopted' OR v.result = 'Passed Amended' THEN 1 ELSE 0 END) = 0
+        )
+    `).bind(now, now, sessionId, sessionId).run();
+
+    const failedFloorDead = failedFloorResult.meta?.changes || 0;
+    deadByReason.defeated_floor_vote = failedFloorDead;
+    totalMarkedDead += failedFloorDead;
+    if (failedFloorDead > 0) console.log(`Deadline checker: ${failedFloorDead} bills failed floor votes with no subsequent pass`);
+  }
+
+  // --- 2c. Crossover stalls (past crossover deadline) ---
+  // Bills that legitimately passed their origin chamber but stalled in the
+  // other chamber's committees — no COW or 3rd read in the crossover chamber.
+  if (today > deadlines.crossover_committee) {
+    const crossoverStallResult = await env.DB.prepare(`
+      UPDATE bills SET
+        status = 'dead',
+        dead_reason = 'missed_crossover_deadline',
+        deadline_dead_at = ?,
+        updated_at = ?
+      WHERE session_id = ?
+        AND ((chamber = 'H' AND status = 'passed_house') OR (chamber = 'S' AND status = 'passed_senate'))
+        AND (dead_reason IS NULL OR dead_reason = '')
+        AND (deadline_dead_at IS NULL OR deadline_dead_at = '')
+        AND (final_disposition IS NULL OR final_disposition = '' OR final_disposition = 'None')
+        AND NOT EXISTS (
+          SELECT 1 FROM floor_actions fa
+          WHERE fa.bill_id = bills.id
+          AND fa.chamber != bills.chamber
+          AND fa.action_type IN ('cow', '3rd_read')
+        )
+    `).bind(now, now, sessionId).run();
+
+    const crossoverStallDead = crossoverStallResult.meta?.changes || 0;
+    deadByReason.missed_crossover_stall = crossoverStallDead;
+    totalMarkedDead += crossoverStallDead;
+    if (crossoverStallDead > 0) console.log(`Deadline checker: ${crossoverStallDead} bills passed origin but stalled in crossover chamber`);
+  }
+
   // --- 3. Conference committee deadline ---
   if (today > deadlines.conference_committee) {
     const confResult = await env.DB.prepare(`

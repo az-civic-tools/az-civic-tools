@@ -21,6 +21,7 @@ export const DEAD_REASONS = {
   missed_crossover_deadline: 'Missed crossover committee deadline',
   missed_conference_deadline: 'Missed conference committee deadline',
   defeated: 'Defeated in committee or on the floor',
+  defeated_floor_vote: 'Failed floor vote with no subsequent pass',
   withdrawn: 'Withdrawn by sponsor',
   held: 'Held in committee',
   final_disposition: 'Marked dead by the legislature',
