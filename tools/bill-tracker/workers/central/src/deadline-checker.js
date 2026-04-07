@@ -92,9 +92,9 @@ export async function runDeadlineChecker(env) {
     // For now, we'll check bills with passed_committee status that haven't
     // progressed — these are likely stuck between chambers.
 
-    // Note: This is conservative. Bills with status 'passed_house' or 'passed_senate'
-    // may still be alive if they've been heard in the other chamber's committee.
-    // We only mark 'passed_committee' bills that haven't crossed over yet.
+    // Only kill 'passed_committee' bills that have NO activity in the crossover chamber.
+    // If a bill has committee actions or floor actions in the opposite chamber,
+    // it crossed over and is still alive.
     const crossoverResult = await env.DB.prepare(`
       UPDATE bills SET
         status = 'dead',
@@ -105,6 +105,16 @@ export async function runDeadlineChecker(env) {
         AND status = 'passed_committee'
         AND (dead_reason IS NULL OR dead_reason = '')
         AND (deadline_dead_at IS NULL OR deadline_dead_at = '')
+        AND NOT EXISTS (
+          SELECT 1 FROM committee_actions ca
+          WHERE ca.bill_id = bills.id
+          AND ca.chamber != bills.chamber
+        )
+        AND NOT EXISTS (
+          SELECT 1 FROM floor_actions fa
+          WHERE fa.bill_id = bills.id
+          AND fa.chamber != bills.chamber
+        )
     `).bind(now, now, sessionId).run();
 
     const crossoverDead = crossoverResult.meta?.changes || 0;
@@ -145,8 +155,10 @@ export async function runDeadlineChecker(env) {
   }
 
   // --- 2c. Crossover stalls (past crossover deadline) ---
-  // Bills that legitimately passed their origin chamber but stalled in the
-  // other chamber's committees — no COW or 3rd read in the crossover chamber.
+  // Bills that legitimately passed their origin chamber but have ZERO activity
+  // in the crossover chamber — no committee actions, no floor actions, no readings.
+  // A bill with ANY crossover-chamber activity (committee hearings, readings, caucus,
+  // consent calendar, etc.) is still alive and must not be marked dead here.
   if (today > deadlines.crossover_committee) {
     const crossoverStallResult = await env.DB.prepare(`
       UPDATE bills SET
@@ -163,7 +175,11 @@ export async function runDeadlineChecker(env) {
           SELECT 1 FROM floor_actions fa
           WHERE fa.bill_id = bills.id
           AND fa.chamber != bills.chamber
-          AND fa.action_type IN ('cow', '3rd_read')
+        )
+        AND NOT EXISTS (
+          SELECT 1 FROM committee_actions ca
+          WHERE ca.bill_id = bills.id
+          AND ca.chamber != bills.chamber
         )
     `).bind(now, now, sessionId).run();
 

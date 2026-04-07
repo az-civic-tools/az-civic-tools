@@ -18,7 +18,11 @@ import { SESSIONS } from '../shared/constants.js';
 import { deriveBillStatus, parseBillNumber } from '../shared/bill-utils.js';
 import { checkResurrection } from './deadline-checker.js';
 
-/** Bill prefixes to enumerate and their starting numbers */
+/**
+ * Bill prefixes to enumerate and their starting numbers.
+ * Each entry is one enumeration pass. Some prefixes have multiple passes
+ * to cover gaps in azleg numbering (House bills jump from ~2999 to 4001).
+ */
 export const BILL_PREFIXES = [
   { prefix: 'HB', body: 'H', start: 2001 },
   { prefix: 'SB', body: 'S', start: 1001 },
@@ -30,6 +34,14 @@ export const BILL_PREFIXES = [
   { prefix: 'SJR', body: 'S', start: 1001 },
   { prefix: 'HR', body: 'H', start: 2001 },
   { prefix: 'SR', body: 'S', start: 1001 },
+];
+
+/**
+ * Additional ranges for prefixes with numbering gaps.
+ * These run as separate enumeration passes after the main prefix scan.
+ */
+export const EXTRA_RANGES = [
+  { prefix: 'HB', body: 'H', start: 4001 },  // House bills 4000+ series
 ];
 
 /** Stop after this many consecutive misses per prefix */
@@ -147,6 +159,7 @@ export async function runScraper(env, options = {}) {
 /**
  * Run a full scrape of all bill prefixes.
  * Calls runScraper directly (avoids Worker self-fetch, which triggers error 1042).
+ * Also runs EXTRA_RANGES to cover numbering gaps (e.g. HB4001+).
  */
 export async function runFullScrape(env, sessionId) {
   const results = [];
@@ -161,6 +174,21 @@ export async function runFullScrape(env, sessionId) {
     } catch (err) {
       results.push({ prefix, error: err.message });
       console.error(`Failed prefix ${prefix}:`, err);
+    }
+  }
+
+  // Run extra ranges for prefixes with numbering gaps
+  for (const { prefix, start } of EXTRA_RANGES) {
+    const label = `${prefix}@${start}`;
+    console.log(`Starting extra range: ${label}`);
+
+    try {
+      const result = await runScraper(env, { prefix, sessionId, startAt: start });
+      results.push({ prefix: label, ...result });
+      console.log(`Extra range ${label}: ${result.billsFound || 0} bills`);
+    } catch (err) {
+      results.push({ prefix: label, error: err.message });
+      console.error(`Failed extra range ${label}:`, err);
     }
   }
 
@@ -505,7 +533,9 @@ async function processCommitteeActions(env, billDbId, bill) {
   for (const a of actions) {
     const committee = a.Committee || {};
     if (committee.CommitteeShortName === 'THIRD' || committee.CommitteeShortName === 'COW') continue;
-    const chamber = a.LegislativeBody || (bill.Number?.startsWith('H') ? 'H' : 'S');
+    // Committee.LegislativeBody is the reliable source for which chamber the
+    // committee belongs to. The action-level LegislativeBody is often null.
+    const chamber = a.Committee?.LegislativeBody || a.LegislativeBody || (bill.Number?.startsWith('H') ? 'H' : 'S');
 
     await env.DB.prepare(`
       INSERT INTO committee_actions (bill_id, committee_name, committee_short, chamber, action, ayes, nays, action_date)

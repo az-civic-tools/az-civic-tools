@@ -27,7 +27,7 @@ import { handleOrgs } from './routes/orgs.js';
 import { handleFeedback } from './routes/feedback.js';
 import { handleGetTracking, handleSaveTracking } from './routes/user-tracking.js';
 import { handleListImages, handleUploadImage, handleGetImage, handleEditImage, handleDeleteImage, handleListAdmins, handleAddAdmin, handleUpdateAdmin, handleDeleteAdmin, handleAdminCheck } from './routes/nokings.js';
-import { runScraper, BILL_PREFIXES } from './scraper.js';
+import { runScraper, BILL_PREFIXES, EXTRA_RANGES } from './scraper.js';
 import { runRtsScraper } from './rts-scraper.js';
 import { runOverviewScraper } from './overview-scraper.js';
 import { runDeadlineChecker } from './deadline-checker.js';
@@ -207,6 +207,17 @@ async function runScheduledScrape(env) {
       console.log(`Cron: ${prefix} done — ${result.billsFound} bills`);
     } catch (err) {
       console.error(`Cron: ${prefix} failed:`, err);
+    }
+  }
+
+  // Scrape extra ranges (e.g. HB4001+ for House bills past the numbering gap)
+  for (const { prefix, start } of EXTRA_RANGES) {
+    try {
+      console.log(`Cron: scraping ${prefix}@${start}...`);
+      const result = await runScraper(env, { prefix, startAt: start });
+      console.log(`Cron: ${prefix}@${start} done — ${result.billsFound} bills`);
+    } catch (err) {
+      console.error(`Cron: ${prefix}@${start} failed:`, err);
     }
   }
 
