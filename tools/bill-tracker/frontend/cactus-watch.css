@@ -215,6 +215,14 @@ a:hover { color: var(--bt-mesa-warm); }
   border-radius: var(--bt-radius);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
+.bt-meta-stat--clickable {
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.bt-meta-stat--clickable:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.35);
+}
 .bt-meta-stat-value {
   font-family: var(--bt-font-display);
   font-weight: 700;
@@ -1264,22 +1272,31 @@ a:hover { color: var(--bt-mesa-warm); }
   text-overflow: ellipsis;
 }
 
-/* Vetoed bills in org lists */
-.bt-org-list-bill--vetoed .bt-org-list-bill-number,
-.bt-org-list-bill--vetoed .bt-org-list-bill-desc {
+/* Inactive bills in org lists (dead or vetoed) */
+.bt-org-list-bill--inactive .bt-org-list-bill-number,
+.bt-org-list-bill--inactive .bt-org-list-bill-desc {
   text-decoration: line-through;
   opacity: 0.6;
 }
-.bt-org-list-bill-vetoed-badge {
+/* Status badges for org list bills */
+.bt-org-list-bill-status-badge {
   font-size: 9px;
   font-weight: 700;
   color: #fff;
-  background: var(--bt-red, #B91C1C);
   padding: 1px 5px;
   border-radius: 3px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   flex-shrink: 0;
+}
+.bt-org-list-bill-status-badge--vetoed {
+  background: var(--bt-status-vetoed, #9B2226);
+}
+.bt-org-list-bill-status-badge--dead {
+  background: var(--bt-status-dead, #6B5B4F);
+}
+.bt-org-list-bill-status-badge--signed {
+  background: var(--bt-status-signed, #1B4332);
 }
 
 /* Tracking header with label input */

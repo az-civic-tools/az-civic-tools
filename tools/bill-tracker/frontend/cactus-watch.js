@@ -768,11 +768,29 @@
     const vetoed = by_status?.vetoed || 0;
     const active = total - (signed + vetoed + (by_status?.dead || 0));
     el.innerHTML = `
-      <div class="bt-meta-stat"><span class="bt-meta-stat-value">${total.toLocaleString()}</span><span class="bt-meta-stat-label">Total Bills</span></div>
-      <div class="bt-meta-stat"><span class="bt-meta-stat-value">${active.toLocaleString()}</span><span class="bt-meta-stat-label">Active</span></div>
-      <div class="bt-meta-stat"><span class="bt-meta-stat-value">${signed}</span><span class="bt-meta-stat-label">Signed</span></div>
-      <div class="bt-meta-stat"><span class="bt-meta-stat-value">${vetoed}</span><span class="bt-meta-stat-label">Vetoed</span></div>
+      <div class="bt-meta-stat bt-meta-stat--clickable" data-filter-status=""><span class="bt-meta-stat-value">${total.toLocaleString()}</span><span class="bt-meta-stat-label">Total Bills</span></div>
+      <div class="bt-meta-stat bt-meta-stat--clickable" data-filter-status="__active__"><span class="bt-meta-stat-value">${active.toLocaleString()}</span><span class="bt-meta-stat-label">Active</span></div>
+      <div class="bt-meta-stat bt-meta-stat--clickable" data-filter-status="signed"><span class="bt-meta-stat-value">${signed}</span><span class="bt-meta-stat-label">Signed</span></div>
+      <div class="bt-meta-stat bt-meta-stat--clickable" data-filter-status="vetoed"><span class="bt-meta-stat-value">${vetoed}</span><span class="bt-meta-stat-label">Vetoed</span></div>
     `;
+
+    // Make meta stats clickable to filter
+    el.querySelectorAll('.bt-meta-stat--clickable').forEach(stat => {
+      stat.addEventListener('click', () => {
+        const filterValue = stat.dataset.filterStatus;
+        // Switch to Browse tab
+        document.querySelector('[data-tab="browse"]')?.click();
+        // Reset other filters
+        const chamberSelect = document.getElementById('bt-filter-chamber');
+        const typeSelect = document.getElementById('bt-filter-type');
+        const statusSelect = document.getElementById('bt-filter-status');
+        if (chamberSelect) chamberSelect.value = '';
+        if (typeSelect) typeSelect.value = '';
+        if (statusSelect) statusSelect.value = filterValue;
+        // Trigger the filter
+        statusSelect?.dispatchEvent(new Event('change'));
+      });
+    });
   }
 
   function updateListsBadge() {
@@ -2237,10 +2255,17 @@
               const posLabel = b.position === 'oppose' ? 'OPPOSE' : 'SUPPORT';
               const billTitle = b.short_title || b.description || '';
               const isVetoed = b.status === 'vetoed';
-              return `<div class="bt-org-list-bill ${isVetoed ? 'bt-org-list-bill--vetoed' : ''}" data-number="${esc(b.bill_number)}" style="cursor: pointer;">
+              const isDead = b.status === 'dead';
+              const isSigned = b.status === 'signed';
+              const isInactive = isVetoed || isDead;
+              const statusBadge = isVetoed ? '<span class="bt-org-list-bill-status-badge bt-org-list-bill-status-badge--vetoed">VETOED</span>'
+                : isSigned ? '<span class="bt-org-list-bill-status-badge bt-org-list-bill-status-badge--signed">SIGNED</span>'
+                : isDead ? '<span class="bt-org-list-bill-status-badge bt-org-list-bill-status-badge--dead">DEAD</span>'
+                : '';
+              return `<div class="bt-org-list-bill ${isInactive ? 'bt-org-list-bill--inactive' : ''}" data-number="${esc(b.bill_number)}" style="cursor: pointer;">
                 <span class="bt-org-list-bill-number">${esc(b.bill_number)}</span>
                 <span class="bt-hearing-org-rec ${posClass}" style="font-size: 10px;">${posLabel}</span>
-                ${isVetoed ? '<span class="bt-org-list-bill-vetoed-badge">VETOED</span>' : ''}
+                ${statusBadge}
                 <span class="bt-org-list-bill-desc">${esc(billTitle)}</span>
               </div>`;
             }).join('')}
