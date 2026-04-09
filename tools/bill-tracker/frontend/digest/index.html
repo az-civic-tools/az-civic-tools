@@ -247,6 +247,10 @@
         const s = await resp.json();
         if (!s) return '';
 
+        const rTotal = s.floor_votes.r_passed + s.floor_votes.r_failed;
+        const dTotal = s.floor_votes.d_passed + s.floor_votes.d_failed;
+        const allTotal = rTotal + dTotal;
+
         return `
           <div class="session-summary">
             <h2>Session To Date: ${s.session}</h2>
@@ -254,7 +258,7 @@
               <tr><th>Activity</th><th class="party-r">R-Sponsored</th><th class="party-d">D-Sponsored</th></tr>
               <tr><td>Bills introduced</td><td>${s.r_bills}</td><td>${s.d_bills}</td></tr>
               <tr><td>Floor votes</td><td>${s.floor_votes.r_passed} passed, ${s.floor_votes.r_failed} failed</td><td>${s.floor_votes.d_passed} passed, ${s.floor_votes.d_failed} failed</td></tr>
-              <tr><td>% of bills receiving a vote</td><td>${((s.floor_votes.r_passed + s.floor_votes.r_failed) / s.r_bills * 100).toFixed(1)}%</td><td>${((s.floor_votes.d_passed + s.floor_votes.d_failed) / s.d_bills * 100).toFixed(1)}%</td></tr>
+              <tr><td>Share of all floor votes</td><td>${allTotal ? (rTotal / allTotal * 100).toFixed(1) : 0}%</td><td>${allTotal ? (dTotal / allTotal * 100).toFixed(1) : 0}%</td></tr>
               <tr><td>Signed by Governor</td><td>${s.signed.r}</td><td>${s.signed.d}</td></tr>
               <tr><td>Vetoed by Governor</td><td>${s.vetoed.r}</td><td>${s.vetoed.d}</td></tr>
               <tr><td>Defeated on floor</td><td>${s.defeated.r}</td><td>${s.defeated.d}</td></tr>
