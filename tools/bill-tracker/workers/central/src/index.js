@@ -34,7 +34,7 @@ import { runRtsScraper } from './rts-scraper.js';
 import { runOverviewScraper } from './overview-scraper.js';
 import { runDeadlineChecker } from './deadline-checker.js';
 import { runGovernorChecker } from './governor-checker.js';
-import { runDailyDigest, listDigests, getDigest } from './digest.js';
+import { runDailyDigest, listDigests, getDigest, getSessionSummary } from './digest.js';
 import { checkRateLimit } from './rate-limit.js';
 
 const ALLOWED_ORIGINS = new Set([
@@ -112,6 +112,10 @@ export default {
         response = await handleSaveTracking(request, env);
       } else if (path === '/api/feedback' && request.method === 'POST') {
         response = await handleFeedback(request, env);
+      } else if (path === '/api/digests/summary' && request.method === 'GET') {
+        const summary = await getSessionSummary(env);
+        response = Response.json(summary);
+        cacheTtl = 600;
       } else if (path === '/api/digests' && request.method === 'GET') {
         const digests = await listDigests(env);
         response = Response.json(digests);

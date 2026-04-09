@@ -249,6 +249,58 @@ function capitalize(str) {
   return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 }
 
+/**
+ * Plain-English description of what happened to a bill recently.
+ */
+function whatChanged(bill) {
+  const action = (bill.last_action || '').toLowerCase();
+  const status = bill.status;
+
+  if (action.includes('committee of the whole')) return 'Debated by the full chamber in an informal session where amendments can be added.';
+  if (action.includes('third reading') || action.includes('3rd read')) return 'Received a formal floor vote.';
+  if (action.includes('transmitted to house')) return 'Passed the Senate and was sent to the House for consideration.';
+  if (action.includes('transmitted to senate')) return 'Passed the House and was sent to the Senate for consideration.';
+  if (action.includes('transmitted to governor')) return 'Passed both chambers and was sent to the Governor.';
+  if (action.includes('governor: signed')) return 'Signed into law by the Governor.';
+  if (action.includes('governor: vetoed')) return 'Rejected by the Governor.';
+  if (action.includes('rules: pfc')) return 'Cleared the Rules Committee and is eligible for a floor vote.';
+  if (action.includes('rules: c&p')) return 'Under review by the Rules Committee.';
+  if (action.includes(': dp')) return 'Passed committee with a recommendation to move forward.';
+  if (action.includes(': dpa')) return 'Passed committee with amendments and a recommendation to move forward.';
+  if (action.includes(': held')) return 'Held in committee without a vote.';
+  if (action.includes(': failed')) return 'Failed in committee.';
+  if (status === 'signed') return 'Signed into law.';
+  if (status === 'vetoed') return 'Vetoed by the Governor.';
+  if (status === 'dead') return 'Died without advancing.';
+  return `Latest action: ${bill.last_action || 'Unknown'}`;
+}
+
+/**
+ * Plain-English prediction of what happens next based on current status.
+ */
+function whatsNext(bill) {
+  const status = bill.status;
+  const action = (bill.last_action || '').toLowerCase();
+
+  if (status === 'signed') return 'This bill is now law. It takes effect 91 days after the session ends unless it has an emergency clause.';
+  if (status === 'vetoed') return 'Dead for this session unless the legislature overrides the veto (requires 2/3 vote in both chambers, which is rare).';
+  if (status === 'dead') return 'Dead for this session. Could be reintroduced next year.';
+  if (status === 'passed_both' || status === 'to_governor') return 'Waiting for the Governor to sign or veto. She has 10 days to act.';
+
+  if (action.includes('committee of the whole')) return 'Next up: formal floor vote (3rd read). Could happen any day.';
+  if (action.includes('rules: pfc')) return 'Cleared for a floor vote. Will go to Committee of the Whole, then 3rd read.';
+  if (action.includes('rules: c&p')) return 'Waiting on the Rules Committee to clear it for a floor vote.';
+  if (action.includes(': dp') || action.includes(': dpa')) return 'Passed committee. Next stop: Rules Committee, then floor vote.';
+
+  if (status === 'passed_house') return 'Now in the Senate. Needs to pass Senate committees and a Senate floor vote.';
+  if (status === 'passed_senate') return 'Now in the House. Needs to pass House committees and a House floor vote.';
+  if (status === 'on_floor') return 'On the floor, waiting for a vote.';
+  if (status === 'passed_committee') return 'Passed committee. Needs to clear Rules, then get a floor vote.';
+  if (status === 'in_committee') return 'Assigned to committee. Needs a committee hearing and vote to move forward.';
+
+  return 'Status unclear. Check the bill page for details.';
+}
+
 function isEmptyDigest(events) {
   return events.floorVotes.length === 0
     && events.governorActions.length === 0
@@ -320,6 +372,13 @@ function formatDigestMarkdown(events, since) {
   const rDefeated = events.deadBills.filter(b => b.sponsor_party === 'R').length;
   const dDefeated = events.deadBills.filter(b => b.sponsor_party === 'D').length;
 
+  const rOrgBills = new Set(events.orgBills.filter(b => b.sponsor_party === 'R').map(b => b.number)).size;
+  const dOrgBills = new Set(events.orgBills.filter(b => b.sponsor_party === 'D').map(b => b.number)).size;
+  const rStrikers = events.strikers.filter(s => s.sponsor_party === 'R').length;
+  const dStrikers = events.strikers.filter(s => s.sponsor_party === 'D').length;
+  const rCrossovers = events.crossovers.filter(c => c.sponsor_party === 'R').length;
+  const dCrossovers = events.crossovers.filter(c => c.sponsor_party === 'D').length;
+
   lines.push('## At a Glance');
   lines.push('');
   lines.push('| Activity | R-Sponsored | D-Sponsored |');
@@ -328,11 +387,9 @@ function formatDigestMarkdown(events, since) {
   lines.push(`| Governor signed | ${rGovSigned} | ${dGovSigned} |`);
   lines.push(`| Governor vetoed | ${rGovVetoed} | ${dGovVetoed} |`);
   lines.push(`| Defeated on floor | ${rDefeated} | ${dDefeated} |`);
-  lines.push(`| Crossover votes | ${events.crossovers.length} | |`);
-  lines.push(`| Advocacy-tracked bills | ${events.orgBills.length} with activity | |`);
-  if (events.strikers.length > 0) {
-    lines.push(`| New strikers detected | ${events.strikers.length} | |`);
-  }
+  lines.push(`| [Crossover votes](${WIKI_LINKS.crossovers}) | ${rCrossovers} bills had D crossovers | ${dCrossovers} bills had R crossovers |`);
+  lines.push(`| Advocacy-tracked bills | ${rOrgBills} with activity | ${dOrgBills} with activity |`);
+  lines.push(`| New strikers detected | ${rStrikers} | ${dStrikers} |`);
   lines.push('');
 
   // ── Democrat Sponsored Bills ──
@@ -507,13 +564,19 @@ function formatDigestMarkdown(events, since) {
       lines.push('');
       for (const b of uncoveredOrgBills) {
         const orgTags = b.orgs.map(o => `[${o.code}: ${capitalize(o.position)}](${o.source_url})`).join(' | ');
-        lines.push(`- **${billLink(b.number, b.azleg_url)}** -- ${b.short_title} (${b.sponsor}, ${b.sponsor_party}) | ${orgTags}`);
-        lines.push(`  Status: ${b.last_action || b.status}`);
+        lines.push(`### ${billLink(b.number, b.azleg_url)} -- ${b.short_title}`);
+        lines.push('');
+        lines.push(`**Sponsor:** ${b.sponsor} ${partyTag(b.sponsor_party)} | ${orgTags}`);
         if (b.org_description) {
-          lines.push(`  ${b.org_description}`);
+          lines.push('');
+          lines.push(`> ${b.org_description}`);
         }
+        lines.push('');
+        lines.push(`**What changed:** ${whatChanged(b)}`);
+        lines.push('');
+        lines.push(`**What's likely next:** ${whatsNext(b)}`);
+        lines.push('');
       }
-      lines.push('');
     }
   }
 
@@ -591,6 +654,87 @@ function markdownToHtml(md) {
       </div>
     </div>
   `;
+}
+
+// ─── Session-to-Date Summary ────────────────────────────────────────────────
+
+/**
+ * Public: session-to-date stats for the digest archive header.
+ */
+export async function getSessionSummary(env) {
+  const sessionRow = await env.DB.prepare(
+    'SELECT id FROM sessions WHERE session_id = ?'
+  ).bind(CURRENT_SESSION.id).first();
+  if (!sessionRow) return null;
+
+  const sid = sessionRow.id;
+
+  const [totals, floorVotes, govActions, crossoverData] = await Promise.all([
+    env.DB.prepare(`
+      SELECT
+        COUNT(*) as total_bills,
+        SUM(CASE WHEN sponsor_party = 'R' THEN 1 ELSE 0 END) as r_bills,
+        SUM(CASE WHEN sponsor_party = 'D' THEN 1 ELSE 0 END) as d_bills,
+        SUM(CASE WHEN status = 'signed' THEN 1 ELSE 0 END) as signed,
+        SUM(CASE WHEN status = 'vetoed' THEN 1 ELSE 0 END) as vetoed,
+        SUM(CASE WHEN status = 'dead' THEN 1 ELSE 0 END) as dead,
+        SUM(CASE WHEN has_striker = 1 THEN 1 ELSE 0 END) as strikers,
+        SUM(CASE WHEN status = 'signed' AND sponsor_party = 'R' THEN 1 ELSE 0 END) as r_signed,
+        SUM(CASE WHEN status = 'signed' AND sponsor_party = 'D' THEN 1 ELSE 0 END) as d_signed,
+        SUM(CASE WHEN status = 'vetoed' AND sponsor_party = 'R' THEN 1 ELSE 0 END) as r_vetoed,
+        SUM(CASE WHEN status = 'vetoed' AND sponsor_party = 'D' THEN 1 ELSE 0 END) as d_vetoed,
+        SUM(CASE WHEN dead_reason = 'defeated' AND sponsor_party = 'R' THEN 1 ELSE 0 END) as r_defeated,
+        SUM(CASE WHEN dead_reason = 'defeated' AND sponsor_party = 'D' THEN 1 ELSE 0 END) as d_defeated
+      FROM bills WHERE session_id = ?
+    `).bind(sid).first(),
+
+    env.DB.prepare(`
+      SELECT
+        COUNT(*) as total_votes,
+        SUM(CASE WHEN b.sponsor_party = 'R' AND v.result = 'Passed' THEN 1 ELSE 0 END) as r_passed,
+        SUM(CASE WHEN b.sponsor_party = 'R' AND v.result = 'Failed' THEN 1 ELSE 0 END) as r_failed,
+        SUM(CASE WHEN b.sponsor_party = 'D' AND v.result = 'Passed' THEN 1 ELSE 0 END) as d_passed,
+        SUM(CASE WHEN b.sponsor_party = 'D' AND v.result = 'Failed' THEN 1 ELSE 0 END) as d_failed
+      FROM votes v JOIN bills b ON b.id = v.bill_id
+      WHERE b.session_id = ?
+    `).bind(sid).first(),
+
+    env.DB.prepare(`
+      SELECT COUNT(*) as total
+      FROM bills WHERE session_id = ? AND governor_action IS NOT NULL AND governor_action != 'None'
+    `).bind(sid).first(),
+
+    env.DB.prepare(`
+      SELECT COUNT(DISTINCT v.bill_id) as crossover_bills
+      FROM votes v
+      JOIN bills b ON b.id = v.bill_id
+      JOIN vote_records vr ON vr.vote_id = v.id
+      WHERE b.session_id = ?
+        AND v.result IS NOT NULL
+        AND (
+          (b.sponsor_party = 'R' AND vr.party = 'D' AND vr.vote = 'Y')
+          OR (b.sponsor_party = 'D' AND vr.party = 'R' AND vr.vote = 'Y')
+        )
+    `).bind(sid).first(),
+  ]);
+
+  return {
+    session: CURRENT_SESSION.name,
+    total_bills: totals.total_bills,
+    r_bills: totals.r_bills,
+    d_bills: totals.d_bills,
+    floor_votes: {
+      r_passed: floorVotes.r_passed || 0,
+      r_failed: floorVotes.r_failed || 0,
+      d_passed: floorVotes.d_passed || 0,
+      d_failed: floorVotes.d_failed || 0,
+    },
+    signed: { r: totals.r_signed || 0, d: totals.d_signed || 0 },
+    vetoed: { r: totals.r_vetoed || 0, d: totals.d_vetoed || 0 },
+    defeated: { r: totals.r_defeated || 0, d: totals.d_defeated || 0 },
+    strikers: totals.strikers || 0,
+    crossover_bills: crossoverData.crossover_bills || 0,
+  };
 }
 
 // ─── Storage ────────────────────────────────────────────────────────────────

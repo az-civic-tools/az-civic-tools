@@ -153,22 +153,64 @@
     .loading { text-align: center; padding: 40px; color: var(--text-muted); }
     .error { text-align: center; padding: 40px; color: var(--r-color); }
 
+    .digest-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
     .copy-btn {
-      display: inline-block;
-      margin: 12px 0;
-      padding: 8px 16px;
+      padding: 6px 12px;
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       cursor: pointer;
       font-family: inherit;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
+      white-space: nowrap;
     }
 
     .copy-btn:hover { opacity: 0.9; }
     .copy-btn.copied { background: #2E7D32; }
+
+    .session-summary {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .session-summary h2 {
+      font-family: 'Fraunces', serif;
+      color: var(--accent);
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .session-summary table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .session-summary th {
+      text-align: left;
+      padding: 6px 12px;
+      border-bottom: 2px solid var(--accent);
+      font-weight: 700;
+    }
+
+    .session-summary td {
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .session-summary .party-r { color: var(--r-color); font-weight: 600; }
+    .session-summary .party-d { color: var(--d-color); font-weight: 600; }
 
     @media (max-width: 600px) {
       .digest-content { padding: 16px; }
@@ -199,17 +241,46 @@
       return params.get('id');
     }
 
+    async function loadSessionSummary() {
+      try {
+        const resp = await fetch(`${API}/api/digests/summary`);
+        const s = await resp.json();
+        if (!s) return '';
+
+        return `
+          <div class="session-summary">
+            <h2>Session To Date: ${s.session}</h2>
+            <table>
+              <tr><th>Activity</th><th class="party-r">R-Sponsored</th><th class="party-d">D-Sponsored</th></tr>
+              <tr><td>Bills introduced</td><td>${s.r_bills}</td><td>${s.d_bills}</td></tr>
+              <tr><td>Floor votes</td><td>${s.floor_votes.r_passed} passed, ${s.floor_votes.r_failed} failed</td><td>${s.floor_votes.d_passed} passed, ${s.floor_votes.d_failed} failed</td></tr>
+              <tr><td>Signed by Governor</td><td>${s.signed.r}</td><td>${s.signed.d}</td></tr>
+              <tr><td>Vetoed by Governor</td><td>${s.vetoed.r}</td><td>${s.vetoed.d}</td></tr>
+              <tr><td>Defeated on floor</td><td>${s.defeated.r}</td><td>${s.defeated.d}</td></tr>
+              <tr><td>Bills with crossover votes</td><td colspan="2">${s.crossover_bills}</td></tr>
+              <tr><td>Strike-everything amendments</td><td colspan="2">${s.strikers}</td></tr>
+            </table>
+          </div>
+        `;
+      } catch {
+        return '';
+      }
+    }
+
     async function loadList() {
       try {
-        const resp = await fetch(`${API}/api/digests`);
+        const [summaryHtml, resp] = await Promise.all([
+          loadSessionSummary(),
+          fetch(`${API}/api/digests`),
+        ]);
         const digests = await resp.json();
 
         if (!digests.length) {
-          app.innerHTML = '<p class="loading">No digests yet. The first one will be sent at 7 AM AZ time tomorrow.</p>';
+          app.innerHTML = summaryHtml + '<p class="loading">No digests yet. The first one will be sent at 7 AM AZ time tomorrow.</p>';
           return;
         }
 
-        let html = '<ul class="digest-list">';
+        let html = summaryHtml + '<ul class="digest-list">';
         for (const d of digests) {
           const date = new Date(d.sent_at);
           const label = date.toLocaleDateString('en-US', {
@@ -253,8 +324,13 @@
 
         app.innerHTML = `
           <a href="/digest/" class="back-link">&larr; All Digests</a>
-          <button class="copy-btn" id="copy-btn">Copy Markdown for Reddit</button>
-          <div class="digest-content">${html}</div>
+          <div class="digest-content">
+            <div class="digest-card-header">
+              <span></span>
+              <button class="copy-btn" id="copy-btn">Copy MD</button>
+            </div>
+            ${html}
+          </div>
           <textarea id="md-source" style="position:absolute;left:-9999px;" aria-hidden="true">${escHtml(md)}</textarea>
         `;
 
@@ -266,7 +342,7 @@
           ta.style.position = 'absolute';
           this.textContent = 'Copied!';
           this.classList.add('copied');
-          setTimeout(() => { this.textContent = 'Copy Markdown for Reddit'; this.classList.remove('copied'); }, 2000);
+          setTimeout(() => { this.textContent = 'Copy MD'; this.classList.remove('copied'); }, 2000);
         });
       } catch (err) {
         app.innerHTML = `<p class="error">${err.message}</p>`;
