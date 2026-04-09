@@ -9,9 +9,10 @@
  *   GET  /api/meta           — session info, last scrape, counts
  *   GET  /api/hearings        — all upcoming hearings with bill data
  *   GET  /api/rts/:number    — RTS agenda items + deep links for a bill
- *   POST /api/scrape         — trigger single-prefix scrape (auth required)
- *   POST /api/scrape/all     — trigger full scrape, all prefixes (auth required)
- *   POST /api/scrape/rts     — trigger RTS agenda scrape (auth required)
+ *   POST /api/scrape          — trigger single-prefix scrape (auth required)
+ *   POST /api/scrape/all      — trigger full scrape, all prefixes (auth required)
+ *   POST /api/scrape/rts      — trigger RTS agenda scrape (auth required)
+ *   POST /api/scrape/governor — re-check passed_both bills for governor actions
  *   GET  /api/nokings/images — list NoKings3 images grouped by city
  *   POST /api/nokings/images — upload image (admin only)
  *   GET  /api/nokings/image/:id    — serve image bytes
@@ -28,9 +29,12 @@ import { handleFeedback } from './routes/feedback.js';
 import { handleGetTracking, handleSaveTracking } from './routes/user-tracking.js';
 import { handleListImages, handleUploadImage, handleGetImage, handleEditImage, handleDeleteImage, handleListAdmins, handleAddAdmin, handleUpdateAdmin, handleDeleteAdmin, handleAdminCheck } from './routes/nokings.js';
 import { runScraper, BILL_PREFIXES, EXTRA_RANGES } from './scraper.js';
+import { runIncrementalScrape } from './incremental-scraper.js';
 import { runRtsScraper } from './rts-scraper.js';
 import { runOverviewScraper } from './overview-scraper.js';
 import { runDeadlineChecker } from './deadline-checker.js';
+import { runGovernorChecker } from './governor-checker.js';
+import { runDailyDigest, listDigests, getDigest } from './digest.js';
 import { checkRateLimit } from './rate-limit.js';
 
 const ALLOWED_ORIGINS = new Set([
@@ -108,6 +112,45 @@ export default {
         response = await handleSaveTracking(request, env);
       } else if (path === '/api/feedback' && request.method === 'POST') {
         response = await handleFeedback(request, env);
+      } else if (path === '/api/digests' && request.method === 'GET') {
+        const digests = await listDigests(env);
+        response = Response.json(digests);
+        cacheTtl = 300;
+      } else if (path.match(/^\/api\/digests\/\d+$/) && request.method === 'GET') {
+        const id = parseInt(path.split('/').pop(), 10);
+        const digest = await getDigest(env, id);
+        if (digest) {
+          response = Response.json(digest);
+          cacheTtl = 3600;
+        } else {
+          response = Response.json({ error: 'Digest not found' }, { status: 404 });
+        }
+      } else if (path === '/api/digest/preview' && request.method === 'GET') {
+        const url = new URL(request.url);
+        const since = url.searchParams.get('since') || undefined;
+        const result = await runDailyDigest(env, { preview: true, since });
+        response = new Response(result.markdown, {
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        });
+      } else if (path === '/api/digest/send' && request.method === 'POST') {
+        const url = new URL(request.url);
+        const since = url.searchParams.get('since') || undefined;
+        const result = await runDailyDigest(env, { since });
+        response = new Response(JSON.stringify(result), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } else if (path === '/api/scrape/incremental' && request.method === 'POST') {
+        const url = new URL(request.url);
+        const batch = parseInt(url.searchParams.get('batch') || '15', 10);
+        const result = await runIncrementalScrape(env, batch);
+        response = new Response(JSON.stringify(result), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } else if (path === '/api/scrape/governor' && request.method === 'POST') {
+        const result = await runGovernorChecker(env);
+        response = new Response(JSON.stringify(result), {
+          headers: { 'Content-Type': 'application/json' },
+        });
       } else if (path === '/api/scrape/deadlines' && request.method === 'POST') {
         response = await handleScrapeDeadlines(request, env);
       } else if (path === '/api/scrape/overviews' && request.method === 'POST') {
@@ -164,13 +207,24 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    // Route based on which cron fired: :00 = bills, :30 = RTS/overviews/deadlines
-    const minute = new Date(event.scheduledTime).getUTCMinutes();
-    if (minute >= 30) {
+    const scheduledTime = new Date(event.scheduledTime);
+    const hour = scheduledTime.getUTCHours();
+    const minute = scheduledTime.getUTCMinutes();
+
+    // Daily at 13:30 UTC (6:30 AM AZ): post-processing (RTS, overviews, deadlines, governor)
+    if (hour === 13 && minute === 30) {
       ctx.waitUntil(runScheduledPostProcess(env));
-    } else {
-      ctx.waitUntil(runScheduledScrape(env));
+      return;
     }
+
+    // Daily at 14:00 UTC (7:00 AM AZ): daily digest email
+    if (hour === 14 && minute === 0) {
+      ctx.waitUntil(runScheduledDigest(env));
+      return;
+    }
+
+    // Every 3 minutes: incremental bill scrape (15 bills per batch)
+    ctx.waitUntil(runScheduledIncrementalScrape(env));
   },
 };
 
@@ -185,11 +239,44 @@ const SESSION_WINDOW = {
 };
 
 /**
- * Cron-triggered scrape: run each prefix sequentially.
- * Skips scraping entirely outside the legislative session window.
+ * Cron (every 3 min) - Incremental bill scrape (15 bills per batch, oldest first).
+ * Replaces the full-enumeration cron which exceeded the 30s CPU limit.
+ * Cycles through all ~2,100 bills every ~7 hours.
  */
+async function runScheduledIncrementalScrape(env) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today < SESSION_WINDOW.start || today > SESSION_WINDOW.end) {
+    return;
+  }
+
+  try {
+    const result = await runIncrementalScrape(env);
+    console.log(`Cron: incremental scrape — ${result.checked} checked, ${result.updated} updated`);
+  } catch (err) {
+    console.error('Cron: incremental scrape failed:', err);
+  }
+}
+
 /**
- * Cron :00 — Scrape bill data from azleg API (all prefixes).
+ * Cron 14:00 UTC (7 AM AZ) - Daily digest email.
+ */
+async function runScheduledDigest(env) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today < SESSION_WINDOW.start || today > SESSION_WINDOW.end) {
+    return;
+  }
+
+  try {
+    const result = await runDailyDigest(env);
+    console.log(`Cron: digest — sent=${result.sent}, events=${JSON.stringify(result.events)}`);
+  } catch (err) {
+    console.error('Cron: digest failed:', err);
+  }
+}
+
+/**
+ * Full-enumeration scrape (all prefixes). Retained for manual use via /api/scrape/all.
+ * WARNING: This will exceed the 30s CPU limit on cron — use incremental scrape for cron.
  */
 async function runScheduledScrape(env) {
   const today = new Date().toISOString().slice(0, 10);
@@ -259,6 +346,14 @@ async function runScheduledPostProcess(env) {
     console.log(`Cron: deadline checker done — ${deadlineResult.billsMarkedDead} marked dead, ${deadlineResult.strikers} potential strikers`);
   } catch (err) {
     console.error('Cron: deadline checker failed:', err);
+  }
+
+  try {
+    console.log('Cron: checking governor actions...');
+    const govResult = await runGovernorChecker(env);
+    console.log(`Cron: governor checker done — ${govResult.checked} checked, ${govResult.signed} signed, ${govResult.vetoed} vetoed`);
+  } catch (err) {
+    console.error('Cron: governor checker failed:', err);
   }
 
   console.log('Cron :30 — post-processing complete');

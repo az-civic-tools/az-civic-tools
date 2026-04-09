@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Digest -- Cactus Watch</title>
+  <meta name="description" content="Daily summary of Arizona Legislature activity. Floor votes, governor actions, party-line crossovers, and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500;1,700&family=Nunito:wght@400;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FAF6F0;
+      --bg-card: #FFFFFF;
+      --text: #333333;
+      --text-muted: #8B7355;
+      --accent: #C1440E;
+      --border: #E5DDD4;
+      --r-color: #C41E3A;
+      --d-color: #1A5AAB;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .digest-header {
+      background: var(--accent);
+      color: white;
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .digest-header h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .digest-header p {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    .digest-header a {
+      color: white;
+      text-decoration: underline;
+    }
+
+    .digest-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Archive list */
+    .digest-list {
+      list-style: none;
+    }
+
+    .digest-list li {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+    }
+
+    .digest-list a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .digest-list a:hover {
+      text-decoration: underline;
+    }
+
+    .digest-list .digest-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .digest-list .digest-stats {
+      display: inline-flex;
+      gap: 12px;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .digest-list .digest-stats span {
+      background: var(--bg);
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    /* Single digest view */
+    .digest-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      margin-top: 16px;
+      font-family: 'Source Sans 3', sans-serif;
+      line-height: 1.7;
+    }
+
+    .digest-content h1 { font-family: 'Fraunces', serif; color: var(--accent); font-size: 24px; margin-bottom: 4px; }
+    .digest-content h2 { font-family: 'Fraunces', serif; color: var(--accent); font-size: 20px; margin: 24px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .digest-content h3 { color: #6B4E3D; font-size: 16px; margin: 16px 0 6px; }
+    .digest-content hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .digest-content a { color: var(--accent); }
+    .digest-content strong { font-weight: 700; }
+    .digest-content ul { margin: 8px 0; padding-left: 20px; }
+    .digest-content li { margin: 6px 0; }
+    .digest-content p { margin: 8px 0; }
+
+    .digest-content table {
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .digest-content th {
+      text-align: left;
+      padding: 6px 12px;
+      border-bottom: 2px solid var(--accent);
+      font-weight: 700;
+    }
+
+    .digest-content td {
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 16px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover { text-decoration: underline; }
+
+    .loading { text-align: center; padding: 40px; color: var(--text-muted); }
+    .error { text-align: center; padding: 40px; color: var(--r-color); }
+
+    .copy-btn {
+      display: inline-block;
+      margin: 12px 0;
+      padding: 8px 16px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .copy-btn:hover { opacity: 0.9; }
+    .copy-btn.copied { background: #2E7D32; }
+
+    @media (max-width: 600px) {
+      .digest-content { padding: 16px; }
+      .digest-header h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="digest-header">
+    <h1>Cactus Watch Daily Digest</h1>
+    <p>Daily summary of Arizona Legislature activity | <a href="/">Back to Bill Tracker</a></p>
+  </div>
+
+  <div class="digest-container" id="app">
+    <div class="loading">Loading...</div>
+  </div>
+
+  <script>
+    const API = window.location.hostname === 'localhost'
+      ? 'http://localhost:8787'
+      : 'https://cactus-watch-central.alex-logvin.workers.dev';
+
+    const app = document.getElementById('app');
+
+    function getDigestId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    async function loadList() {
+      try {
+        const resp = await fetch(`${API}/api/digests`);
+        const digests = await resp.json();
+
+        if (!digests.length) {
+          app.innerHTML = '<p class="loading">No digests yet. The first one will be sent at 7 AM AZ time tomorrow.</p>';
+          return;
+        }
+
+        let html = '<ul class="digest-list">';
+        for (const d of digests) {
+          const date = new Date(d.sent_at);
+          const label = date.toLocaleDateString('en-US', {
+            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+            timeZone: 'America/Phoenix'
+          });
+          let stats = '';
+          try {
+            const s = JSON.parse(d.events_summary);
+            const parts = [];
+            if (s.floorVotes) parts.push(`${s.floorVotes} floor votes`);
+            if (s.governorActions) parts.push(`${s.governorActions} governor actions`);
+            if (s.crossovers) parts.push(`${s.crossovers} crossovers`);
+            if (s.strikers) parts.push(`${s.strikers} strikers`);
+            stats = parts.map(p => `<span>${p}</span>`).join('');
+          } catch {}
+
+          html += `
+            <li>
+              <a href="?id=${d.id}">${label}</a>
+              <div class="digest-meta">Since ${new Date(d.since).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Phoenix' })}</div>
+              ${stats ? `<div class="digest-stats">${stats}</div>` : ''}
+            </li>
+          `;
+        }
+        html += '</ul>';
+        app.innerHTML = html;
+      } catch (err) {
+        app.innerHTML = `<p class="error">Failed to load digests: ${err.message}</p>`;
+      }
+    }
+
+    async function loadDigest(id) {
+      try {
+        const resp = await fetch(`${API}/api/digests/${id}`);
+        if (!resp.ok) throw new Error('Digest not found');
+        const digest = await resp.json();
+
+        const md = digest.markdown;
+        const html = renderMarkdown(md);
+
+        app.innerHTML = `
+          <a href="/digest/" class="back-link">&larr; All Digests</a>
+          <button class="copy-btn" id="copy-btn">Copy Markdown for Reddit</button>
+          <div class="digest-content">${html}</div>
+          <textarea id="md-source" style="position:absolute;left:-9999px;" aria-hidden="true">${escHtml(md)}</textarea>
+        `;
+
+        document.getElementById('copy-btn').addEventListener('click', function() {
+          const ta = document.getElementById('md-source');
+          ta.style.position = 'static';
+          ta.select();
+          document.execCommand('copy');
+          ta.style.position = 'absolute';
+          this.textContent = 'Copied!';
+          this.classList.add('copied');
+          setTimeout(() => { this.textContent = 'Copy Markdown for Reddit'; this.classList.remove('copied'); }, 2000);
+        });
+      } catch (err) {
+        app.innerHTML = `<p class="error">${err.message}</p>`;
+      }
+    }
+
+    function renderMarkdown(md) {
+      let html = md;
+
+      // Tables
+      html = html.replace(/\|([^\n]+)\|\n\|[-| ]+\|\n((?:\|[^\n]+\|\n?)+)/g, (match, header, body) => {
+        const headers = header.split('|').map(h => h.trim()).filter(Boolean);
+        const headerRow = headers.map(h => `<th>${h}</th>`).join('');
+        const rows = body.trim().split('\n').map(row => {
+          const cells = row.split('|').map(c => c.trim()).filter(Boolean);
+          return `<tr>${cells.map(c => `<td>${c}</td>`).join('')}</tr>`;
+        }).join('');
+        return `<table><tr>${headerRow}</tr>${rows}</table>`;
+      });
+
+      html = html
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^---$/gm, '<hr>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/^  (.+)$/gm, '<p style="margin-left:24px;font-size:13px;color:#8B7355;">$1</p>');
+
+      // Wrap <li> in <ul>
+      html = html.replace(/((?:<li>.*?<\/li>\s*)+)/g, '<ul>$1</ul>');
+
+      // Party colors
+      html = html
+        .replace(/\(R\)/g, '<span style="color:#C41E3A;font-weight:bold;">(R)</span>')
+        .replace(/\(D\)/g, '<span style="color:#1A5AAB;font-weight:bold;">(D)</span>');
+
+      // Clean up empty lines
+      html = html.replace(/\n{2,}/g, '\n');
+
+      return html;
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Route
+    const digestId = getDigestId();
+    if (digestId) {
+      loadDigest(digestId);
+    } else {
+      loadList();
+    }
+  </script>
+</body>
+</html>

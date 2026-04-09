@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS bills (
   original_short_title TEXT,
   has_striker INTEGER DEFAULT 0,
   striker_detail TEXT,
+  striker_detected_at TEXT,
   scraped_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   UNIQUE(session_id, number)
@@ -158,6 +159,16 @@ CREATE TABLE IF NOT EXISTS scrape_log (
   bills_updated INTEGER DEFAULT 0,
   errors TEXT,
   status TEXT DEFAULT 'running'
+);
+
+-- Daily digest archive
+CREATE TABLE IF NOT EXISTS digests (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  sent_at TEXT NOT NULL,
+  since TEXT NOT NULL,
+  markdown TEXT NOT NULL,
+  events_summary TEXT,
+  UNIQUE(sent_at)
 );
 
 -- Indexes for common queries

@@ -210,7 +210,7 @@ export async function runFullScrape(env, sessionId) {
  *   /Bill/?sessionId=X&billNumber=HB2008
  * which returns the bill object directly (not wrapped in ListItems).
  */
-async function fetchBill(sessionId, body, billNumber) {
+export async function fetchBill(sessionId, body, billNumber) {
   const url = `${AZLEG_API}/Bill/?sessionId=${sessionId}&billNumber=${billNumber}`;
   try {
     const resp = await fetch(url, {
@@ -331,7 +331,7 @@ async function fetchFloorVote(billId, actionId) {
 /**
  * Process a single bill — upsert into D1 with sponsors, committees, and votes.
  */
-async function processBill(env, dbSessionId, azlegSessionId, bill) {
+export async function processBill(env, dbSessionId, azlegSessionId, bill) {
   const number = (bill.Number || '').trim().toUpperCase();
   if (!number) return null;
 
@@ -436,12 +436,13 @@ async function processBill(env, dbSessionId, azlegSessionId, bill) {
     const { hasStriker, detail } = detectStriker(docGroups);
 
     await env.DB.prepare(
-      'UPDATE bills SET has_striker = ?, striker_detail = ?, updated_at = ? WHERE id = ?'
+      `UPDATE bills SET has_striker = ?, striker_detail = ?, updated_at = ?
+       ${hasStriker ? ', striker_detected_at = COALESCE(striker_detected_at, ?)' : ''}
+       WHERE id = ?`
     ).bind(
-      hasStriker ? 1 : 0,
-      detail ? JSON.stringify(detail) : null,
-      new Date().toISOString(),
-      billDbId
+      ...(hasStriker
+        ? [1, JSON.stringify(detail), new Date().toISOString(), new Date().toISOString(), billDbId]
+        : [0, null, new Date().toISOString(), billDbId])
     ).run();
 
     if (hasStriker) {
