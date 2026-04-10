@@ -182,10 +182,19 @@
       border-radius: 8px;
       padding: 24px;
       margin-bottom: 24px;
+    }
+
+    .digest-archive-layout {
       display: grid;
-      grid-template-columns: 1fr 220px;
+      grid-template-columns: 1fr 240px;
       gap: 24px;
       align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .digest-archive-layout {
+        grid-template-columns: 1fr;
+      }
     }
 
     .session-summary h2 {
@@ -201,17 +210,18 @@
       font-size: 14px;
     }
 
-    .session-summary .summary-callout {
-      background: var(--bg);
+    .summary-callout {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-left: 3px solid var(--accent);
-      padding: 14px 16px;
+      padding: 16px 18px;
       border-radius: 4px;
       font-size: 13px;
       line-height: 1.5;
       color: var(--text-muted);
     }
 
-    .session-summary .summary-callout strong {
+    .summary-callout strong {
       color: var(--accent);
       font-family: 'Fraunces', serif;
       font-size: 14px;
@@ -219,16 +229,10 @@
       margin-bottom: 6px;
     }
 
-    .session-summary .summary-callout .next-update {
+    .summary-callout .next-update {
       margin-top: 12px;
       padding-top: 12px;
       border-top: 1px solid var(--border);
-    }
-
-    @media (max-width: 700px) {
-      .session-summary {
-        grid-template-columns: 1fr;
-      }
     }
 
     .session-summary th {
@@ -301,9 +305,8 @@
           }
         }
 
-        return `
+        const tableHtml = `
           <div class="session-summary">
-            <div>
             <h2>Session To Date: ${s.session}</h2>
             <table>
               <tr><th>Activity</th><th class="party-r">R-Sponsored</th><th class="party-d">D-Sponsored</th></tr>
@@ -316,19 +319,23 @@
               <tr><td>Bills with crossover votes</td><td>${s.crossover_bills}</td><td>0</td></tr>
               <tr><td>Strike-everything amendments</td><td>${s.strikers}</td><td>0</td></tr>
             </table>
-            </div>
-            <aside class="summary-callout">
-              <strong>About this view</strong>
-              The table to the left covers the entire 57th Legislature, 2nd Regular Session through today.
-              <div class="next-update">
-                <strong>Latest digest</strong>
-                Sent ${lastUpdateText}. Daily digests below cover only what changed since the previous edition.
-              </div>
-            </aside>
           </div>
         `;
+
+        const calloutHtml = `
+          <aside class="summary-callout">
+            <strong>About the digest</strong>
+            The table above covers the entire 57th Legislature, 2nd Regular Session through today.
+            <div class="next-update">
+              <strong>Latest digest</strong>
+              Sent ${lastUpdateText}. Each daily digest below covers only what changed since the previous edition.
+            </div>
+          </aside>
+        `;
+
+        return { tableHtml, calloutHtml };
       } catch {
-        return '';
+        return { tableHtml: '', calloutHtml: '' };
       }
     }
 
@@ -336,14 +343,14 @@
       try {
         const resp = await fetch(`${API}/api/digests`);
         const digests = await resp.json();
-        const summaryHtml = await loadSessionSummary(digests[0]);
+        const { tableHtml, calloutHtml } = await loadSessionSummary(digests[0]);
 
         if (!digests.length) {
-          app.innerHTML = summaryHtml + '<p class="loading">No digests yet. The first one will be sent at 7 AM AZ time tomorrow.</p>';
+          app.innerHTML = tableHtml + '<p class="loading">No digests yet. The first one will be sent at 7 AM AZ time tomorrow.</p>';
           return;
         }
 
-        let html = summaryHtml + '<ul class="digest-list">';
+        let listHtml = '<ul class="digest-list">';
         for (const d of digests) {
           const date = new Date(d.sent_at);
           const label = date.toLocaleDateString('en-US', {
@@ -361,7 +368,7 @@
             stats = parts.map(p => `<span>${p}</span>`).join('');
           } catch {}
 
-          html += `
+          listHtml += `
             <li>
               <a href="?id=${d.id}">${label}</a>
               <div class="digest-meta">Since ${new Date(d.since).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Phoenix' })}</div>
@@ -369,8 +376,8 @@
             </li>
           `;
         }
-        html += '</ul>';
-        app.innerHTML = html;
+        listHtml += '</ul>';
+        app.innerHTML = tableHtml + `<div class="digest-archive-layout"><div>${listHtml}</div>${calloutHtml}</div>`;
       } catch (err) {
         app.innerHTML = `<p class="error">Failed to load digests: ${err.message}</p>`;
       }
