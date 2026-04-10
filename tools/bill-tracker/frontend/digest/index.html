@@ -182,6 +182,10 @@
       border-radius: 8px;
       padding: 24px;
       margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 24px;
+      align-items: start;
     }
 
     .session-summary h2 {
@@ -195,6 +199,36 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
+    }
+
+    .session-summary .summary-callout {
+      background: var(--bg);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .session-summary .summary-callout strong {
+      color: var(--accent);
+      font-family: 'Fraunces', serif;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .session-summary .summary-callout .next-update {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 700px) {
+      .session-summary {
+        grid-template-columns: 1fr;
+      }
     }
 
     .session-summary th {
@@ -241,7 +275,7 @@
       return params.get('id');
     }
 
-    async function loadSessionSummary() {
+    async function loadSessionSummary(latestDigest) {
       try {
         const resp = await fetch(`${API}/api/digests/summary`);
         const s = await resp.json();
@@ -251,8 +285,25 @@
         const dTotal = s.floor_votes.d_passed + s.floor_votes.d_failed;
         const allTotal = rTotal + dTotal;
 
+        let lastUpdateText = 'No digests sent yet.';
+        if (latestDigest) {
+          const sentAt = new Date(latestDigest.sent_at);
+          const diffMs = Date.now() - sentAt.getTime();
+          const hours = Math.floor(diffMs / (1000 * 60 * 60));
+          const days = Math.floor(hours / 24);
+          if (days >= 1) {
+            lastUpdateText = `${days} day${days === 1 ? '' : 's'} ago`;
+          } else if (hours >= 1) {
+            lastUpdateText = `${hours} hour${hours === 1 ? '' : 's'} ago`;
+          } else {
+            const mins = Math.floor(diffMs / (1000 * 60));
+            lastUpdateText = `${mins} minute${mins === 1 ? '' : 's'} ago`;
+          }
+        }
+
         return `
           <div class="session-summary">
+            <div>
             <h2>Session To Date: ${s.session}</h2>
             <table>
               <tr><th>Activity</th><th class="party-r">R-Sponsored</th><th class="party-d">D-Sponsored</th></tr>
@@ -265,6 +316,15 @@
               <tr><td>Bills with crossover votes</td><td>${s.crossover_bills}</td><td>0</td></tr>
               <tr><td>Strike-everything amendments</td><td>${s.strikers}</td><td>0</td></tr>
             </table>
+            </div>
+            <aside class="summary-callout">
+              <strong>About this view</strong>
+              The table to the left covers the entire 57th Legislature, 2nd Regular Session through today.
+              <div class="next-update">
+                <strong>Latest digest</strong>
+                Sent ${lastUpdateText}. Daily digests below cover only what changed since the previous edition.
+              </div>
+            </aside>
           </div>
         `;
       } catch {
@@ -274,11 +334,9 @@
 
     async function loadList() {
       try {
-        const [summaryHtml, resp] = await Promise.all([
-          loadSessionSummary(),
-          fetch(`${API}/api/digests`),
-        ]);
+        const resp = await fetch(`${API}/api/digests`);
         const digests = await resp.json();
+        const summaryHtml = await loadSessionSummary(digests[0]);
 
         if (!digests.length) {
           app.innerHTML = summaryHtml + '<p class="loading">No digests yet. The first one will be sent at 7 AM AZ time tomorrow.</p>';
