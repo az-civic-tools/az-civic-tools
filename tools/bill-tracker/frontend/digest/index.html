@@ -99,6 +99,12 @@
       border: 1px solid var(--border);
     }
 
+    .digest-list .digest-stats .quiet {
+      color: var(--text-muted);
+      font-style: italic;
+      background: transparent;
+    }
+
     /* Single digest view */
     .digest-content {
       background: var(--bg-card);
@@ -365,7 +371,11 @@
             if (s.governorActions) parts.push(`${s.governorActions} governor actions`);
             if (s.crossovers) parts.push(`${s.crossovers} crossovers`);
             if (s.strikers) parts.push(`${s.strikers} strikers`);
-            stats = parts.map(p => `<span>${p}</span>`).join('');
+            if (parts.length === 0) {
+              stats = '<span class="quiet">No actions found</span>';
+            } else {
+              stats = parts.map(p => `<span>${p}</span>`).join('');
+            }
           } catch {}
 
           listHtml += `
