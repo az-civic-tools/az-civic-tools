@@ -348,20 +348,25 @@ async function runScheduledPostProcess(env) {
     console.error('Cron: overview scrape failed:', err);
   }
 
-  try {
-    console.log('Cron: running deadline checker...');
-    const deadlineResult = await runDeadlineChecker(env);
-    console.log(`Cron: deadline checker done — ${deadlineResult.billsMarkedDead} marked dead, ${deadlineResult.strikers} potential strikers`);
-  } catch (err) {
-    console.error('Cron: deadline checker failed:', err);
-  }
-
+  // Governor checker runs BEFORE the deadline checker: resolve any sign/veto
+  // actions first, so the deadline checker's pocket-veto sweep only ever marks
+  // bills the Governor genuinely left unacted. (Order matters — once a bill is
+  // marked dead, resurrection is disabled post-sine-die, so a late-caught
+  // signature on an already-swept bill would otherwise be lost.)
   try {
     console.log('Cron: checking governor actions...');
     const govResult = await runGovernorChecker(env);
     console.log(`Cron: governor checker done — ${govResult.checked} checked, ${govResult.signed} signed, ${govResult.vetoed} vetoed`);
   } catch (err) {
     console.error('Cron: governor checker failed:', err);
+  }
+
+  try {
+    console.log('Cron: running deadline checker...');
+    const deadlineResult = await runDeadlineChecker(env);
+    console.log(`Cron: deadline checker done — ${deadlineResult.billsMarkedDead} marked dead, ${deadlineResult.strikers} potential strikers`);
+  } catch (err) {
+    console.error('Cron: deadline checker failed:', err);
   }
 
   try {
