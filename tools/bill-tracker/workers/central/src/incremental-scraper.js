@@ -107,5 +107,45 @@ export async function runIncrementalScrape(env, batchSize = DEFAULT_BATCH_SIZE) 
 
   const result = { checked: bills.length, updated, skipped, errors };
   console.log(`Incremental scraper complete:`, JSON.stringify({ ...result, errors: errors.length }));
+
+  await writeHeartbeat(env, result, now);
+
   return result;
+}
+
+/**
+ * Record a scraper heartbeat so /api/meta's `last_scrape` reflects the live
+ * incremental cron (which otherwise never writes to scrape_log), and self-heal
+ * any row left stuck in 'running' by a crashed full scrape.
+ *
+ * Keeps a single 'ok' heartbeat row per session, updated in place each run, so
+ * the table doesn't grow by ~480 rows/day.
+ */
+async function writeHeartbeat(env, result, now) {
+  const logSessionId = CURRENT_SESSION.id; // scrape_log keys on the azleg session id
+
+  try {
+    // Mark any scrape that's been 'running' for over 30 minutes as stalled —
+    // a full scrape that crashed mid-run leaves a perpetual "running" row that
+    // makes the scraper look dead in /api/meta.
+    await env.DB.prepare(
+      `UPDATE scrape_log SET status = 'stalled', completed_at = ?
+       WHERE status = 'running' AND started_at < datetime('now', '-30 minutes')`
+    ).bind(now).run();
+
+    // Upsert the single heartbeat row for this session.
+    const upd = await env.DB.prepare(
+      `UPDATE scrape_log SET started_at = ?, completed_at = ?, bills_found = ?, bills_updated = ?, status = 'ok'
+       WHERE session_id = ? AND status = 'ok'`
+    ).bind(now, now, result.checked, result.updated, logSessionId).run();
+
+    if (!upd.meta?.changes) {
+      await env.DB.prepare(
+        `INSERT INTO scrape_log (session_id, started_at, completed_at, bills_found, bills_updated, status)
+         VALUES (?, ?, ?, ?, ?, 'ok')`
+      ).bind(logSessionId, now, now, result.checked, result.updated).run();
+    }
+  } catch (err) {
+    console.error('Incremental scraper: heartbeat write failed:', err.message);
+  }
 }

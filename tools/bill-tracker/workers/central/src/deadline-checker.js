@@ -189,24 +189,66 @@ export async function runDeadlineChecker(env) {
     if (crossoverStallDead > 0) console.log(`Deadline checker: ${crossoverStallDead} bills passed origin but stalled in crossover chamber`);
   }
 
-  // --- 3. Conference committee deadline ---
-  if (today > deadlines.conference_committee) {
-    const confResult = await env.DB.prepare(`
+  // --- 3. Sine die sweep (the Legislature has adjourned) ---
+  // Once the session adjourns sine die, every bill that never reached the
+  // Governor is dead — it simply ran out of session. This is the authoritative
+  // end-of-session cleanup that catches everything the mid-session procedural
+  // deadlines left behind (e.g. bills that crossed over and advanced but never
+  // got a final floor vote in the second chamber).
+  //
+  // Bills that DID pass both chambers are handled in 3b below: the Governor
+  // still has a post-adjournment window to sign them, so they stay alive until
+  // that window closes.
+  //
+  // NOTE: We intentionally no longer mark 'passed_both' dead at the conference
+  // committee deadline. Passing both chambers is success, not failure — those
+  // bills go to the Governor. The old conference rule killed them and the
+  // resurrection pass un-killed them on the next scrape, churning daily.
+  if (today > deadlines.sine_die) {
+    const adjournResult = await env.DB.prepare(`
       UPDATE bills SET
         status = 'dead',
-        dead_reason = 'missed_conference_deadline',
+        dead_reason = 'died_on_adjournment',
         deadline_dead_at = ?,
         updated_at = ?
       WHERE session_id = ?
-        AND status = 'passed_both'
+        AND status IN ('introduced', 'in_committee', 'passed_committee', 'on_floor', 'passed_house', 'passed_senate')
         AND (dead_reason IS NULL OR dead_reason = '')
         AND (deadline_dead_at IS NULL OR deadline_dead_at = '')
+        AND (final_disposition IS NULL OR final_disposition = '' OR final_disposition = 'None')
+        AND (governor_action IS NULL OR governor_action = '' OR governor_action = 'None')
     `).bind(now, now, sessionId).run();
 
-    const confDead = confResult.meta?.changes || 0;
-    deadByReason.missed_conference_deadline = confDead;
-    totalMarkedDead += confDead;
-    if (confDead > 0) console.log(`Deadline checker: ${confDead} bills missed conference deadline`);
+    const adjournDead = adjournResult.meta?.changes || 0;
+    deadByReason.died_on_adjournment = adjournDead;
+    totalMarkedDead += adjournDead;
+    if (adjournDead > 0) console.log(`Deadline checker: ${adjournDead} bills died on adjournment (sine die)`);
+  }
+
+  // --- 3b. Pocket veto sweep (the Governor's post-adjournment window has closed) ---
+  // Bills that passed both chambers and went to the Governor, but were neither
+  // signed nor vetoed before the constitutional deadline, are pocket-vetoed and
+  // do not become law. The governor checker resolves signs/vetoes during the
+  // window; whatever is still unresolved after the deadline is dead.
+  if (deadlines.governor_deadline && today > deadlines.governor_deadline) {
+    const pocketResult = await env.DB.prepare(`
+      UPDATE bills SET
+        status = 'dead',
+        dead_reason = 'pocket_veto',
+        deadline_dead_at = ?,
+        updated_at = ?
+      WHERE session_id = ?
+        AND status IN ('passed_both', 'to_governor')
+        AND (dead_reason IS NULL OR dead_reason = '')
+        AND (deadline_dead_at IS NULL OR deadline_dead_at = '')
+        AND (final_disposition IS NULL OR final_disposition = '' OR final_disposition = 'None')
+        AND (governor_action IS NULL OR governor_action = '' OR governor_action = 'None')
+    `).bind(now, now, sessionId).run();
+
+    const pocketDead = pocketResult.meta?.changes || 0;
+    deadByReason.pocket_veto = pocketDead;
+    totalMarkedDead += pocketDead;
+    if (pocketDead > 0) console.log(`Deadline checker: ${pocketDead} bills pocket-vetoed after governor deadline`);
   }
 
   // --- 4. Backfill dead_reason for azleg-marked dead bills ---
@@ -296,6 +338,15 @@ export async function checkResurrection(env, billId, newStatus) {
   ];
 
   if (!PROGRESS_STATUSES.includes(newStatus)) return false;
+
+  // Once the Legislature has adjourned sine die, nothing makes forward progress.
+  // Resurrecting here would just re-animate bills the sine-die sweep killed,
+  // re-creating the daily kill/resurrect churn. Bills that the Governor signs
+  // after adjournment are moved directly by the governor checker, not here.
+  const deadlines = getDeadlinesForSession(CURRENT_SESSION.id);
+  if (deadlines?.sine_die && new Date().toISOString().slice(0, 10) > deadlines.sine_die) {
+    return false;
+  }
 
   const bill = await env.DB.prepare(
     'SELECT id, number, deadline_dead_at, dead_reason FROM bills WHERE id = ?'

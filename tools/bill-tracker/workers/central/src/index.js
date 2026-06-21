@@ -36,6 +36,7 @@ import { runDeadlineChecker } from './deadline-checker.js';
 import { runGovernorChecker } from './governor-checker.js';
 import { runDailyDigest, listDigests, getDigest, getSessionSummary } from './digest.js';
 import { checkRateLimit } from './rate-limit.js';
+import { CURRENT_SESSION } from '../shared/constants.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://cactus.watch',
@@ -239,7 +240,10 @@ export default {
  */
 const SESSION_WINDOW = {
   start: '2026-01-01',
-  end: '2026-06-30',
+  // Extends past the June 13 sine die so post-session processing still runs:
+  // the governor checker resolves signs/vetoes through the post-adjournment
+  // window (~June 25) and the deadline checker's pocket-veto sweep fires after.
+  end: '2026-07-15',
 };
 
 /**
@@ -360,7 +364,47 @@ async function runScheduledPostProcess(env) {
     console.error('Cron: governor checker failed:', err);
   }
 
+  try {
+    await checkScraperHealth(env);
+  } catch (err) {
+    console.error('Cron: scraper health check failed:', err);
+  }
+
   console.log('Cron :30 — post-processing complete');
+}
+
+/**
+ * Scraper staleness alarm. The incremental scraper cycles every bill roughly
+ * every 7 hours, so the freshest `updated_at` should never be more than a few
+ * hours old while the cron is healthy. If it lags badly, the every-3-minutes
+ * cron has silently stopped — log a loud alarm so it surfaces in tail/logs.
+ */
+const SCRAPER_STALE_HOURS = 12;
+
+async function checkScraperHealth(env) {
+  const row = await env.DB.prepare(
+    `SELECT MAX(updated_at) AS freshest FROM bills b
+     JOIN sessions s ON b.session_id = s.id
+     WHERE s.session_id = ?`
+  ).bind(CURRENT_SESSION.id).first();
+
+  const freshest = row?.freshest;
+  if (!freshest) {
+    console.error('SCRAPER HEALTH ALARM: no bills found for current session');
+    return;
+  }
+
+  const ageMs = Date.now() - new Date(freshest).getTime();
+  const ageHours = ageMs / (1000 * 60 * 60);
+
+  if (ageHours > SCRAPER_STALE_HOURS) {
+    console.error(
+      `SCRAPER HEALTH ALARM: freshest bill update is ${ageHours.toFixed(1)}h old ` +
+      `(threshold ${SCRAPER_STALE_HOURS}h). The incremental scrape cron may have stopped.`
+    );
+  } else {
+    console.log(`Scraper health OK: freshest bill update ${ageHours.toFixed(1)}h ago`);
+  }
 }
 
 /**
