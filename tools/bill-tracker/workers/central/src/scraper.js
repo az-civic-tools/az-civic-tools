@@ -355,6 +355,18 @@ export async function processBill(env, dbSessionId, azlegSessionId, bill) {
   let result;
 
   if (existing) {
+    // Preserve a swept-dead status. If a deadline/sine-die/pocket-veto sweep
+    // already marked this bill dead (deadline_dead_at set), don't let a
+    // re-derived non-terminal "alive" status silently overwrite it on the next
+    // scrape — azleg keeps showing the old floor header, so deriveBillStatus
+    // keeps returning e.g. 'passed_both' forever. Genuine terminal statuses
+    // from azleg (signed/vetoed/held/dead) still win, and legitimate in-session
+    // resurrection is handled by checkResurrection() below.
+    const TERMINAL_STATUSES = ['signed', 'vetoed', 'dead', 'held'];
+    const statusToWrite = (existing.deadline_dead_at && !TERMINAL_STATUSES.includes(status))
+      ? 'dead'
+      : status;
+
     await env.DB.prepare(`
       UPDATE bills SET
         azleg_bill_id = ?, short_title = ?, description = ?,
@@ -370,7 +382,7 @@ export async function processBill(env, dbSessionId, azlegSessionId, bill) {
       bill.Description || null,
       primeSponsor?.name || null, primeSponsor?.party || null,
       lastAction?.text || null, lastAction?.date || null,
-      status, bill.FinalDisposition || null,
+      statusToWrite, bill.FinalDisposition || null,
       bill.GovernorAction || null, bill.GovernorActionDate || null,
       azlegUrl, keywords,
       now, now,
