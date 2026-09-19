@@ -14,8 +14,13 @@ export const ELECTION = {
 export const COPY = {
   title: 'Find your voting site',
   intro:
-    'Every voter in Maricopa County can vote at any vote center or drop off a mail ballot at any drop box. '
-    + 'Pick how you want to vote, enter your address, and we will show you the closest sites and exactly when they are open.',
+    'Maricopa County Recorder Justin Heap built a terrible website that does an awful job of showing where you can '
+    + 'find a voting location that is open on the day you want to vote. We think everyone should be able to find a '
+    + 'voting location in Maricopa County easily, so we built a better way to look it up. All data comes from '
+    + 'elections.maricopa.gov; we only fixed a handful of spelling and grammar mistakes that Heap\'s office published '
+    + 'in its official spreadsheet. Every voter in the county can vote at any vote center or drop a mail ballot at any '
+    + 'drop box. Pick how you want to vote, enter your address, and we will show you the closest sites and exactly '
+    + 'when they are open.',
   question: 'Do you want to vote in person, or drop off your mail-in ballot?',
 };
 
