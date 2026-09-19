@@ -68,6 +68,7 @@
           </div>
           <button type="button" class="vf-link" id="vf-geo">Use my current location</button>
           <p class="vf-status" id="vf-status" role="status"></p>
+          <p class="vf-privacy">We do not save or share this information with any person, campaign, or organization.</p>
         </form>
 
         <div class="vf-legend" id="vf-legend"></div>
@@ -76,8 +77,10 @@
           <h2 id="vf-list-title">All sites</h2>
           <input id="vf-filter" type="search" placeholder="Filter by name or city" aria-label="Filter sites by name or city">
         </div>
-        <ol class="vf-list" id="vf-list"></ol>
-        <button type="button" class="vf-more" id="vf-more" hidden>Show more sites</button>
+        <div class="vf-scroll" id="vf-scroll">
+          <ol class="vf-list" id="vf-list"></ol>
+          <button type="button" class="vf-more" id="vf-more" hidden>Show more sites</button>
+        </div>
       </div>
       <div class="vf-map-col">
         <div id="vf-map" class="vf-map" role="region" aria-label="Map of sites in Maricopa County"></div>

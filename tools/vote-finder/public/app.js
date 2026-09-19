@@ -122,7 +122,9 @@
       .filter((r) => r.hours && matchesWhen(r.hours))
       .filter((r) => !q || `${r.site.name} ${r.site.city} ${r.site.zip}`.toLowerCase().includes(q))
       .map((r) => ({ ...r, tier: tierOf(r.hours), miles: state.voter ? haversineMiles(state.voter, r.site) : null }));
-    return state.voter ? list.sort((a, b) => a.miles - b.miles) : list.sort((a, b) => a.site.name.localeCompare(b.site.name));
+    const sorted = state.voter ? list.sort((a, b) => a.miles - b.miles) : list.sort((a, b) => a.site.name.localeCompare(b.site.name));
+    const idx = sorted.findIndex((r) => r.site.id === state.selectedId);
+    return idx > 0 ? [sorted[idx], ...sorted.slice(0, idx), ...sorted.slice(idx + 1)] : sorted;
   };
 
   /* ---------- rendering ---------- */
@@ -158,7 +160,8 @@
     const form = el('form', { class: 'vf-email', novalidate: '' },
       el('label', { text: 'Email me this site’s hours and my voter guides' }),
       el('div', { class: 'vf-search-row' }, input, button),
-      el('p', { class: 'vf-email-note', text: note }), status);
+      el('p', { class: 'vf-email-note', text: note }),
+      el('p', { class: 'vf-privacy', text: 'We do not save or share this information with any person, campaign, or organization.' }), status);
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = input.value.trim();
@@ -210,10 +213,8 @@
       const msg = day !== null && !state.filter.trim() ? `No vote centers are open ${formatDate(state.data.dates[day])}. Pick another day above.` : 'No sites match that filter.';
       list.append(el('li', { class: 'vf-empty', text: msg })); $('vf-more').hidden = true; renderMarkers([]); return;
     }
-    const selectedIdx = results.findIndex((r) => r.site.id === state.selectedId);
-    const limit = Math.max(state.shown, selectedIdx + 1);
-    results.slice(0, limit).forEach((r) => list.append(renderSiteItem(r)));
-    $('vf-more').hidden = results.length <= limit;
+    results.slice(0, state.shown).forEach((r) => list.append(renderSiteItem(r)));
+    $('vf-more').hidden = results.length <= state.shown;
     renderMarkers(results);
   };
 
@@ -265,6 +266,7 @@
   /* ---------- actions ---------- */
   const selectSite = (id, { scroll = false } = {}) => {
     state.selectedId = id; renderList();
+    $('vf-scroll').scrollTop = 0;
     if (id === null) return;
     const site = state.sitesById.get(id);
     if (map && site) { map.flyTo([site.lat, site.lng], Math.max(map.getZoom(), 13), { duration: 0.6 }); markers.get(id)?.bringToFront(); }

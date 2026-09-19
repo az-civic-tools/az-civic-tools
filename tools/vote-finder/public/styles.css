@@ -126,7 +126,12 @@ button { font: inherit; color: inherit; }
   border-radius: var(--radius);
   background: #e9ecf1;
 }
-.vf-panel { min-width: 0; }
+.vf-panel { min-width: 0; display: flex; flex-direction: column; }
+.vf-scroll { flex: 1; min-height: 0; overflow-y: auto; margin-top: 12px; border-top: 1px solid var(--line); scrollbar-gutter: stable; }
+.vf-privacy { margin: 8px 0 0; font-size: 0.82rem; color: var(--muted); }
+@media (min-width: 901px) {
+  .vf-panel { height: min(78vh, 760px); min-height: 360px; }
+}
 
 /* Search */
 .vf-search label { display: block; font-weight: 700; margin-bottom: 8px; }
@@ -181,7 +186,7 @@ button { font: inherit; color: inherit; }
 .vf-listhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
 .vf-listhead h2 { margin: 0; font-size: 1.05rem; font-weight: 700; white-space: nowrap; }
 .vf-listhead input { max-width: 240px; padding-block: 8px; font-size: 0.95rem; }
-.vf-list { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.vf-list { list-style: none; margin: 0; padding: 0; }
 .vf-site { border-bottom: 1px solid var(--line); border-left: 5px solid var(--tier, var(--t-none)); }
 .vf-site.is-selected { background: var(--paper); box-shadow: 0 0 0 2px var(--ink) inset; border-left-color: var(--ink); }
 .vf-site-head {
@@ -231,7 +236,7 @@ button { font: inherit; color: inherit; }
 .vf-email label { display: block; font-weight: 700; margin-bottom: 8px; }
 .vf-email .vf-search-row input { padding-block: 10px; }
 .vf-email-note { margin: 8px 0 0; font-size: 0.86rem; color: var(--muted); }
-.vf-more { display: block; width: 100%; margin-top: 12px; padding: 12px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper); font-weight: 700; cursor: pointer; }
+.vf-more { display: block; width: 100%; margin: 12px 0; padding: 12px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper); font-weight: 700; cursor: pointer; }
 .vf-empty { padding: 20px 14px; color: var(--muted); }
 
 /* Map bits */
