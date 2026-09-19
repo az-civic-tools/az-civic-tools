@@ -1,0 +1,22 @@
+name: Deploy vote-finder
+
+on:
+  push:
+    branches: [main, feat/vote-finder]
+    paths:
+      - "tools/vote-finder/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Deploy Vote Finder Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: tools/vote-finder
+          command: deploy
