@@ -59,7 +59,9 @@
   };
 
   /* ---------- state ---------- */
-  const state = { data: null, config: null, mode: null, voter: null, filter: '', selectedId: null, shown: PAGE_SIZE, sitesById: new Map() };
+  const state = { data: null, config: null, mode: null, when: null, day: null, voter: null, filter: '', selectedId: null, shown: PAGE_SIZE, sitesById: new Map() };
+  const WHEN_HASH = { early: 'early', eday: 'election-day' };
+  const lastIndex = () => state.data.dates.length - 1;
   let map = null; let markers = new Map(); let youMarker = null;
 
   const hoursFor = (site, mode) => {
@@ -100,11 +102,24 @@
   };
 
   /* ---------- results ---------- */
+  const matchesWhen = (hours) => {
+    if (state.mode !== 'vc' || !state.when) return firstOpenIndex(hours) >= 0;
+    if (state.when === 'eday') return isOpen(hours[lastIndex()]);
+    if (state.day !== null) return isOpen(hours[state.day]);
+    return hours.slice(0, lastIndex()).some(isOpen);
+  };
+  const pickedDay = () => (state.mode === 'vc' && state.when === 'eday' ? lastIndex() : state.mode === 'vc' && state.when === 'early' ? state.day : null);
+  const statusFor = (hours) => {
+    const day = pickedDay();
+    if (day === null) return todayStatus(hours);
+    return { cls: isOpen(hours[day]) ? 'is-open' : 'is-closed', text: `${formatDate(state.data.dates[day])}: ${describeHours(hours[day])}` };
+  };
+  const countOpenOn = (dayIdx) => state.data.sites.filter((site) => { const h = hoursFor(site, 'vc'); return h && isOpen(h[dayIdx]); }).length;
   const visibleSites = () => {
     const q = state.filter.trim().toLowerCase();
     const list = state.data.sites
       .map((site) => ({ site, hours: hoursFor(site, state.mode) }))
-      .filter((r) => r.hours && firstOpenIndex(r.hours) >= 0)
+      .filter((r) => r.hours && matchesWhen(r.hours))
       .filter((r) => !q || `${r.site.name} ${r.site.city} ${r.site.zip}`.toLowerCase().includes(q))
       .map((r) => ({ ...r, tier: tierOf(r.hours), miles: state.voter ? haversineMiles(state.voter, r.site) : null }));
     return state.voter ? list.sort((a, b) => a.miles - b.miles) : list.sort((a, b) => a.site.name.localeCompare(b.site.name));
@@ -115,7 +130,7 @@
     const { dates } = state.data;
     const cells = hours.map((h, i) => {
       const dt = parseDate(dates[i]);
-      const cls = [isOpen(h) ? 'on' : '', isLate(h) ? 'late' : '', i > 0 && dt.getUTCDay() === 0 ? 'wk' : '', i === dates.length - 1 ? 'eday' : ''].filter(Boolean).join(' ');
+      const cls = [isOpen(h) ? 'on' : '', isLate(h) ? 'late' : '', i > 0 && dt.getUTCDay() === 0 ? 'wk' : '', i === dates.length - 1 ? 'eday' : '', i === pickedDay() ? 'pick' : ''].filter(Boolean).join(' ');
       return el('i', { class: cls, title: `${formatDate(dates[i])}: ${describeHours(h)}` });
     });
     const openDays = hours.filter(isOpen).length;
@@ -176,7 +191,7 @@
   };
 
   const renderSiteItem = ({ site, hours, tier, miles }) => {
-    const selected = site.id === state.selectedId; const status = todayStatus(hours);
+    const selected = site.id === state.selectedId; const status = statusFor(hours);
     const head = el('button', { type: 'button', class: 'vf-site-head', 'aria-expanded': String(selected), onclick: () => selectSite(selected ? null : site.id) },
       el('span', { class: 'vf-site-name', text: site.name }),
       miles !== null ? el('span', { class: 'vf-dist', text: miles < 10 ? `${miles.toFixed(1)} mi` : `${Math.round(miles)} mi` }) : null,
@@ -188,8 +203,13 @@
 
   const renderList = () => {
     const results = visibleSites(); const list = $('vf-list'); list.replaceChildren();
-    $('vf-list-title').textContent = state.voter ? `Closest to you (${results.length})` : `All sites (${results.length})`;
-    if (!results.length) { list.append(el('li', { class: 'vf-empty', text: 'No sites match that filter.' })); $('vf-more').hidden = true; return; }
+    const day = pickedDay();
+    const scope = day !== null ? `Open ${formatDate(state.data.dates[day])}` : state.voter ? 'Closest to you' : 'All sites';
+    $('vf-list-title').textContent = `${scope} (${results.length})`;
+    if (!results.length) {
+      const msg = day !== null && !state.filter.trim() ? `No vote centers are open ${formatDate(state.data.dates[day])}. Pick another day above.` : 'No sites match that filter.';
+      list.append(el('li', { class: 'vf-empty', text: msg })); $('vf-more').hidden = true; renderMarkers([]); return;
+    }
     const selectedIdx = results.findIndex((r) => r.site.id === state.selectedId);
     const limit = Math.max(state.shown, selectedIdx + 1);
     results.slice(0, limit).forEach((r) => list.append(renderSiteItem(r)));
@@ -228,7 +248,7 @@
       const m = L.circleMarker([site.lat, site.lng], markerStyle(tier, site.id === state.selectedId)).addTo(map);
       m.bindPopup(() => {
         const btn = el('button', { type: 'button', text: 'Show hours' }); btn.addEventListener('click', () => selectSite(site.id, { scroll: true }));
-        return el('div', { class: 'vf-popup' }, el('strong', { text: site.name }), el('span', { text: `${site.street}, ${site.city}` }), el('br'), el('span', { text: todayStatus(hours).text }), el('br'), btn);
+        return el('div', { class: 'vf-popup' }, el('strong', { text: site.name }), el('span', { text: `${site.street}, ${site.city}` }), el('br'), el('span', { text: statusFor(hours).text }), el('br'), btn);
       });
       markers.set(site.id, m);
     });
@@ -253,15 +273,65 @@
     item?.querySelector('.vf-site-head')?.focus({ preventScroll: !scroll });
   };
 
-  const setMode = (mode) => {
-    state.mode = mode; state.selectedId = null; state.shown = PAGE_SIZE;
-    document.querySelectorAll('.vf-tile').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.mode === mode)));
+  const updateHash = () => {
+    if (!history.replaceState) return;
+    const parts = [MODE_HASH[state.mode]];
+    if (state.mode === 'vc' && state.when) parts.push(WHEN_HASH[state.when]);
+    if (state.mode === 'vc' && state.when === 'early' && state.day !== null) parts.push(state.data.dates[state.day].replace(/\//g, '-'));
+    history.replaceState(null, '', `#${parts.join('/')}`);
+  };
+  const showFinder = () => {
+    state.selectedId = null; state.shown = PAGE_SIZE;
     $('vf-finder').hidden = false;
-    if (history.replaceState) history.replaceState(null, '', `#${MODE_HASH[mode]}`);
-    renderLegend(); renderList();
+    updateHash(); renderLegend(); renderList();
     requestAnimationFrame(() => { map?.invalidateSize(); if (!state.voter) map?.fitBounds(L.latLngBounds(visibleSites().map((r) => [r.site.lat, r.site.lng])).pad(0.05)); });
     if (!state.voter) $('vf-query').focus({ preventScroll: true });
     $('vf-finder').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  const renderCalendar = () => {
+    const { dates } = state.data; const cal = $('vf-cal'); cal.replaceChildren();
+    const any = el('button', { type: 'button', class: 'vf-cal-any', 'aria-pressed': String(state.day === null), onclick: () => setDay(null) }, el('b', { text: 'Any day' }), el('small', { text: 'show every early voting site' }));
+    cal.append(any);
+    DAY_NAMES.forEach((d) => cal.append(el('div', { class: 'vf-cal-dow', text: d })));
+    const firstDow = parseDate(dates[0]).getUTCDay();
+    for (let i = 0; i < firstDow; i += 1) cal.append(el('div'));
+    dates.slice(0, lastIndex()).forEach((d, i) => {
+      const dt = parseDate(d); const dow = dt.getUTCDay(); const open = countOpenOn(i);
+      const showMonth = i === 0 || dt.getUTCDate() === 1;
+      cal.append(el('button', { type: 'button', class: dow === 0 || dow === 6 ? 'is-weekend' : '', 'aria-pressed': String(state.day === i), 'aria-label': `${formatDate(d)}, ${open} sites open`, title: `${open} sites open`, onclick: () => setDay(i) },
+        el('b', { text: String(dt.getUTCDate()) }), el('small', { text: showMonth ? MONTH_NAMES[dt.getUTCMonth()] : `${open}` })));
+    });
+  };
+  const setDay = (day) => {
+    state.day = day;
+    renderCalendar();
+    showFinder();
+  };
+  const setWhen = (when) => {
+    state.when = when;
+    document.querySelectorAll('.vf-tile[data-when]').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.when === when)));
+    $('vf-daypick').hidden = when !== 'early';
+    if (when === 'early') renderCalendar();
+    showFinder();
+  };
+  const applyWhenCopy = () => {
+    const { dates } = state.data; const last = lastIndex();
+    $('vf-early-sub').textContent = `${formatDate(dates[0])} through ${formatDate(dates[last - 1])}`;
+    $('vf-eday-title').textContent = `Election Day (${shortDate(dates[last])})`;
+    $('vf-when-blurb').textContent = `Arizona offers in-person early voting. In Maricopa County it runs ${formatDate(dates[0])} through ${formatDate(dates[last - 1])}, and every vote center is open on Election Day, ${formatDate(dates[last])}. Not every location is open every day, and hours vary by site.`;
+  };
+  const setMode = (mode) => {
+    state.mode = mode;
+    document.querySelectorAll('.vf-tile[data-mode]').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.mode === mode)));
+    if (mode === 'vc') {
+      $('vf-when').hidden = false;
+      if (state.when) { setWhen(state.when); return; }
+      $('vf-finder').hidden = true; updateHash();
+      $('vf-when').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    $('vf-when').hidden = true;
+    showFinder();
   };
 
   const setStatus = (text, cls = '') => { const s = $('vf-status'); s.textContent = text; s.className = `vf-status ${cls}`.trim(); };
@@ -320,13 +390,22 @@
     ]);
     state.data = data; state.config = config; data.sites.forEach((s) => state.sitesById.set(s.id, s));
     applyConfig();
-    document.querySelectorAll('.vf-tile').forEach((t) => t.addEventListener('click', () => setMode(t.dataset.mode)));
+    document.querySelectorAll('.vf-tile[data-mode]').forEach((t) => t.addEventListener('click', () => setMode(t.dataset.mode)));
     $('vf-search').addEventListener('submit', onSearch);
     $('vf-geo').addEventListener('click', onGeolocate);
     $('vf-filter').addEventListener('input', (e) => { state.filter = e.target.value; state.shown = PAGE_SIZE; renderList(); });
     $('vf-more').addEventListener('click', () => { state.shown += PAGE_SIZE; renderList(); });
-    const initial = Object.entries(MODE_HASH).find(([, h]) => location.hash === `#${h}`);
-    if (initial) setMode(initial[0]);
+    applyWhenCopy();
+    document.querySelectorAll('.vf-tile[data-when]').forEach((t) => t.addEventListener('click', () => setWhen(t.dataset.when)));
+    const [modeHash, whenHash, dayHash] = location.hash.replace(/^#/, '').split('/');
+    const initialMode = Object.entries(MODE_HASH).find(([, h]) => h === modeHash)?.[0];
+    const initialWhen = Object.entries(WHEN_HASH).find(([, h]) => h === whenHash)?.[0];
+    if (initialMode === 'vc' && initialWhen) {
+      state.when = initialWhen;
+      const dayIdx = dayHash ? data.dates.indexOf(dayHash.replace(/-/g, '/')) : -1;
+      state.day = initialWhen === 'early' && dayIdx >= 0 ? dayIdx : null;
+    }
+    if (initialMode) setMode(initialMode);
   };
   init().catch((err) => { console.error(err); $('vf-intro').textContent = 'We could not load the site list. Refresh the page to try again.'; });
 })();

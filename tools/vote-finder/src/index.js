@@ -13,7 +13,6 @@ import { handleEmail } from './email.js';
 
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
-  'x-frame-options': 'SAMEORIGIN',
   'referrer-policy': 'strict-origin-when-cross-origin',
 };
 

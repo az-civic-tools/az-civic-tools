@@ -10,7 +10,10 @@ Live (temporary) URL: https://vote-finder.alex-logvin.workers.dev
 ## How it works
 
 - `public/` is the whole frontend: plain HTML, CSS, and JS served as Cloudflare Workers
-  static assets. Leaflet (from unpkg) draws the map with CARTO basemap tiles.
+  static assets. Leaflet (from unpkg) draws the map with OpenStreetMap tiles.
+- Flow: pick in-person or drop box. In-person voters then pick early voting or Election
+  Day; early voters can pick a specific day, which filters the list and map to sites open
+  that day (the county sheet shows many sites open only in the final days).
 - `public/data/sites.json` is generated from the county's "Voting Sites Schedule" XLSX
   by `scripts/build-data.py`. Each site carries per-day hour codes for in-person voting
   (`vc`) and drop-off (`db`, only when it differs), decoded through `legend`.

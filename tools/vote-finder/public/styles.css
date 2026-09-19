@@ -86,6 +86,29 @@ button { font: inherit; color: inherit; }
 .vf-tile[aria-pressed="true"] .vf-tile-sub { color: #f4e6b8; }
 .vf-tile:active { transform: translateY(1px); }
 
+/* Second question: when */
+.vf-when { padding-top: 28px; }
+.vf-blurb { margin: 0 0 16px; max-width: 64ch; color: var(--ink-soft); }
+.vf-daypick { margin-top: 18px; padding: 18px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper); }
+.vf-daypick .vf-blurb { margin-bottom: 14px; }
+.vf-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 520px; }
+.vf-cal-dow { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-align: center; padding-bottom: 2px; }
+.vf-cal-any { grid-column: 1 / -1; margin-bottom: 6px; }
+.vf-cal button {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 46px; padding: 4px 2px;
+  border: 2px solid var(--line); border-radius: var(--radius);
+  background: var(--paper); cursor: pointer; line-height: 1.1;
+}
+.vf-cal button b { font-size: 1.05rem; }
+.vf-cal button small { font-size: 0.68rem; color: var(--muted); }
+.vf-cal button:hover { border-color: var(--ink); }
+.vf-cal button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--sun); }
+.vf-cal button[aria-pressed="true"] small { color: #f4e6b8; }
+.vf-cal button.vf-cal-any { flex-direction: row; gap: 8px; font-weight: 700; border-color: var(--ink); }
+.vf-cal button.is-weekend { background: #f8f6ef; }
+.vf-strip i.pick { outline: 2px solid var(--focus); outline-offset: 1px; }
+
 /* Finder layout */
 .vf-finder {
   display: grid;
