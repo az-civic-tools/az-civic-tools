@@ -22,8 +22,11 @@
 
   <main class="vf-wrap">
     <section class="vf-choose" aria-labelledby="vf-question">
-      <h2 id="vf-question">Do you want to vote in person, or drop off your mail-in ballot?</h2>
-      <div class="vf-tiles">
+      <div class="vf-qrow">
+        <h2 id="vf-question">Do you want to vote in person, or drop off your mail-in ballot?</h2>
+        <div class="vf-answer" id="vf-mode-answer" hidden><span class="vf-answer-text"></span><button type="button" class="vf-change" data-change="mode">Change</button></div>
+      </div>
+      <div class="vf-tiles" id="vf-mode-body">
         <button type="button" class="vf-tile" data-mode="vc" aria-pressed="false">
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 20h32v20H8z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 20l8-10h4l8 10" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 28l4 4 8-8" fill="none" stroke="currentColor" stroke-width="3"/></svg>
           <span class="vf-tile-title">Vote in person</span>
@@ -38,7 +41,11 @@
     </section>
 
     <section class="vf-choose vf-when" id="vf-when" hidden aria-labelledby="vf-when-question">
-      <h2 id="vf-when-question">When do you want to vote?</h2>
+      <div class="vf-qrow">
+        <h2 id="vf-when-question">When do you want to vote?</h2>
+        <div class="vf-answer" id="vf-when-answer" hidden><span class="vf-answer-text"></span><button type="button" class="vf-change" data-change="when">Change</button></div>
+      </div>
+      <div id="vf-when-body">
       <p class="vf-blurb" id="vf-when-blurb">Arizona offers in-person early voting. Not every location is open every day, and hours vary by site.</p>
       <div class="vf-tiles">
         <button type="button" class="vf-tile" data-when="early" aria-pressed="false">
@@ -52,9 +59,16 @@
           <span class="vf-tile-sub" id="vf-eday-sub">Every vote center is open 6am to 7pm</span>
         </button>
       </div>
+      </div>
       <div class="vf-daypick" id="vf-daypick" hidden>
+        <div class="vf-qrow">
+          <h3 id="vf-day-question">Which day do you plan to vote?</h3>
+          <div class="vf-answer" id="vf-day-answer" hidden><span class="vf-answer-text"></span><button type="button" class="vf-change" data-change="day">Change</button></div>
+        </div>
+        <div id="vf-day-body">
         <p class="vf-blurb">Make sure the site you pick is open on the day you plan to vote. Choose a day and we will only show sites open that day. The small number under each date is how many vote centers are open.</p>
         <div class="vf-cal" id="vf-cal" role="group" aria-label="Pick the day you plan to vote"></div>
+        </div>
       </div>
     </section>
 

@@ -59,8 +59,15 @@
   };
 
   /* ---------- state ---------- */
-  const state = { data: null, config: null, mode: null, when: null, day: null, voter: null, filter: '', selectedId: null, shown: PAGE_SIZE, sitesById: new Map() };
+  const state = { data: null, config: null, mode: null, when: null, day: null, voter: null, filter: '', selectedId: null, shown: PAGE_SIZE, sitesById: new Map(), dayChosen: false };
   const WHEN_HASH = { early: 'early', eday: 'election-day' };
+  const WHEN_LABELS = { early: 'Early voting', eday: 'Election Day' };
+  /** Collapse a question to its answer row (text) or reopen it (null). */
+  const setAnswer = (key, text) => {
+    const answer = $(`vf-${key}-answer`); const body = $(`vf-${key}-body`);
+    answer.hidden = text === null; body.hidden = text !== null;
+    if (text !== null) answer.querySelector('.vf-answer-text').textContent = text;
+  };
   const lastIndex = () => state.data.dates.length - 1;
   let map = null; let markers = new Map(); let youMarker = null;
 
@@ -305,15 +312,20 @@
     });
   };
   const setDay = (day) => {
-    state.day = day;
+    state.day = day; state.dayChosen = true;
     renderCalendar();
+    setAnswer('day', day === null ? 'Any early voting day' : formatDate(state.data.dates[day]));
     showFinder();
   };
   const setWhen = (when) => {
     state.when = when;
     document.querySelectorAll('.vf-tile[data-when]').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.when === when)));
+    setAnswer('when', when === 'eday' ? `${WHEN_LABELS.eday} (${shortDate(state.data.dates[lastIndex()])})` : WHEN_LABELS.early);
     $('vf-daypick').hidden = when !== 'early';
-    if (when === 'early') renderCalendar();
+    if (when === 'early') {
+      renderCalendar();
+      setAnswer('day', state.dayChosen ? (state.day === null ? 'Any early voting day' : formatDate(state.data.dates[state.day])) : null);
+    }
     showFinder();
   };
   const applyWhenCopy = () => {
@@ -325,6 +337,7 @@
   const setMode = (mode) => {
     state.mode = mode;
     document.querySelectorAll('.vf-tile[data-mode]').forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.mode === mode)));
+    setAnswer('mode', MODE_LABELS[mode]);
     if (mode === 'vc') {
       $('vf-when').hidden = false;
       if (state.when) { setWhen(state.when); return; }
@@ -399,6 +412,11 @@
     $('vf-more').addEventListener('click', () => { state.shown += PAGE_SIZE; renderList(); });
     applyWhenCopy();
     document.querySelectorAll('.vf-tile[data-when]').forEach((t) => t.addEventListener('click', () => setWhen(t.dataset.when)));
+    document.querySelectorAll('.vf-change').forEach((b) => b.addEventListener('click', () => {
+      setAnswer(b.dataset.change, null);
+      const focusTarget = $(`vf-${b.dataset.change}-body`).querySelector('button');
+      focusTarget?.focus({ preventScroll: true });
+    }));
     const [modeHash, whenHash, dayHash] = location.hash.replace(/^#/, '').split('/');
     const initialMode = Object.entries(MODE_HASH).find(([, h]) => h === modeHash)?.[0];
     const initialWhen = Object.entries(WHEN_HASH).find(([, h]) => h === whenHash)?.[0];
@@ -406,6 +424,7 @@
       state.when = initialWhen;
       const dayIdx = dayHash ? data.dates.indexOf(dayHash.replace(/-/g, '/')) : -1;
       state.day = initialWhen === 'early' && dayIdx >= 0 ? dayIdx : null;
+      state.dayChosen = dayIdx >= 0;
     }
     if (initialMode) setMode(initialMode);
   };
