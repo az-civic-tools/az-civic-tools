@@ -10,6 +10,22 @@ import { runRtsScraper } from '../rts-scraper.js';
 import { runOverviewScraper } from '../overview-scraper.js';
 import { runDeadlineChecker } from '../deadline-checker.js';
 
+/**
+ * Shared bearer-token check for every manual scrape trigger.
+ * Returns null when the request is authorized, otherwise a 401/503 Response.
+ */
+export function checkScrapeAuth(request, env) {
+  const expectedToken = env.SCRAPE_TOKEN;
+  if (!expectedToken) {
+    return Response.json({ error: 'Scrape endpoint not configured' }, { status: 503 });
+  }
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || authHeader !== `Bearer ${expectedToken}`) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return null;
+}
+
 export async function handleScrape(request, env) {
   const authHeader = request.headers.get('Authorization');
   const expectedToken = env.SCRAPE_TOKEN;

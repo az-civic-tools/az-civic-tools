@@ -12,7 +12,9 @@
  *   POST /api/scrape          — trigger single-prefix scrape (auth required)
  *   POST /api/scrape/all      — trigger full scrape, all prefixes (auth required)
  *   POST /api/scrape/rts      — trigger RTS agenda scrape (auth required)
- *   POST /api/scrape/governor — re-check passed_both bills for governor actions
+ *   POST /api/scrape/governor — re-check passed_both bills for governor actions (auth required)
+ *   POST /api/scrape/incremental — scrape a batch of oldest-scraped bills (auth required)
+ *   POST /api/digest/send     — send + archive the daily digest (auth required)
  *   GET  /api/nokings/images — list NoKings3 images grouped by city
  *   POST /api/nokings/images — upload image (admin only)
  *   GET  /api/nokings/image/:id    — serve image bytes
@@ -21,7 +23,7 @@
 
 import { handleListBills, handleGetBill, handleSyncBills } from './routes/bills.js';
 import { handleMeta } from './routes/meta.js';
-import { handleScrape, handleScrapeAll, handleScrapeRts, handleScrapeOverviews, handleScrapeDeadlines } from './routes/scrape.js';
+import { handleScrape, handleScrapeAll, handleScrapeRts, handleScrapeOverviews, handleScrapeDeadlines, checkScrapeAuth } from './routes/scrape.js';
 import { handleRts } from './routes/rts.js';
 import { handleHearings } from './routes/hearings.js';
 import { handleOrgs } from './routes/orgs.js';
@@ -138,24 +140,33 @@ export default {
           headers: { 'Content-Type': 'text/plain; charset=utf-8' },
         });
       } else if (path === '/api/digest/send' && request.method === 'POST') {
-        const url = new URL(request.url);
-        const since = url.searchParams.get('since') || undefined;
-        const result = await runDailyDigest(env, { since });
-        response = new Response(JSON.stringify(result), {
-          headers: { 'Content-Type': 'application/json' },
-        });
+        const denied = checkScrapeAuth(request, env);
+        if (denied) {
+          response = denied;
+        } else {
+          const url = new URL(request.url);
+          const since = url.searchParams.get('since') || undefined;
+          const result = await runDailyDigest(env, { since });
+          response = Response.json(result);
+        }
       } else if (path === '/api/scrape/incremental' && request.method === 'POST') {
-        const url = new URL(request.url);
-        const batch = parseInt(url.searchParams.get('batch') || '15', 10);
-        const result = await runIncrementalScrape(env, batch);
-        response = new Response(JSON.stringify(result), {
-          headers: { 'Content-Type': 'application/json' },
-        });
+        const denied = checkScrapeAuth(request, env);
+        if (denied) {
+          response = denied;
+        } else {
+          const url = new URL(request.url);
+          const batch = parseInt(url.searchParams.get('batch') || '15', 10);
+          const result = await runIncrementalScrape(env, batch);
+          response = Response.json(result);
+        }
       } else if (path === '/api/scrape/governor' && request.method === 'POST') {
-        const result = await runGovernorChecker(env);
-        response = new Response(JSON.stringify(result), {
-          headers: { 'Content-Type': 'application/json' },
-        });
+        const denied = checkScrapeAuth(request, env);
+        if (denied) {
+          response = denied;
+        } else {
+          const result = await runGovernorChecker(env);
+          response = Response.json(result);
+        }
       } else if (path === '/api/scrape/deadlines' && request.method === 'POST') {
         response = await handleScrapeDeadlines(request, env);
       } else if (path === '/api/scrape/overviews' && request.method === 'POST') {
