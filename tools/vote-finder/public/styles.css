@@ -63,10 +63,10 @@ button { font: inherit; color: inherit; }
 /* Mode choice */
 .vf-choose { padding-block: 36px 8px; }
 .vf-choose h2, .vf-choose h3 { margin: 0; font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 700; }
-.vf-choose h3 { font-size: 1.1rem; }
 .vf-qrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; margin-bottom: 16px; }
 .vf-qrow:has(+ [hidden]) { margin-bottom: 0; }
-.vf-answer { display: inline-flex; align-items: center; gap: 14px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--ink); color: var(--sun); font-weight: 700; }
+.vf-answer { display: inline-flex; align-items: center; gap: 12px; min-width: 320px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--ink); color: var(--sun); font-weight: 700; }
+.vf-answer-text { flex: 1; text-align: left; }
 .vf-answer::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--sun); flex: none; }
 .vf-change { padding: 0; border: 0; background: none; color: #fff; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .vf-change:hover { color: var(--sun); }
@@ -96,7 +96,8 @@ button { font: inherit; color: inherit; }
 /* Second question: when */
 .vf-when { padding-top: 28px; }
 .vf-blurb { margin: 0 0 16px; max-width: 64ch; color: var(--ink-soft); }
-.vf-daypick { margin-top: 18px; padding: 18px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper); }
+.vf-daypick { margin-top: 28px; }
+.vf-daybox { padding: 18px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper); }
 .vf-daypick .vf-blurb { margin-bottom: 14px; }
 .vf-daypick .vf-qrow { margin-bottom: 12px; }
 .vf-daypick .vf-qrow:last-child { margin-bottom: 0; }
@@ -270,6 +271,7 @@ button { font: inherit; color: inherit; }
   .vf-listhead input { max-width: none; flex-basis: 100%; }
 }
 @media (max-width: 520px) {
+  .vf-answer { min-width: 0; width: 100%; }
   .vf-search-row { flex-wrap: wrap; }
   .vf-search-row .vf-btn { width: 100%; }
 }

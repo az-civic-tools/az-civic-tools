@@ -325,6 +325,11 @@
     if (when === 'early') {
       renderCalendar();
       setAnswer('day', state.dayChosen ? (state.day === null ? 'Any early voting day' : formatDate(state.data.dates[state.day])) : null);
+      if (!state.dayChosen) {
+        $('vf-finder').hidden = true; updateHash();
+        $('vf-daypick').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
     }
     showFinder();
   };
