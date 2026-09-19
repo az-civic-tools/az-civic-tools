@@ -39,7 +39,8 @@ Census or Nominatim APIs. Addresses neither service can place go in `MANUAL_COOR
 ## Editing copy and guide links
 
 Everything a human reads lives in `src/config.js`: the title, intro paragraph, the
-question, and the voter-guide URLs (statewide, per-LD pattern, and per-city local guides).
+question, and the voter-guide URLs (statewide LD/CD guide, judges and ballot prop guide, and the
+per-LD pattern for the 24 legislative districts that touch Maricopa County).
 
 ## Deploying
 

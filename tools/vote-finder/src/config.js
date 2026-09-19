@@ -26,31 +26,28 @@ export const COPY = {
 
 /**
  * Voter guide links. All placeholders for now; swap in real URLs when the guides exist.
- * `local` is keyed by lowercase city name as returned by the Census "Incorporated Places" layer.
+ * MARICOPA_LDS is every legislative district that intersects Maricopa County
+ * (from Census TIGERweb, 2024/2026 state legislative district boundaries).
  */
+export const MARICOPA_LDS = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+
 export const GUIDES = {
-  statewide: { label: 'Statewide voter guide', url: '/guides/statewide' },
-  ldPattern: { label: 'Legislative District {ld} voter guide', url: '/guides/ld-{ld}' },
-  local: {
-    phoenix: { label: 'Phoenix local voter guide', url: '/guides/local/phoenix' },
-    mesa: { label: 'Mesa local voter guide', url: '/guides/local/mesa' },
-    tempe: { label: 'Tempe local voter guide', url: '/guides/local/tempe' },
-  },
-  localFallback: { label: 'Local voter guides (city and school board)', url: '/guides/local' },
+  statewide: { label: 'Statewide LD and CD Guide', url: '/guides/statewide' },
+  county: { label: 'Judges, County, and Ballot Prop Guide', url: '/guides/county' },
+  ldPattern: { label: 'LD{ld} Voter Guide', url: '/guides/ld-{ld}' },
 };
 
-/** Guides that apply to a voter given their legislative district and city. */
-export const guidesFor = ({ ld, city } = {}) => {
-  const list = [GUIDES.statewide];
+export const ldGuide = (ld) => ({
+  ld,
+  label: GUIDES.ldPattern.label.replace('{ld}', String(ld)),
+  url: GUIDES.ldPattern.url.replace('{ld}', String(ld)),
+});
+
+/** Guides that apply to a voter given their legislative district. */
+export const guidesFor = ({ ld } = {}) => {
+  const list = [GUIDES.statewide, GUIDES.county];
   const ldNum = Number.parseInt(ld, 10);
-  if (Number.isInteger(ldNum) && ldNum >= 1 && ldNum <= 30) {
-    list.push({
-      label: GUIDES.ldPattern.label.replace('{ld}', String(ldNum)),
-      url: GUIDES.ldPattern.url.replace('{ld}', String(ldNum)),
-    });
-  }
-  const key = typeof city === 'string' ? city.trim().toLowerCase() : '';
-  list.push(GUIDES.local[key] || GUIDES.localFallback);
+  if (MARICOPA_LDS.includes(ldNum)) list.push(ldGuide(ldNum));
   return list;
 };
 
@@ -59,8 +56,7 @@ export const publicConfig = () => ({
   copy: COPY,
   guides: {
     statewide: GUIDES.statewide,
-    ldPattern: GUIDES.ldPattern,
-    localFallback: GUIDES.localFallback,
-    local: GUIDES.local,
+    county: GUIDES.county,
+    lds: MARICOPA_LDS.map(ldGuide),
   },
 });
