@@ -56,7 +56,7 @@ button { font: inherit; color: inherit; }
   font-stretch: 115%;
   line-height: 0.98;
   letter-spacing: -0.02em;
-  max-width: 14ch;
+  max-width: 24ch;
 }
 .vf-intro { margin: 18px 0 0; max-width: 62ch; font-size: 1.08rem; }
 
