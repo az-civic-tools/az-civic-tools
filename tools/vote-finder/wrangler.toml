@@ -2,6 +2,10 @@ name = "vote-finder"
 main = "src/index.js"
 compatibility_date = "2025-09-01"
 workers_dev = true
+routes = [
+  { pattern = "justinheapsucks.com", custom_domain = true },
+  { pattern = "www.justinheapsucks.com", custom_domain = true },
+]
 
 # Frontend (HTML/CSS/JS + data JSON) is served as static assets.
 # Anything not matching an asset path falls through to src/index.js (the /api/* routes).
@@ -22,7 +26,7 @@ enabled = true
 
 [vars]
 ENVIRONMENT = "production"
-SITE_URL = "https://vote-finder.alex-logvin.workers.dev"
+SITE_URL = "https://justinheapsucks.com"
 EMAIL_FROM = "Maricopa Vote Finder <vote@cactus.watch>"
 # Secrets (set in the Cloudflare dashboard, never here):
 #   RESEND_API_KEY — Resend API key for the "email me this site" feature

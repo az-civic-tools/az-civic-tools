@@ -5,7 +5,7 @@ ballot drop box for the November 3, 2026 general election, see exactly which day
 hours it is open, and email themselves the details plus the voter guides that apply to
 their legislative district and city.
 
-Live (temporary) URL: https://vote-finder.alex-logvin.workers.dev
+Live at https://justinheapsucks.com (also https://vote-finder.alex-logvin.workers.dev).
 
 ## How it works
 

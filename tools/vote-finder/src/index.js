@@ -38,7 +38,11 @@ const routeApi = async (request, env, pathname) => {
 
 export default {
   async fetch(request, env) {
-    const { pathname } = new URL(request.url);
+    const url = new URL(request.url);
+    const { pathname } = url;
+    if (url.hostname.startsWith('www.')) {
+      return Response.redirect(`${url.protocol}//${url.hostname.slice(4)}${pathname}${url.search}`, 301);
+    }
     try {
       if (pathname.startsWith('/api/')) {
         return withHeaders(await routeApi(request, env, pathname), SECURITY_HEADERS);
