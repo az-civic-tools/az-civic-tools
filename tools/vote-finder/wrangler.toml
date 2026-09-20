@@ -1,0 +1,32 @@
+name = "vote-finder"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+routes = [
+  { pattern = "justinheapsucks.com", custom_domain = true },
+  { pattern = "www.justinheapsucks.com", custom_domain = true },
+]
+
+# Frontend (HTML/CSS/JS + data JSON) is served as static assets.
+# Anything not matching an asset path falls through to src/index.js (the /api/* routes).
+[assets]
+directory = "public"
+binding = "ASSETS"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "de3351784e6c4f8193e08b73645a185c"
+
+[[r2_buckets]]
+binding = "GUIDES"
+bucket_name = "vote-finder-guides"
+
+[observability]
+enabled = true
+
+[vars]
+ENVIRONMENT = "production"
+SITE_URL = "https://justinheapsucks.com"
+EMAIL_FROM = "Find Your Voting Site <vote@justinheapsucks.com>"
+# Secrets (set in the Cloudflare dashboard, never here):
+#   RESEND_API_KEY — Resend API key for the "email me this site" feature

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Find your voting site | Maricopa County</title>
+  <meta name="description" content="Find the closest vote center or ballot drop box in Maricopa County for the November 3, 2026 general election, with the days and hours each one is open.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="vf-hero">
+    <div class="vf-wrap">
+      <p class="vf-election" id="vf-election">November 3, 2026 General Election, Maricopa County</p>
+      <h1 id="vf-title">Find your voting site</h1>
+      <p class="vf-intro" id="vf-intro"></p>
+    </div>
+  </header>
+
+  <main class="vf-wrap">
+    <section class="vf-choose" aria-labelledby="vf-question">
+      <div class="vf-qrow">
+        <h2 id="vf-question">Do you want to vote in person, or drop off your mail-in ballot?</h2>
+        <div class="vf-answer" id="vf-mode-answer" hidden><span class="vf-answer-text"></span><button type="button" class="vf-change" data-change="mode">Change</button></div>
+      </div>
+      <div class="vf-tiles" id="vf-mode-body">
+        <button type="button" class="vf-tile" data-mode="vc" aria-pressed="false">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 20h32v20H8z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 20l8-10h4l8 10" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 28l4 4 8-8" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          <span class="vf-tile-title">Vote in person</span>
+          <span class="vf-tile-sub">Any vote center in the county. Early voting starts October 7.</span>
+        </button>
+        <button type="button" class="vf-tile" data-mode="db" aria-pressed="false">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="14" width="28" height="26" rx="2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 14v-4h16v4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M17 22h14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="vf-tile-title">Drop off my ballot</span>
+          <span class="vf-tile-sub">Any drop box. No postage, no mail delay.</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="vf-choose vf-when" id="vf-when" hidden aria-labelledby="vf-when-question">
+      <div class="vf-qrow">
+        <h2 id="vf-when-question">When do you want to vote?</h2>
+        <div class="vf-answer" id="vf-when-answer" hidden><span class="vf-answer-text"></span><button type="button" class="vf-change" data-change="when">Change</button></div>
+      </div>
+      <div id="vf-when-body">
+      <p class="vf-blurb" id="vf-when-blurb">Arizona offers in-person early voting. Not every location is open every day, and hours vary by site.</p>
+      <div class="vf-tiles">
+        <button type="button" class="vf-tile" data-when="early" aria-pressed="false">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="12" width="32" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M8 20h32M16 8v8M32 8v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M15 30h4M22 30h4M29 30h4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <span class="vf-tile-title">Early voting</span>
+          <span class="vf-tile-sub" id="vf-early-sub">Wed, Oct 7 through Mon, Nov 2</span>
+        </button>
+        <button type="button" class="vf-tile" data-when="eday" aria-pressed="false">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 24l6 6 10-12" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          <span class="vf-tile-title" id="vf-eday-title">Election Day (Nov 3)</span>
+          <span class="vf-tile-sub" id="vf-eday-sub">Every vote center is open 6am to 7pm</span>
+        </button>
+      </div>
+      </div>
+      <div class="vf-daypick" id="vf-daypick" hidden>
+        <div class="vf-qrow">
+          <h3 id="vf-day-question">Which day do you plan to vote?</h3>
+          <div class="vf-answer" id="vf-day-answer" hidden><span class="vf-answer-text"></span><button type="button" class="vf-change" data-change="day">Change</button></div>
+        </div>
+        <div class="vf-daybox" id="vf-day-body">
+        <p class="vf-blurb">Make sure the site you pick is open on the day you plan to vote. Choose a day and we will only show sites open that day. The small number under each date is how many vote centers are open.</p>
+        <div class="vf-cal" id="vf-cal" role="group" aria-label="Pick the day you plan to vote"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vf-finder" id="vf-finder" hidden aria-live="polite">
+      <div class="vf-panel">
+        <form class="vf-search" id="vf-search" novalidate>
+          <label for="vf-query">Where are you starting from?</label>
+          <div class="vf-search-row">
+            <input id="vf-query" name="q" type="search" placeholder="Street address or ZIP code" autocomplete="street-address" enterkeyhint="search">
+            <button type="submit" class="vf-btn">Search</button>
+          </div>
+          <button type="button" class="vf-link" id="vf-geo">Use my current location</button>
+          <p class="vf-status" id="vf-status" role="status"></p>
+          <p class="vf-privacy">We do not save or share this information with any person, campaign, or organization.</p>
+        </form>
+
+        <div class="vf-legend" id="vf-legend"></div>
+
+        <div class="vf-listhead">
+          <h2 id="vf-list-title">All sites</h2>
+          <input id="vf-filter" type="search" placeholder="Filter by name or city" aria-label="Filter sites by name or city">
+        </div>
+        <div class="vf-scroll" id="vf-scroll">
+          <ol class="vf-list" id="vf-list"></ol>
+          <button type="button" class="vf-more" id="vf-more" hidden>Show more sites</button>
+        </div>
+      </div>
+      <div class="vf-map-col">
+        <div id="vf-map" class="vf-map" role="region" aria-label="Map of sites in Maricopa County"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="vf-foot">
+    <div class="vf-wrap">
+      <h2>Voter guides</h2>
+      <ul class="vf-guides" id="vf-guides"></ul>
+      <p class="vf-source">Site list and hours come from the Maricopa County Elections report of September 17, 2026. Hours can change, so confirm at <a href="https://Locations.Maricopa.Vote">Locations.Maricopa.Vote</a> before you go.</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/app.js"></script>
+</body>
+</html>
