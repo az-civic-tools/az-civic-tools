@@ -103,7 +103,7 @@ export const handleEmail = async (request, env) => {
   try {
     await sendViaResend({
       apiKey: env.RESEND_API_KEY,
-      from: env.EMAIL_FROM || 'Vote Finder <vote@cactus.watch>',
+      from: env.EMAIL_FROM || 'Find Your Voting Site <vote@justinheapsucks.com>',
       to: email,
       subject: `${mode === 'vc' ? 'Your voting site' : 'Your ballot drop-off site'}: ${site.name}`,
       html,

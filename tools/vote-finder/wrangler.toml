@@ -27,6 +27,6 @@ enabled = true
 [vars]
 ENVIRONMENT = "production"
 SITE_URL = "https://justinheapsucks.com"
-EMAIL_FROM = "Maricopa Vote Finder <vote@cactus.watch>"
+EMAIL_FROM = "Find Your Voting Site <vote@justinheapsucks.com>"
 # Secrets (set in the Cloudflare dashboard, never here):
 #   RESEND_API_KEY — Resend API key for the "email me this site" feature
