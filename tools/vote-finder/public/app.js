@@ -162,8 +162,8 @@
     const button = el('button', { type: 'submit', class: 'vf-btn', text: 'Send' });
     const status = el('p', { class: 'vf-status', role: 'status' });
     const note = state.voter && state.voter.ld
-      ? `Includes the statewide guide, the judges and ballot prop guide, and the LD${state.voter.ld} guide.`
-      : 'Search your address above first and we will include your LD guide too.';
+      ? `Includes the LD${state.voter.ld} voter guide for your district.`
+      : 'Includes the statewide voter guide. Search your address above first and we will send your LD guide instead.';
     const form = el('form', { class: 'vf-email', novalidate: '' },
       el('label', { text: 'Email me this site’s hours and my voter guides' }),
       el('div', { class: 'vf-search-row' }, input, button),
@@ -235,10 +235,13 @@
   const renderGuides = () => {
     const g = state.config.guides; const ul = $('vf-guides'); ul.replaceChildren();
     const mine = Number.parseInt(state.voter?.ld, 10);
-    [g.statewide, g.county, ...g.lds].forEach((i) => {
-      const yours = i.ld === mine;
-      ul.append(el('li', { class: yours ? 'is-yours' : '' }, el('a', { href: i.url, text: i.label }), yours ? el('span', { class: 'vf-yours', text: 'your district' }) : null));
+    ul.append(el('li', { class: 'vf-guide-statewide' }, el('a', { href: g.statewide.url, text: g.statewide.label })));
+    const row = el('li', { class: 'vf-guide-lds', 'aria-label': 'Legislative district guides' });
+    g.lds.forEach((i, idx) => {
+      if (idx > 0) row.append(el('span', { class: 'vf-sep', 'aria-hidden': 'true', text: ' - ' }));
+      row.append(el('a', { href: i.url, class: i.ld === mine ? 'is-yours' : '', title: i.label, text: `LD${i.ld}` }));
     });
+    ul.append(row);
   };
 
   /* ---------- map ---------- */

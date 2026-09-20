@@ -5,11 +5,13 @@
  *   GET  /api/geocode  — address → coordinates, legislative district, city
  *   GET  /api/locate   — coordinates → legislative district, city
  *   POST /api/email    — email a voter their chosen site's schedule + guides
+ *   GET  /guides/<slug> — voter guide PDFs from R2
  */
 import { json, error } from './http.js';
 import { publicConfig } from './config.js';
 import { handleGeocode, handleLocate } from './geocode.js';
 import { handleEmail } from './email.js';
+import { handleGuide } from './guides.js';
 
 const SECURITY_HEADERS = {
   'x-content-type-options': 'nosniff',
@@ -40,6 +42,9 @@ export default {
     try {
       if (pathname.startsWith('/api/')) {
         return withHeaders(await routeApi(request, env, pathname), SECURITY_HEADERS);
+      }
+      if (pathname.startsWith('/guides/')) {
+        return withHeaders(await handleGuide(request, env, pathname), SECURITY_HEADERS);
       }
       const asset = await env.ASSETS.fetch(request);
       return withHeaders(asset, SECURITY_HEADERS);

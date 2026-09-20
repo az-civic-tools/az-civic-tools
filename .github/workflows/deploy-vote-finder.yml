@@ -20,3 +20,34 @@ jobs:
           accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: tools/vote-finder
           command: deploy
+
+      - name: Upload voter guide PDFs to R2
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: tools/vote-finder
+          command: |
+            r2 object put "vote-finder-guides/AZ_LD10_Ballot_Guide.pdf" --file "guides/AZ_LD10_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD11_Ballot_Guide.pdf" --file "guides/AZ_LD11_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD12_Ballot_Guide.pdf" --file "guides/AZ_LD12_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD13_Ballot_Guide.pdf" --file "guides/AZ_LD13_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD14_Ballot_Guide.pdf" --file "guides/AZ_LD14_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD15_Ballot_Guide.pdf" --file "guides/AZ_LD15_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD16_Ballot_Guide.pdf" --file "guides/AZ_LD16_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD22_Ballot_Guide.pdf" --file "guides/AZ_LD22_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD23_Ballot_Guide.pdf" --file "guides/AZ_LD23_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD24_Ballot_Guide.pdf" --file "guides/AZ_LD24_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD25_Ballot_Guide.pdf" --file "guides/AZ_LD25_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD26_Ballot_Guide.pdf" --file "guides/AZ_LD26_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD27_Ballot_Guide.pdf" --file "guides/AZ_LD27_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD28_Ballot_Guide.pdf" --file "guides/AZ_LD28_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD29_Ballot_Guide.pdf" --file "guides/AZ_LD29_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD2_Ballot_Guide.pdf" --file "guides/AZ_LD2_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD30_Ballot_Guide.pdf" --file "guides/AZ_LD30_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD3_Ballot_Guide.pdf" --file "guides/AZ_LD3_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD4_Ballot_Guide.pdf" --file "guides/AZ_LD4_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD5_Ballot_Guide.pdf" --file "guides/AZ_LD5_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD8_Ballot_Guide.pdf" --file "guides/AZ_LD8_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD9_Ballot_Guide.pdf" --file "guides/AZ_LD9_Ballot_Guide.pdf" --content-type application/pdf --remote
+            r2 object put "vote-finder-guides/AZ_LD_and_CD_Guide.pdf" --file "guides/AZ_LD_and_CD_Guide.pdf" --content-type application/pdf --remote

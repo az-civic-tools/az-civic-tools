@@ -25,38 +25,37 @@ export const COPY = {
 };
 
 /**
- * Voter guide links. All placeholders for now; swap in real URLs when the guides exist.
- * MARICOPA_LDS is every legislative district that intersects Maricopa County
- * (from Census TIGERweb, 2024/2026 state legislative district boundaries).
+ * Voter guides. PDFs live in guides/ and are uploaded to the vote-finder-guides R2
+ * bucket on deploy; the Worker serves them at /guides/<slug>.
+ * LD_GUIDES lists the legislative districts that have a guide PDF.
  */
-export const MARICOPA_LDS = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+export const LD_GUIDES = [2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 22, 23, 24, 25, 26, 27, 28, 29, 30];
 
 export const GUIDES = {
-  statewide: { label: 'Statewide LD and CD Guide', url: '/guides/statewide' },
-  county: { label: 'Judges, County, and Ballot Prop Guide', url: '/guides/county' },
-  ldPattern: { label: 'LD{ld} Voter Guide', url: '/guides/ld-{ld}' },
+  statewide: { label: 'Statewide LD and CD Guide', url: '/guides/statewide', key: 'AZ_LD_and_CD_Guide.pdf' },
 };
 
-export const ldGuide = (ld) => ({
-  ld,
-  label: GUIDES.ldPattern.label.replace('{ld}', String(ld)),
-  url: GUIDES.ldPattern.url.replace('{ld}', String(ld)),
-});
+export const ldGuide = (ld) => ({ ld, label: `LD${ld} Voter Guide`, url: `/guides/ld-${ld}`, key: `AZ_LD${ld}_Ballot_Guide.pdf` });
 
-/** Guides that apply to a voter given their legislative district. */
+/** R2 object key for a /guides/<slug> path, or null when the slug is unknown. */
+export const guideKeyForSlug = (slug) => {
+  if (slug === 'statewide') return GUIDES.statewide.key;
+  const m = /^ld-(\d{1,2})$/.exec(slug);
+  const ld = m ? Number.parseInt(m[1], 10) : NaN;
+  return LD_GUIDES.includes(ld) ? ldGuide(ld).key : null;
+};
+
+/** The one guide to send a voter: their LD guide when we know it, else the statewide guide. */
 export const guidesFor = ({ ld } = {}) => {
-  const list = [GUIDES.statewide, GUIDES.county];
   const ldNum = Number.parseInt(ld, 10);
-  if (MARICOPA_LDS.includes(ldNum)) list.push(ldGuide(ldNum));
-  return list;
+  return LD_GUIDES.includes(ldNum) ? [ldGuide(ldNum)] : [GUIDES.statewide];
 };
 
 export const publicConfig = () => ({
   election: ELECTION,
   copy: COPY,
   guides: {
-    statewide: GUIDES.statewide,
-    county: GUIDES.county,
-    lds: MARICOPA_LDS.map(ldGuide),
+    statewide: { label: GUIDES.statewide.label, url: GUIDES.statewide.url },
+    lds: LD_GUIDES.map((ld) => { const g = ldGuide(ld); return { ld: g.ld, label: g.label, url: g.url }; }),
   },
 });

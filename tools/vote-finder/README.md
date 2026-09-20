@@ -39,8 +39,10 @@ Census or Nominatim APIs. Addresses neither service can place go in `MANUAL_COOR
 ## Editing copy and guide links
 
 Everything a human reads lives in `src/config.js`: the title, intro paragraph, the
-question, and the voter-guide URLs (statewide LD/CD guide, judges and ballot prop guide, and the
-per-LD pattern for the 24 legislative districts that touch Maricopa County).
+question, and the voter-guide list. Guide PDFs live in `guides/`; the deploy workflow uploads them
+to the `vote-finder-guides` R2 bucket and the Worker serves them at `/guides/statewide` and
+`/guides/ld-<n>`. Add a new LD PDF as `guides/AZ_LD<n>_Ballot_Guide.pdf` and add `<n>` to
+`LD_GUIDES` in `src/config.js`.
 
 ## Deploying
 

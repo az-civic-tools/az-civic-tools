@@ -13,6 +13,10 @@ binding = "ASSETS"
 binding = "RATE_LIMIT"
 id = "de3351784e6c4f8193e08b73645a185c"
 
+[[r2_buckets]]
+binding = "GUIDES"
+bucket_name = "vote-finder-guides"
+
 [observability]
 enabled = true
 
